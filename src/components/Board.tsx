@@ -1,6 +1,8 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import BoardBackground from "./Background"
 
-const BOARD_SIZE = 4000
+const BOARD_WIDTH = 2000
+const BOARD_HEIGHT = 2000
 
 export default function Board() {
     const viewportRef = useRef<HTMLDivElement | null>(null)
@@ -49,6 +51,13 @@ export default function Board() {
         return "cursor-default"
     }
 
+    useEffect(() => {
+        const viewport = viewportRef.current
+        if (!viewport) return
+        viewport.scrollLeft = BOARD_WIDTH / 2 - viewport.clientWidth / 2
+        viewport.scrollTop = BOARD_HEIGHT / 2 - viewport.clientHeight / 2
+    }, [])
+
     return (
         <div
             ref={viewportRef}
@@ -62,9 +71,10 @@ export default function Board() {
         >
             <div
                 className="relative bg-gray-50"
-                style={{ width: BOARD_SIZE, height: BOARD_SIZE }}
+                style={{ width: BOARD_WIDTH, height: BOARD_HEIGHT }}
             >
-                notes
+                <BoardBackground gridSize={224} lineWidth={2} />
+                <div className="relative  z-10">notes</div>
             </div>
         </div>
     )
