@@ -52,10 +52,14 @@ export default function Board() {
     }
 
     useEffect(() => {
-        const viewport = viewportRef.current
-        if (!viewport) return
-        viewport.scrollLeft = BOARD_WIDTH / 2 - viewport.clientWidth / 2
-        viewport.scrollTop = BOARD_HEIGHT / 2 - viewport.clientHeight / 2
+        const centerViewport = () => {
+            const viewport = viewportRef.current
+            if (!viewport) return
+            viewport.scrollLeft = BOARD_WIDTH / 2 - viewport.clientWidth / 2
+            viewport.scrollTop = BOARD_HEIGHT / 2 - viewport.clientHeight / 2
+        }
+
+        centerViewport()
     }, [])
 
     return (
