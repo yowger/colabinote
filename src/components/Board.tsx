@@ -5,12 +5,20 @@ import Note, { type Note as NoteType } from "./Note"
 const BOARD_WIDTH = 2000
 const BOARD_HEIGHT = 2000
 
+type GhostNote = {
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
 export default function Board() {
     const [isDragging, setIsDragging] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
     const [notes, setNotes] = useState<NoteType[]>([])
     const [draggingNoteId, setDraggingNoteId] = useState<number | null>(null)
     const [resizingNoteId, setResizingNoteId] = useState<number | null>(null)
+    const [ghostNote, setGhostNote] = useState<GhostNote | null>(null)
 
     const viewportRef = useRef<HTMLDivElement | null>(null)
     const noteDragStart = useRef<{
@@ -92,6 +100,7 @@ export default function Board() {
         setIsDragging(false)
         setDraggingNoteId(null)
         setResizingNoteId(null)
+        setGhostNote(null)
     }
     const enterBoard = () => setIsHovering(true)
     const exitBoard = () => setIsHovering(false)
@@ -112,7 +121,7 @@ export default function Board() {
             x: BOARD_WIDTH / 2 - 50,
             y: BOARD_HEIGHT / 2 - 25,
             width: 100,
-            height: 50,
+            height: 100,
             text: "New Note",
         }
         setNotes((prev) => [...prev, newNote])
@@ -124,6 +133,19 @@ export default function Board() {
     ) => {
         mouseEvent.stopPropagation()
         setDraggingNoteId(note.id)
+
+        console.log(
+            "Starting note drag at",
+            mouseEvent.clientX,
+            mouseEvent.clientY,
+        )
+
+        setGhostNote({
+            width: note.width,
+            height: note.height,
+            x: note.x,
+            y: note.y,
+        })
 
         noteDragStart.current = {
             x: mouseEvent.clientX,
@@ -205,6 +227,20 @@ export default function Board() {
                 >
                     <BoardBackground gridSize={224} lineWidth={2} />
                     <div className="relative  z-10">
+                        {ghostNote && draggingNoteId && (
+                            <div
+                                className="absolute border-2 border-dashed border-gray-300 bg-yellow-100 opacity-50 pointer-events-none"
+                                style={{
+                                    left: ghostNote.x,
+                                    top: ghostNote.y,
+                                    width: ghostNote.width,
+                                    height: ghostNote.height,
+                                }}
+                            >
+                                
+                            </div>
+                        )}
+
                         {notes.map((note) => (
                             <Note
                                 key={note.id}
