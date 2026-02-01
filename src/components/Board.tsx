@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react"
+
 import BoardBackground from "./Background"
+import GhostNote from "./GhostNote"
 import Note, { type Note as NoteType } from "./Note"
 
 const BOARD_WIDTH = 2000
@@ -13,7 +15,7 @@ type GhostNote = {
 }
 
 export default function Board() {
-    const [isDragging, setIsDragging] = useState(false)
+    const [isScreenDragging, setIsScreenDragging] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
     const [notes, setNotes] = useState<NoteType[]>([])
     const [draggingNoteId, setDraggingNoteId] = useState<number | null>(null)
@@ -27,14 +29,12 @@ export default function Board() {
         noteX: number
         noteY: number
     }>({ x: 0, y: 0, noteX: 0, noteY: 0 })
-
     const resizeStart = useRef({
         x: 0,
         y: 0,
         width: 0,
         height: 0,
     })
-
     const dragStart = useRef<{
         x: number
         y: number
@@ -46,7 +46,7 @@ export default function Board() {
         const viewport = viewportRef.current
         if (!viewport) return
 
-        setIsDragging(true)
+        setIsScreenDragging(true)
         dragStart.current = {
             x: mouseEvent.clientX,
             y: mouseEvent.clientY,
@@ -85,7 +85,7 @@ export default function Board() {
             return
         }
 
-        if (!isDragging) return
+        if (!isScreenDragging) return
         const viewport = viewportRef.current
         if (!viewport) return
 
@@ -97,7 +97,7 @@ export default function Board() {
     }
 
     const endDrag = () => {
-        setIsDragging(false)
+        setIsScreenDragging(false)
         setDraggingNoteId(null)
         setResizingNoteId(null)
         setGhostNote(null)
@@ -110,7 +110,7 @@ export default function Board() {
 
     const getCursorClass = () => {
         if (isInteractingWithNote) return "cursor-default"
-        if (isDragging) return "cursor-grabbing"
+        if (isScreenDragging) return "cursor-grabbing"
         if (isHovering) return "cursor-grab"
         return "cursor-default"
     }
@@ -133,12 +133,6 @@ export default function Board() {
     ) => {
         mouseEvent.stopPropagation()
         setDraggingNoteId(note.id)
-
-        console.log(
-            "Starting note drag at",
-            mouseEvent.clientX,
-            mouseEvent.clientY,
-        )
 
         setGhostNote({
             width: note.width,
@@ -174,16 +168,16 @@ export default function Board() {
         )
     }
 
-    const startResize = (
-        e: React.MouseEvent<HTMLDivElement>,
+    const startNoteResize = (
+        mouseEvent: React.MouseEvent<HTMLDivElement>,
         note: NoteType,
     ) => {
-        e.stopPropagation()
+        mouseEvent.stopPropagation()
 
         setResizingNoteId(note.id)
         resizeStart.current = {
-            x: e.clientX,
-            y: e.clientY,
+            x: mouseEvent.clientX,
+            y: mouseEvent.clientY,
             width: note.width,
             height: note.height,
         }
@@ -193,6 +187,7 @@ export default function Board() {
         const centerViewport = () => {
             const viewport = viewportRef.current
             if (!viewport) return
+
             viewport.scrollLeft = BOARD_WIDTH / 2 - viewport.clientWidth / 2
             viewport.scrollTop = BOARD_HEIGHT / 2 - viewport.clientHeight / 2
         }
@@ -228,25 +223,24 @@ export default function Board() {
                     <BoardBackground gridSize={224} lineWidth={2} />
                     <div className="relative  z-10">
                         {ghostNote && draggingNoteId && (
-                            <div
-                                className="absolute border-2 border-dashed border-gray-300 bg-yellow-100 opacity-50 pointer-events-none"
-                                style={{
-                                    left: ghostNote.x,
-                                    top: ghostNote.y,
-                                    width: ghostNote.width,
-                                    height: ghostNote.height,
-                                }}
-                            >
-                                
-                            </div>
+                            <GhostNote
+                                x={ghostNote.x}
+                                y={ghostNote.y}
+                                width={ghostNote.width}
+                                height={ghostNote.height}
+                            />
                         )}
 
                         {notes.map((note) => (
                             <Note
                                 key={note.id}
                                 note={note}
-                                onMoveMouseDown={(e) => startNoteDrag(e, note)}
-                                onResizeMouseDown={(e) => startResize(e, note)}
+                                onMoveMouseDown={(mouseEvent) =>
+                                    startNoteDrag(mouseEvent, note)
+                                }
+                                onResizeMouseDown={(mouseEvent) =>
+                                    startNoteResize(mouseEvent, note)
+                                }
                             />
                         ))}
                     </div>
