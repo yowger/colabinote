@@ -1,28 +1,31 @@
 import { useEffect, useRef, useState } from "react"
 import BoardBackground from "./Background"
+import Note, { type Note as NoteType } from "./Note"
 
 const BOARD_WIDTH = 2000
 const BOARD_HEIGHT = 2000
 
-type Note = {
-    id: number
-    x: number
-    y: number
-    text: string
-}
-
 export default function Board() {
-    const viewportRef = useRef<HTMLDivElement | null>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [isHovering, setIsHovering] = useState(false)
-    const [notes, setNotes] = useState<Note[]>([])
+    const [notes, setNotes] = useState<NoteType[]>([])
     const [draggingNoteId, setDraggingNoteId] = useState<number | null>(null)
+    const [resizingNoteId, setResizingNoteId] = useState<number | null>(null)
+
+    const viewportRef = useRef<HTMLDivElement | null>(null)
     const noteDragStart = useRef<{
         x: number
         y: number
         noteX: number
         noteY: number
     }>({ x: 0, y: 0, noteX: 0, noteY: 0 })
+
+    const resizeStart = useRef({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    })
 
     const dragStart = useRef<{
         x: number
@@ -45,6 +48,30 @@ export default function Board() {
     }
 
     const dragMove = (mouseEvent: React.MouseEvent<HTMLDivElement>) => {
+        if (resizingNoteId !== null) {
+            const dx = mouseEvent.clientX - resizeStart.current.x
+            const dy = mouseEvent.clientY - resizeStart.current.y
+
+            setNotes((prev) =>
+                prev.map((note) =>
+                    note.id === resizingNoteId
+                        ? {
+                              ...note,
+                              width: Math.max(
+                                  60,
+                                  resizeStart.current.width + dx,
+                              ),
+                              height: Math.max(
+                                  40,
+                                  resizeStart.current.height + dy,
+                              ),
+                          }
+                        : note,
+                ),
+            )
+            return
+        }
+
         if (draggingNoteId !== null) {
             moveNote(mouseEvent)
             return
@@ -64,21 +91,28 @@ export default function Board() {
     const endDrag = () => {
         setIsDragging(false)
         setDraggingNoteId(null)
+        setResizingNoteId(null)
     }
     const enterBoard = () => setIsHovering(true)
     const exitBoard = () => setIsHovering(false)
 
+    const isInteractingWithNote =
+        draggingNoteId !== null || resizingNoteId !== null
+
     const getCursorClass = () => {
+        if (isInteractingWithNote) return "cursor-default"
         if (isDragging) return "cursor-grabbing"
         if (isHovering) return "cursor-grab"
         return "cursor-default"
     }
 
     const addNote = () => {
-        const newNote: Note = {
+        const newNote: NoteType = {
             id: Date.now(),
             x: BOARD_WIDTH / 2 - 50,
             y: BOARD_HEIGHT / 2 - 25,
+            width: 100,
+            height: 50,
             text: "New Note",
         }
         setNotes((prev) => [...prev, newNote])
@@ -86,7 +120,7 @@ export default function Board() {
 
     const startNoteDrag = (
         mouseEvent: React.MouseEvent<HTMLDivElement>,
-        note: Note,
+        note: NoteType,
     ) => {
         mouseEvent.stopPropagation()
         setDraggingNoteId(note.id)
@@ -116,6 +150,21 @@ export default function Board() {
                     : note,
             ),
         )
+    }
+
+    const startResize = (
+        e: React.MouseEvent<HTMLDivElement>,
+        note: NoteType,
+    ) => {
+        e.stopPropagation()
+
+        setResizingNoteId(note.id)
+        resizeStart.current = {
+            x: e.clientX,
+            y: e.clientY,
+            width: note.width,
+            height: note.height,
+        }
     }
 
     useEffect(() => {
@@ -157,19 +206,12 @@ export default function Board() {
                     <BoardBackground gridSize={224} lineWidth={2} />
                     <div className="relative  z-10">
                         {notes.map((note) => (
-                            <div
+                            <Note
                                 key={note.id}
-                                onMouseDown={(e) => startNoteDrag(e, note)}
-                                className="absolute bg-yellow-200 p-2 rounded shadow cursor-move select-none"
-                                style={{
-                                    left: note.x,
-                                    top: note.y,
-                                    width: 100,
-                                    height: 50,
-                                }}
-                            >
-                                {note.text}
-                            </div>
+                                note={note}
+                                onMoveMouseDown={(e) => startNoteDrag(e, note)}
+                                onResizeMouseDown={(e) => startResize(e, note)}
+                            />
                         ))}
                     </div>
                 </div>
