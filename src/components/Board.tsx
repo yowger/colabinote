@@ -1,117 +1,150 @@
 import { useEffect, useRef, useState } from "react"
 
 import BoardBackground from "./Background"
-import GhostNote from "./GhostNote"
 import Note, { type Note as NoteType } from "./Note"
 
 const BOARD_WIDTH = 2000
 const BOARD_HEIGHT = 2000
 
-type GhostNote = {
-    x: number
-    y: number
-    width: number
-    height: number
-}
+type Interaction =
+    | {
+          type: "pan"
+          startX: number
+          startY: number
+          scrollLeft: number
+          scrollTop: number
+      }
+    | {
+          type: "drag"
+          noteId: number
+          startX: number
+          startY: number
+          noteStartX: number
+          noteStartY: number
+      }
+    | {
+          type: "resize"
+          noteId: number
+          startX: number
+          startY: number
+          startWidth: number
+          startHeight: number
+      }
+    | null
 
 export default function Board() {
-    const [isScreenDragging, setIsScreenDragging] = useState(false)
-    const [isHovering, setIsHovering] = useState(false)
+    const [interaction, setInteraction] = useState<Interaction>(null)
     const [notes, setNotes] = useState<NoteType[]>([])
-    const [draggingNoteId, setDraggingNoteId] = useState<number | null>(null)
-    const [resizingNoteId, setResizingNoteId] = useState<number | null>(null)
-    const [ghostNote, setGhostNote] = useState<GhostNote | null>(null)
 
     const viewportRef = useRef<HTMLDivElement | null>(null)
-    const noteDragStart = useRef<{
-        x: number
-        y: number
-        noteX: number
-        noteY: number
-    }>({ x: 0, y: 0, noteX: 0, noteY: 0 })
-    const resizeStart = useRef({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-    })
-    const dragStart = useRef<{
-        x: number
-        y: number
-        scrollLeft: number
-        scrollTop: number
-    }>({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 })
 
-    const startDrag = (mouseEvent: React.MouseEvent<HTMLDivElement>) => {
+    const onPointerDown = (
+        pointerEvent: React.PointerEvent<HTMLDivElement>,
+        mode: "drag" | "resize" | "pan",
+        note?: NoteType,
+    ) => {
+        pointerEvent.stopPropagation()
+        pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
+
         const viewport = viewportRef.current
         if (!viewport) return
 
-        setIsScreenDragging(true)
-        dragStart.current = {
-            x: mouseEvent.clientX,
-            y: mouseEvent.clientY,
-            scrollLeft: viewport.scrollLeft,
-            scrollTop: viewport.scrollTop,
+        if (mode === "drag" && note) {
+            setInteraction({
+                type: "drag",
+                noteId: note.id,
+                startX: pointerEvent.clientX,
+                startY: pointerEvent.clientY,
+                noteStartX: note.x,
+                noteStartY: note.y,
+            })
+        } else if (mode === "resize" && note) {
+            setInteraction({
+                type: "resize",
+                noteId: note.id,
+                startX: pointerEvent.clientX,
+                startY: pointerEvent.clientY,
+                startWidth: note.width,
+                startHeight: note.height,
+            })
+        } else if (mode === "pan") {
+            setInteraction({
+                type: "pan",
+                startX: pointerEvent.clientX,
+                startY: pointerEvent.clientY,
+                scrollLeft: viewport.scrollLeft,
+                scrollTop: viewport.scrollTop,
+            })
         }
     }
 
-    const dragMove = (mouseEvent: React.MouseEvent<HTMLDivElement>) => {
-        if (resizingNoteId !== null) {
-            const dx = mouseEvent.clientX - resizeStart.current.x
-            const dy = mouseEvent.clientY - resizeStart.current.y
-
-            setNotes((prev) =>
-                prev.map((note) =>
-                    note.id === resizingNoteId
-                        ? {
-                              ...note,
-                              width: Math.max(
-                                  60,
-                                  resizeStart.current.width + dx,
-                              ),
-                              height: Math.max(
-                                  40,
-                                  resizeStart.current.height + dy,
-                              ),
-                          }
-                        : note,
-                ),
-            )
-            return
-        }
-
-        if (draggingNoteId !== null) {
-            moveNote(mouseEvent)
-            return
-        }
-
-        if (!isScreenDragging) return
+    const onPointerMove = (
+        pointerEvent: React.PointerEvent<HTMLDivElement>,
+    ) => {
+        if (!interaction) return
         const viewport = viewportRef.current
         if (!viewport) return
 
-        const deltaX = mouseEvent.clientX - dragStart.current.x
-        const deltaY = mouseEvent.clientY - dragStart.current.y
+        switch (interaction.type) {
+            case "drag": {
+                const deltaX = pointerEvent.clientX - interaction.startX
+                const deltaY = pointerEvent.clientY - interaction.startY
+                setNotes((prevNote) =>
+                    prevNote.map((note) =>
+                        note.id === interaction.noteId
+                            ? {
+                                  ...note,
+                                  x: interaction.noteStartX + deltaX,
+                                  y: interaction.noteStartY + deltaY,
+                              }
+                            : note,
+                    ),
+                )
 
-        viewport.scrollLeft = dragStart.current.scrollLeft - deltaX
-        viewport.scrollTop = dragStart.current.scrollTop - deltaY
+                break
+            }
+            case "resize": {
+                const dx = pointerEvent.clientX - interaction.startX
+                const dy = pointerEvent.clientY - interaction.startY
+                setNotes((prev) =>
+                    prev.map((note) =>
+                        note.id === interaction.noteId
+                            ? {
+                                  ...note,
+                                  width: Math.max(
+                                      60,
+                                      interaction.startWidth + dx,
+                                  ),
+                                  height: Math.max(
+                                      40,
+                                      interaction.startHeight + dy,
+                                  ),
+                              }
+                            : note,
+                    ),
+                )
+
+                break
+            }
+            case "pan": {
+                const deltaX = pointerEvent.clientX - interaction.startX
+                const deltaY = pointerEvent.clientY - interaction.startY
+                viewport.scrollLeft = interaction.scrollLeft - deltaX
+                viewport.scrollTop = interaction.scrollTop - deltaY
+                break
+            }
+        }
     }
 
-    const endDrag = () => {
-        setIsScreenDragging(false)
-        setDraggingNoteId(null)
-        setResizingNoteId(null)
-        setGhostNote(null)
+    const onPointerUp = () => {
+        setInteraction(null)
     }
-    const enterBoard = () => setIsHovering(true)
-    const exitBoard = () => setIsHovering(false)
 
-    const isInteractingWithNote =
-        draggingNoteId !== null || resizingNoteId !== null
+    const getCursorClass = (interaction: Interaction) => {
+        if (interaction?.type === "pan") {
+            return "cursor-grabbing"
+        }
 
-    const getCursorClass = () => {
-        if (isInteractingWithNote) return "cursor-default"
-        if (isScreenDragging) return "cursor-grabbing"
-        if (isHovering) return "cursor-grab"
         return "cursor-default"
     }
 
@@ -125,62 +158,6 @@ export default function Board() {
             text: "New Note",
         }
         setNotes((prev) => [...prev, newNote])
-    }
-
-    const startNoteDrag = (
-        mouseEvent: React.MouseEvent<HTMLDivElement>,
-        note: NoteType,
-    ) => {
-        mouseEvent.stopPropagation()
-        setDraggingNoteId(note.id)
-
-        setGhostNote({
-            width: note.width,
-            height: note.height,
-            x: note.x,
-            y: note.y,
-        })
-
-        noteDragStart.current = {
-            x: mouseEvent.clientX,
-            y: mouseEvent.clientY,
-            noteX: note.x,
-            noteY: note.y,
-        }
-    }
-
-    const moveNote = (mouseEvent: React.MouseEvent<HTMLDivElement>) => {
-        if (draggingNoteId === null) return
-
-        const deltaX = mouseEvent.clientX - noteDragStart.current.x
-        const deltaY = mouseEvent.clientY - noteDragStart.current.y
-
-        setNotes((prevNote) =>
-            prevNote.map((note) =>
-                note.id === draggingNoteId
-                    ? {
-                          ...note,
-                          x: noteDragStart.current.noteX + deltaX,
-                          y: noteDragStart.current.noteY + deltaY,
-                      }
-                    : note,
-            ),
-        )
-    }
-
-    const startNoteResize = (
-        mouseEvent: React.MouseEvent<HTMLDivElement>,
-        note: NoteType,
-    ) => {
-        mouseEvent.stopPropagation()
-
-        setResizingNoteId(note.id)
-        resizeStart.current = {
-            x: mouseEvent.clientX,
-            y: mouseEvent.clientY,
-            width: note.width,
-            height: note.height,
-        }
     }
 
     useEffect(() => {
@@ -208,13 +185,13 @@ export default function Board() {
 
             <div
                 ref={viewportRef}
-                className={`w-screen h-screen overflow-auto ${getCursorClass()}`}
-                onMouseDown={startDrag}
-                onMouseMove={dragMove}
-                onMouseUp={endDrag}
-                onMouseLeave={endDrag}
-                onMouseEnter={enterBoard}
-                onMouseOut={exitBoard}
+                className={`w-screen h-screen overflow-auto ${getCursorClass(interaction)}`}
+                onPointerDown={(pointerEvent) =>
+                    onPointerDown(pointerEvent, "pan")
+                }
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerLeave={onPointerUp}
             >
                 <div
                     className="relative bg-gray-50"
@@ -222,24 +199,15 @@ export default function Board() {
                 >
                     <BoardBackground gridSize={224} lineWidth={2} />
                     <div className="relative  z-10">
-                        {ghostNote && draggingNoteId && (
-                            <GhostNote
-                                x={ghostNote.x}
-                                y={ghostNote.y}
-                                width={ghostNote.width}
-                                height={ghostNote.height}
-                            />
-                        )}
-
                         {notes.map((note) => (
                             <Note
                                 key={note.id}
                                 note={note}
-                                onMoveMouseDown={(mouseEvent) =>
-                                    startNoteDrag(mouseEvent, note)
+                                onPointerDown={(pointerEvent) =>
+                                    onPointerDown(pointerEvent, "drag", note)
                                 }
-                                onResizeMouseDown={(mouseEvent) =>
-                                    startNoteResize(mouseEvent, note)
+                                onResizePointerDown={(pointerEvent) =>
+                                    onPointerDown(pointerEvent, "resize", note)
                                 }
                             />
                         ))}

@@ -9,14 +9,14 @@ export type Note = {
 
 export type NoteProps = {
     note: Note
-    onMoveMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void
-    onResizeMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void
+    onPointerDown?: (e: React.PointerEvent<HTMLDivElement>) => void
+    onResizePointerDown?: (e: React.PointerEvent<HTMLDivElement>) => void
 }
 
 export default function Note({
     note,
-    onMoveMouseDown,
-    onResizeMouseDown,
+    onPointerDown,
+    onResizePointerDown,
 }: NoteProps) {
     return (
         <div
@@ -30,7 +30,7 @@ export default function Note({
         >
             <div
                 className="group h-7 flex items-center px-2 bg-yellow-300 rounded-t"
-                onMouseDown={onMoveMouseDown}
+                onPointerDown={onPointerDown}
             >
                 <span className="text-xs font-medium text-gray-700 pointer-events-auto">
                     Note Title
@@ -40,7 +40,7 @@ export default function Note({
             <div className="p-2 text-sm">{note.text}</div>
 
             <div
-                onMouseDown={onResizeMouseDown}
+                onPointerDown={onResizePointerDown}
                 className="absolute right-1 bottom-1 w-3 h-3 bg-gray-600 cursor-se-resize rounded-sm"
                 title="Resize"
             />
