@@ -124,11 +124,11 @@ export default function Board() {
                             ? {
                                   ...note,
                                   width: Math.max(
-                                      60,
+                                      100,
                                       interaction.startWidth + dx,
                                   ),
                                   height: Math.max(
-                                      40,
+                                      60,
                                       interaction.startHeight + dy,
                                   ),
                               }
