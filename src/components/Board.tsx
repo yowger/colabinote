@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react"
 import BoardBackground from "./Background"
 import Note, { type Note as NoteType } from "./Note"
 
-const BOARD_WIDTH = 2000
-const BOARD_HEIGHT = 2000
+const BOARD_SIZE = { width: 2000, height: 2000 }
+const DEFAULT_NOTE_SIZE = { width: 200, height: 215 }
 
 type Interaction =
     | {
@@ -149,12 +149,21 @@ export default function Board() {
     }
 
     const addNote = () => {
+        const viewport = viewportRef.current
+        if (!viewport) return
+
         const newNote: NoteType = {
             id: Date.now(),
-            x: BOARD_WIDTH / 2 - 50,
-            y: BOARD_HEIGHT / 2 - 25,
-            width: 100,
-            height: 100,
+            x:
+                viewport.scrollLeft +
+                viewport.clientWidth / 2 -
+                DEFAULT_NOTE_SIZE.width / 2,
+            y:
+                viewport.scrollTop +
+                viewport.clientHeight / 2 -
+                DEFAULT_NOTE_SIZE.height / 2,
+            width: DEFAULT_NOTE_SIZE.width,
+            height: DEFAULT_NOTE_SIZE.height,
             text: "New Note",
         }
         setNotes((prev) => [...prev, newNote])
@@ -165,8 +174,10 @@ export default function Board() {
             const viewport = viewportRef.current
             if (!viewport) return
 
-            viewport.scrollLeft = BOARD_WIDTH / 2 - viewport.clientWidth / 2
-            viewport.scrollTop = BOARD_HEIGHT / 2 - viewport.clientHeight / 2
+            viewport.scrollLeft =
+                BOARD_SIZE.width / 2 - viewport.clientWidth / 2
+            viewport.scrollTop =
+                BOARD_SIZE.height / 2 - viewport.clientHeight / 2
         }
 
         centerViewport()
@@ -195,7 +206,10 @@ export default function Board() {
             >
                 <div
                     className="relative bg-gray-50"
-                    style={{ width: BOARD_WIDTH, height: BOARD_HEIGHT }}
+                    style={{
+                        width: BOARD_SIZE.width,
+                        height: BOARD_SIZE.height,
+                    }}
                 >
                     <BoardBackground gridSize={224} lineWidth={2} />
                     <div className="relative  z-10">
