@@ -8,29 +8,39 @@ const BOARD_SIZE = { width: 2000, height: 2000 }
 const DEFAULT_NOTE_SIZE = { width: 200, height: 215 }
 const NOTE_MIN_SIZE = { width: 100, height: 60 }
 
+const InteractionType = {
+    DRAG: "drag" as const,
+    RESIZE: "resize" as const,
+    PAN: "pan" as const,
+}
+
 type Interaction =
     | {
-          type: "pan"
+          type: typeof InteractionType.PAN
           startX: number
           startY: number
           scrollLeft: number
           scrollTop: number
       }
     | {
-          type: "drag"
-          note: NoteType
+          type: typeof InteractionType.DRAG
           startX: number
           startY: number
+          noteId: number
           noteStartX: number
           noteStartY: number
+          noteWidth: number
+          noteHeight: number
       }
     | {
-          type: "resize"
-          note: NoteType
+          type: typeof InteractionType.RESIZE
           startX: number
           startY: number
-          startWidth: number
-          startHeight: number
+          noteId: number
+          noteStartX: number
+          noteStartY: number
+          noteStartWidth: number
+          noteStartHeight: number
       }
     | null
 
@@ -55,7 +65,10 @@ export default function Board() {
 
     const onPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
-        mode: "drag" | "resize" | "pan",
+        mode:
+            | typeof InteractionType.DRAG
+            | typeof InteractionType.RESIZE
+            | typeof InteractionType.PAN,
         note?: NoteType,
     ) => {
         pointerEvent.stopPropagation()
@@ -64,27 +77,31 @@ export default function Board() {
         const viewport = viewportRef.current
         if (!viewport) return
 
-        if (mode === "drag" && note) {
+        if (mode === InteractionType.DRAG && note) {
             setInteraction({
-                type: "drag",
-                note: note,
+                type: InteractionType.DRAG,
                 startX: pointerEvent.clientX,
                 startY: pointerEvent.clientY,
+                noteId: note.id,
                 noteStartX: note.x,
                 noteStartY: note.y,
+                noteWidth: note.width,
+                noteHeight: note.height,
             })
-        } else if (mode === "resize" && note) {
+        } else if (mode === InteractionType.RESIZE && note) {
             setInteraction({
-                type: "resize",
-                note: note,
+                type: InteractionType.RESIZE,
                 startX: pointerEvent.clientX,
                 startY: pointerEvent.clientY,
-                startWidth: note.width,
-                startHeight: note.height,
+                noteId: note.id,
+                noteStartX: note.x,
+                noteStartY: note.y,
+                noteStartWidth: note.width,
+                noteStartHeight: note.height,
             })
-        } else if (mode === "pan") {
+        } else if (mode === InteractionType.PAN) {
             setInteraction({
-                type: "pan",
+                type: InteractionType.PAN,
                 startX: pointerEvent.clientX,
                 startY: pointerEvent.clientY,
                 scrollLeft: viewport.scrollLeft,
@@ -102,20 +119,20 @@ export default function Board() {
         if (!viewport) return
 
         switch (interaction.type) {
-            case "drag": {
+            case InteractionType.DRAG: {
                 const deltaX = pointerEvent.clientX - interaction.startX
                 const deltaY = pointerEvent.clientY - interaction.startY
                 const noteX = Math.max(
                     0,
                     Math.min(
-                        BOARD_SIZE.width - interaction.note.width,
+                        BOARD_SIZE.width - interaction.noteWidth,
                         interaction.noteStartX + deltaX,
                     ),
                 )
                 const noteY = Math.max(
                     0,
                     Math.min(
-                        BOARD_SIZE.height - interaction.noteStartY,
+                        BOARD_SIZE.height - interaction.noteHeight,
                         interaction.noteStartY + deltaY,
                     ),
                 )
@@ -123,46 +140,46 @@ export default function Board() {
                 setGhostNote({
                     x: noteX,
                     y: noteY,
-                    width: interaction.note.width,
-                    height: interaction.note.height,
+                    width: interaction.noteWidth,
+                    height: interaction.noteHeight,
                 })
 
                 liveDragRef.current = {
-                    noteId: interaction.note.id,
+                    noteId: interaction.noteId,
                     x: noteX,
                     y: noteY,
                 }
 
                 break
             }
-            case "resize": {
+            case InteractionType.RESIZE: {
                 const deltaX = pointerEvent.clientX - interaction.startX
                 const deltaY = pointerEvent.clientY - interaction.startY
+
                 const noteWidth = Math.max(
                     NOTE_MIN_SIZE.width,
-                    interaction.startWidth + deltaX,
+                    interaction.noteStartWidth + deltaX,
                 )
                 const noteHeight = Math.max(
                     NOTE_MIN_SIZE.height,
-                    interaction.startHeight + deltaY,
+                    interaction.noteStartHeight + deltaY,
                 )
 
                 setGhostNote({
-                    x: interaction.note.x,
-                    y: interaction.note.y,
+                    x: interaction.noteStartX,
+                    y: interaction.noteStartY,
                     width: noteWidth,
                     height: noteHeight,
                 })
 
                 liveResizeRef.current = {
-                    noteId: interaction.note.id,
+                    noteId: interaction.noteId,
                     width: noteWidth,
                     height: noteHeight,
                 }
-
                 break
             }
-            case "pan": {
+            case InteractionType.PAN: {
                 const deltaX = pointerEvent.clientX - interaction.startX
                 const deltaY = pointerEvent.clientY - interaction.startY
                 viewport.scrollLeft = interaction.scrollLeft - deltaX
@@ -175,7 +192,7 @@ export default function Board() {
     const onPointerUp = (pointerEvent: React.PointerEvent) => {
         pointerEvent.currentTarget.releasePointerCapture(pointerEvent.pointerId)
 
-        if (interaction?.type === "drag" && liveDragRef.current) {
+        if (interaction?.type === InteractionType.DRAG && liveDragRef.current) {
             const { noteId, x, y } = liveDragRef.current
 
             setNotes((prev) =>
@@ -185,7 +202,10 @@ export default function Board() {
             // TODO DB
         }
 
-        if (interaction?.type === "resize" && liveResizeRef.current) {
+        if (
+            interaction?.type === InteractionType.RESIZE &&
+            liveResizeRef.current
+        ) {
             const { noteId, width, height } = liveResizeRef.current
 
             setNotes((prev) =>
@@ -205,11 +225,11 @@ export default function Board() {
 
     const getCursorClass = (interaction: Interaction) => {
         switch (interaction?.type) {
-            case "pan":
+            case InteractionType.PAN:
                 return "cursor-grabbing"
-            case "drag":
+            case InteractionType.DRAG:
                 return "cursor-grabbing"
-            case "resize":
+            case InteractionType.RESIZE:
                 return "cursor-se-resize"
             default:
                 return "cursor-grab"
@@ -266,7 +286,7 @@ export default function Board() {
                 ref={viewportRef}
                 className={`w-screen h-screen overflow-auto ${getCursorClass(interaction)}`}
                 onPointerDown={(pointerEvent) =>
-                    onPointerDown(pointerEvent, "pan")
+                    onPointerDown(pointerEvent, InteractionType.PAN)
                 }
                 onPointerMove={onPointerMove}
                 onPointerUp={onPointerUp}
@@ -291,14 +311,14 @@ export default function Board() {
                                     onPointerDown={(pointerEvent) =>
                                         onPointerDown(
                                             pointerEvent,
-                                            "drag",
+                                            InteractionType.DRAG,
                                             note,
                                         )
                                     }
                                     onResizePointerDown={(pointerEvent) =>
                                         onPointerDown(
                                             pointerEvent,
-                                            "resize",
+                                            InteractionType.RESIZE,
                                             note,
                                         )
                                     }
