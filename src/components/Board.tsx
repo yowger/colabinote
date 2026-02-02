@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from "react"
 
 import BoardBackground from "./Background"
 import Note, { type Note as NoteType } from "./Note"
+import GhostNote, { type GhostNoteProps } from "./GhostNote"
 
 const BOARD_SIZE = { width: 2000, height: 2000 }
 const DEFAULT_NOTE_SIZE = { width: 200, height: 215 }
+const NOTE_MIN_SIZE = { width: 100, height: 60 }
 
 type Interaction =
     | {
@@ -16,7 +18,7 @@ type Interaction =
       }
     | {
           type: "drag"
-          noteId: number
+          note: NoteType
           startX: number
           startY: number
           noteStartX: number
@@ -24,7 +26,7 @@ type Interaction =
       }
     | {
           type: "resize"
-          noteId: number
+          note: NoteType
           startX: number
           startY: number
           startWidth: number
@@ -33,10 +35,23 @@ type Interaction =
     | null
 
 export default function Board() {
+    console.log("RENDER")
+
     const [interaction, setInteraction] = useState<Interaction>(null)
     const [notes, setNotes] = useState<NoteType[]>([])
+    const [ghostNote, setGhostNote] = useState<GhostNoteProps | null>(null)
 
     const viewportRef = useRef<HTMLDivElement | null>(null)
+    const liveDragRef = useRef<{
+        noteId: number
+        x: number
+        y: number
+    } | null>(null)
+    const liveResizeRef = useRef<{
+        noteId: number
+        width: number
+        height: number
+    } | null>(null)
 
     const onPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
@@ -52,7 +67,7 @@ export default function Board() {
         if (mode === "drag" && note) {
             setInteraction({
                 type: "drag",
-                noteId: note.id,
+                note: note,
                 startX: pointerEvent.clientX,
                 startY: pointerEvent.clientY,
                 noteStartX: note.x,
@@ -61,7 +76,7 @@ export default function Board() {
         } else if (mode === "resize" && note) {
             setInteraction({
                 type: "resize",
-                noteId: note.id,
+                note: note,
                 startX: pointerEvent.clientX,
                 startY: pointerEvent.clientY,
                 startWidth: note.width,
@@ -82,6 +97,7 @@ export default function Board() {
         pointerEvent: React.PointerEvent<HTMLDivElement>,
     ) => {
         if (!interaction) return
+
         const viewport = viewportRef.current
         if (!viewport) return
 
@@ -89,52 +105,60 @@ export default function Board() {
             case "drag": {
                 const deltaX = pointerEvent.clientX - interaction.startX
                 const deltaY = pointerEvent.clientY - interaction.startY
-                setNotes((prevNote) =>
-                    prevNote.map((note) =>
-                        note.id === interaction.noteId
-                            ? {
-                                  ...note,
-                                  x: Math.max(
-                                      0,
-                                      Math.min(
-                                          BOARD_SIZE.width - note.width,
-                                          interaction.noteStartX + deltaX,
-                                      ),
-                                  ),
-                                  y: Math.max(
-                                      0,
-                                      Math.min(
-                                          BOARD_SIZE.height - note.height,
-                                          interaction.noteStartY + deltaY,
-                                      ),
-                                  ),
-                              }
-                            : note,
+                const noteX = Math.max(
+                    0,
+                    Math.min(
+                        BOARD_SIZE.width - interaction.note.width,
+                        interaction.noteStartX + deltaX,
                     ),
                 )
+                const noteY = Math.max(
+                    0,
+                    Math.min(
+                        BOARD_SIZE.height - interaction.noteStartY,
+                        interaction.noteStartY + deltaY,
+                    ),
+                )
+
+                setGhostNote({
+                    x: noteX,
+                    y: noteY,
+                    width: interaction.note.width,
+                    height: interaction.note.height,
+                })
+
+                liveDragRef.current = {
+                    noteId: interaction.note.id,
+                    x: noteX,
+                    y: noteY,
+                }
 
                 break
             }
             case "resize": {
-                const dx = pointerEvent.clientX - interaction.startX
-                const dy = pointerEvent.clientY - interaction.startY
-                setNotes((prev) =>
-                    prev.map((note) =>
-                        note.id === interaction.noteId
-                            ? {
-                                  ...note,
-                                  width: Math.max(
-                                      100,
-                                      interaction.startWidth + dx,
-                                  ),
-                                  height: Math.max(
-                                      60,
-                                      interaction.startHeight + dy,
-                                  ),
-                              }
-                            : note,
-                    ),
+                const deltaX = pointerEvent.clientX - interaction.startX
+                const deltaY = pointerEvent.clientY - interaction.startY
+                const noteWidth = Math.max(
+                    NOTE_MIN_SIZE.width,
+                    interaction.startWidth + deltaX,
                 )
+                const noteHeight = Math.max(
+                    NOTE_MIN_SIZE.height,
+                    interaction.startHeight + deltaY,
+                )
+
+                setGhostNote({
+                    x: interaction.note.x,
+                    y: interaction.note.y,
+                    width: noteWidth,
+                    height: noteHeight,
+                })
+
+                liveResizeRef.current = {
+                    noteId: interaction.note.id,
+                    width: noteWidth,
+                    height: noteHeight,
+                }
 
                 break
             }
@@ -150,6 +174,32 @@ export default function Board() {
 
     const onPointerUp = (pointerEvent: React.PointerEvent) => {
         pointerEvent.currentTarget.releasePointerCapture(pointerEvent.pointerId)
+
+        if (interaction?.type === "drag" && liveDragRef.current) {
+            const { noteId, x, y } = liveDragRef.current
+
+            setNotes((prev) =>
+                prev.map((n) => (n.id === noteId ? { ...n, x, y } : n)),
+            )
+
+            // TODO DB
+        }
+
+        if (interaction?.type === "resize" && liveResizeRef.current) {
+            const { noteId, width, height } = liveResizeRef.current
+
+            setNotes((prev) =>
+                prev.map((n) =>
+                    n.id === noteId ? { ...n, width, height } : n,
+                ),
+            )
+
+            // TODO DB
+        }
+
+        setGhostNote(null)
+        liveDragRef.current = null
+        liveResizeRef.current = null
         setInteraction(null)
     }
 
@@ -231,18 +281,30 @@ export default function Board() {
                 >
                     <BoardBackground gridSize={224} lineWidth={2} />
                     <div className="relative  z-10">
-                        {notes.map((note) => (
-                            <Note
-                                key={note.id}
-                                note={note}
-                                onPointerDown={(pointerEvent) =>
-                                    onPointerDown(pointerEvent, "drag", note)
-                                }
-                                onResizePointerDown={(pointerEvent) =>
-                                    onPointerDown(pointerEvent, "resize", note)
-                                }
-                            />
-                        ))}
+                        {ghostNote && <GhostNote {...ghostNote} />}
+
+                        {notes.map((note) => {
+                            return (
+                                <Note
+                                    key={note.id}
+                                    note={note}
+                                    onPointerDown={(pointerEvent) =>
+                                        onPointerDown(
+                                            pointerEvent,
+                                            "drag",
+                                            note,
+                                        )
+                                    }
+                                    onResizePointerDown={(pointerEvent) =>
+                                        onPointerDown(
+                                            pointerEvent,
+                                            "resize",
+                                            note,
+                                        )
+                                    }
+                                />
+                            )
+                        })}
                     </div>
                 </div>
             </div>
