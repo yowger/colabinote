@@ -141,11 +141,16 @@ export default function Board() {
     }
 
     const getCursorClass = (interaction: Interaction) => {
-        if (interaction?.type === "pan") {
-            return "cursor-grabbing"
+        switch (interaction?.type) {
+            case "pan":
+                return "cursor-grabbing"
+            case "drag":
+                return "cursor-grabbing"
+            case "resize":
+                return "cursor-se-resize"
+            default:
+                return "cursor-grab"
         }
-
-        return "cursor-default"
     }
 
     const addNote = () => {
