@@ -94,8 +94,20 @@ export default function Board() {
                         note.id === interaction.noteId
                             ? {
                                   ...note,
-                                  x: interaction.noteStartX + deltaX,
-                                  y: interaction.noteStartY + deltaY,
+                                  x: Math.max(
+                                      0,
+                                      Math.min(
+                                          BOARD_SIZE.width - note.width,
+                                          interaction.noteStartX + deltaX,
+                                      ),
+                                  ),
+                                  y: Math.max(
+                                      0,
+                                      Math.min(
+                                          BOARD_SIZE.height - note.height,
+                                          interaction.noteStartY + deltaY,
+                                      ),
+                                  ),
                               }
                             : note,
                     ),
@@ -136,7 +148,8 @@ export default function Board() {
         }
     }
 
-    const onPointerUp = () => {
+    const onPointerUp = (pointerEvent: React.PointerEvent) => {
+        pointerEvent.currentTarget.releasePointerCapture(pointerEvent.pointerId)
         setInteraction(null)
     }
 
