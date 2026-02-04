@@ -8,7 +8,7 @@ export const NoteInteractionType = {
     RESIZE: "resize" as const,
 }
 
-type NoteInteraction =
+export type NoteInteraction =
     | {
           type: typeof NoteInteractionType.DRAG
           startX: number

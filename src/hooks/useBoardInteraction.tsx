@@ -4,7 +4,7 @@ export const BoardInteractionType = {
     PAN: "pan" as const,
 }
 
-type BoardInteraction = {
+export type BoardInteraction = {
     type: typeof BoardInteractionType.PAN
     startX: number
     startY: number

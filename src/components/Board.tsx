@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react"
 import BoardBackground from "./Background"
 import Note, { type Note as NoteType } from "./Note"
 import GhostNote from "./GhostNote"
-
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
 import { useNoteInteraction } from "../hooks/useNoteInteraction"
 
