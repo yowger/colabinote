@@ -60,6 +60,30 @@ export default function Board() {
         setNotes((prev) => [...prev, newNote])
     }
 
+    const startEdit = (id: number) => {
+        console.log("start edit", id)
+
+        setNotes((prev) =>
+            prev.map((n) => (n.id === id ? { ...n, isEditing: true } : n)),
+        )
+    }
+
+    const commitText = (id: number, text: string) => {
+        setNotes((prev) =>
+            prev.map((n) =>
+                n.id === id ? { ...n, text, isEditing: false } : n,
+            ),
+        )
+
+        // TODO: DB
+    }
+
+    const cancelEdit = (id: number) => {
+        setNotes((prev) =>
+            prev.map((n) => (n.id === id ? { ...n, isEditing: false } : n)),
+        )
+    }
+
     useEffect(() => {
         const viewport = viewportRef.current
         if (!viewport) return
@@ -114,12 +138,15 @@ export default function Board() {
                             <Note
                                 key={note.id}
                                 note={note}
-                                onPointerDown={(e) =>
+                                onPointerDown={(e) => {
                                     onDragPointerDown(e, note)
-                                }
+                                }}
                                 onResizePointerDown={(e) =>
                                     onResizePointerDown(e, note)
                                 }
+                                onCommitText={commitText}
+                                onStartEdit={startEdit}
+                                onCancelEdit={cancelEdit}
                             />
                         ))}
                     </div>

@@ -17,30 +17,30 @@ export function useBoardInteraction(
 ) {
     const [interaction, setInteraction] = useState<BoardInteraction>(null)
 
-    const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const onPointerDown = (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
         const viewport = viewportRef.current
         if (!viewport) return
 
-        e.currentTarget.setPointerCapture(e.pointerId)
+        pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
 
         setInteraction({
             type: BoardInteractionType.PAN,
-            startX: e.clientX,
-            startY: e.clientY,
+            startX: pointerEvent.clientX,
+            startY: pointerEvent.clientY,
             scrollLeft: viewport.scrollLeft,
             scrollTop: viewport.scrollTop,
         })
     }
 
-    const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const onPointerMove = (PointerEvent: React.PointerEvent<HTMLDivElement>) => {
         if (!interaction) return
         if (interaction.type !== BoardInteractionType.PAN) return
 
         const viewport = viewportRef.current
         if (!viewport) return
 
-        const deltaX = e.clientX - interaction.startX
-        const deltaY = e.clientY - interaction.startY
+        const deltaX = PointerEvent.clientX - interaction.startX
+        const deltaY = PointerEvent.clientY - interaction.startY
 
         viewport.scrollLeft = interaction.scrollLeft - deltaX
         viewport.scrollTop = interaction.scrollTop - deltaY

@@ -3,6 +3,8 @@ import { useRef, useState } from "react"
 import type { Note as NoteType } from "../components/Note"
 import type { GhostNoteProps } from "../components/GhostNote"
 
+const MIN_NOTE_DIMENSIONS = { width: 120, height: 120 }
+
 export const NoteInteractionType = {
     DRAG: "drag" as const,
     RESIZE: "resize" as const,
@@ -51,16 +53,16 @@ export function useNoteInteraction(
     } | null>(null)
 
     const onDragPointerDown = (
-        e: React.PointerEvent<HTMLDivElement>,
+        pointerEvent: React.PointerEvent<HTMLDivElement>,
         note: NoteType,
     ) => {
-        e.stopPropagation()
-        e.currentTarget.setPointerCapture(e.pointerId)
+        pointerEvent.stopPropagation()
+        pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
 
         setInteraction({
             type: NoteInteractionType.DRAG,
-            startX: e.clientX,
-            startY: e.clientY,
+            startX: pointerEvent.clientX,
+            startY: pointerEvent.clientY,
             noteId: note.id,
             noteStartX: note.x,
             noteStartY: note.y,
@@ -70,16 +72,16 @@ export function useNoteInteraction(
     }
 
     const onResizePointerDown = (
-        e: React.PointerEvent<HTMLDivElement>,
+        pointerEvent: React.PointerEvent,
         note: NoteType,
     ) => {
-        e.stopPropagation()
-        e.currentTarget.setPointerCapture(e.pointerId)
+        pointerEvent.stopPropagation()
+        pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
 
         setInteraction({
             type: NoteInteractionType.RESIZE,
-            startX: e.clientX,
-            startY: e.clientY,
+            startX: pointerEvent.clientX,
+            startY: pointerEvent.clientY,
             noteId: note.id,
             noteStartX: note.x,
             noteStartY: note.y,
@@ -88,12 +90,14 @@ export function useNoteInteraction(
         })
     }
 
-    const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const onPointerMove = (
+        pointerEvent: React.PointerEvent<HTMLDivElement>,
+    ) => {
         if (!interaction) return
 
         if (interaction.type === NoteInteractionType.DRAG) {
-            const deltaX = e.clientX - interaction.startX
-            const deltaY = e.clientY - interaction.startY
+            const deltaX = pointerEvent.clientX - interaction.startX
+            const deltaY = pointerEvent.clientY - interaction.startY
 
             const x = Math.max(
                 0,
@@ -126,12 +130,18 @@ export function useNoteInteraction(
         }
 
         if (interaction.type === NoteInteractionType.RESIZE) {
-            const deltaX = e.clientX - interaction.startX
-            const deltaY = e.clientY - interaction.startY
+            const deltaX = pointerEvent.clientX - interaction.startX
+            const deltaY = pointerEvent.clientY - interaction.startY
 
-            const width = Math.max(80, interaction.noteStartWidth + deltaX)
+            const width = Math.max(
+                MIN_NOTE_DIMENSIONS.width,
+                interaction.noteStartWidth + deltaX,
+            )
 
-            const height = Math.max(60, interaction.noteStartHeight + deltaY)
+            const height = Math.max(
+                MIN_NOTE_DIMENSIONS.height,
+                interaction.noteStartHeight + deltaY,
+            )
 
             setGhostNote({
                 x: interaction.noteStartX,
@@ -148,8 +158,8 @@ export function useNoteInteraction(
         }
     }
 
-    const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-        e.currentTarget.releasePointerCapture(e.pointerId)
+    const onPointerUp = (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
+        pointerEvent.currentTarget.releasePointerCapture(pointerEvent.pointerId)
 
         if (
             interaction?.type === NoteInteractionType.DRAG &&
