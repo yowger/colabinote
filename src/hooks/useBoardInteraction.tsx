@@ -17,7 +17,13 @@ export function useBoardInteraction(
 ) {
     const [interaction, setInteraction] = useState<BoardInteraction>(null)
 
-    const onPointerDown = (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
+    const onPointerDown = (
+        pointerEvent: React.PointerEvent<HTMLDivElement>,
+    ) => {
+        if ((pointerEvent.target as HTMLElement).closest("[data-no-drag]")) {
+            return
+        }
+
         const viewport = viewportRef.current
         if (!viewport) return
 
@@ -32,7 +38,9 @@ export function useBoardInteraction(
         })
     }
 
-    const onPointerMove = (PointerEvent: React.PointerEvent<HTMLDivElement>) => {
+    const onPointerMove = (
+        PointerEvent: React.PointerEvent<HTMLDivElement>,
+    ) => {
         if (!interaction) return
         if (interaction.type !== BoardInteractionType.PAN) return
 

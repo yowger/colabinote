@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 
 import BoardBackground from "./Background"
-import Note, { type Note as NoteType } from "./Note"
+import Note, { type Note as NoteType } from "./Note/Note"
 import GhostNote from "./GhostNote"
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
 import { useNoteInteraction } from "../hooks/useNoteInteraction"
@@ -25,7 +25,7 @@ export default function Board() {
         onPointerDown: onBoardPointerDown,
         onPointerMove: onBoardPointerMove,
         onPointerUp: onBoardPointerUp,
-        getCursorClass: getBoardCursor,
+        // getCursorClass: getBoardCursor,
     } = useBoardInteraction(viewportRef)
 
     const {
@@ -34,8 +34,8 @@ export default function Board() {
         onResizePointerDown,
         onPointerMove: onNotePointerMove,
         onPointerUp: onNotePointerUp,
-        getCursorClass: getNoteCursor,
-        isInteracting: isNoteInteracting,
+        // getCursorClass: getNoteCursor,
+        // isInteracting: isNoteInteracting,
     } = useNoteInteraction(BOARD_SIZE, commitNote)
 
     const addNote = () => {
@@ -54,7 +54,7 @@ export default function Board() {
                 DEFAULT_NOTE_SIZE.height / 2,
             width: DEFAULT_NOTE_SIZE.width,
             height: DEFAULT_NOTE_SIZE.height,
-            text: "New Note",
+            text: "<h1>New Note</h1>",
         }
 
         setNotes((prev) => [...prev, newNote])
@@ -105,9 +105,10 @@ export default function Board() {
 
             <div
                 ref={viewportRef}
-                className={`w-screen h-screen overflow-auto ${
-                    isNoteInteracting ? getNoteCursor() : getBoardCursor()
-                }`}
+                className={`w-screen h-screen overflow-auto`}
+                // className={`w-screen h-screen overflow-auto ${
+                //     isNoteInteracting ? getNoteCursor() : getBoardCursor()
+                // }`}
                 onPointerDown={onBoardPointerDown}
                 onPointerMove={(e) => {
                     onBoardPointerMove(e)

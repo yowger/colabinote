@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 
-import type { Note as NoteType } from "../components/Note"
+import type { Note as NoteType } from "../components/Note/Note"
 import type { GhostNoteProps } from "../components/GhostNote"
 
 const MIN_NOTE_DIMENSIONS = { width: 120, height: 120 }
@@ -56,6 +56,10 @@ export function useNoteInteraction(
         pointerEvent: React.PointerEvent<HTMLDivElement>,
         note: NoteType,
     ) => {
+        if ((pointerEvent.target as HTMLElement).closest("[data-no-drag]")) {
+            return
+        }
+
         pointerEvent.stopPropagation()
         pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
 
