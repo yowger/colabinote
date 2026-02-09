@@ -20,6 +20,7 @@ export type NoteInteraction =
           noteStartY: number
           noteWidth: number
           noteHeight: number
+          noColor: NoteType["color"] | undefined
       }
     | {
           type: typeof NoteInteractionType.RESIZE
@@ -30,6 +31,7 @@ export type NoteInteraction =
           noteStartY: number
           noteStartWidth: number
           noteStartHeight: number
+          noColor: NoteType["color"] | undefined
       }
     | null
 
@@ -72,6 +74,7 @@ export function useNoteInteraction(
             noteStartY: note.y,
             noteWidth: note.width,
             noteHeight: note.height,
+            noColor: note.color,
         })
     }
 
@@ -91,6 +94,7 @@ export function useNoteInteraction(
             noteStartY: note.y,
             noteStartWidth: note.width,
             noteStartHeight: note.height,
+            noColor: note.color,
         })
     }
 
@@ -124,6 +128,7 @@ export function useNoteInteraction(
                 y,
                 width: interaction.noteWidth,
                 height: interaction.noteHeight,
+                color: interaction.noColor,
             })
 
             liveDragRef.current = {
@@ -152,6 +157,7 @@ export function useNoteInteraction(
                 y: interaction.noteStartY,
                 width,
                 height,
+                color: interaction.noColor,
             })
 
             liveResizeRef.current = {
