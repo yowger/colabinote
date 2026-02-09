@@ -1,10 +1,10 @@
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import { TextStyleKit } from "@tiptap/extension-text-style"
+import { EditorContent } from "@tiptap/react"
 import { useEffect } from "react"
 
 import MenuBar from "./Editor/MenuBar"
-import NoteTools from "./Tools"
+import NoteTools from "./Tools/Tools"
+import { useNoteEditor } from "../../hooks/useNoteEditor"
+import { getNoteColor, type NoteColor } from "./constants/noteColors"
 
 export type Note = {
     id: number
@@ -13,6 +13,7 @@ export type Note = {
     width: number
     height: number
     text: string
+    color?: NoteColor
     isEditing?: boolean
 }
 
@@ -23,6 +24,7 @@ export type NoteProps = {
     onStartEdit: (id: number) => void
     onCommitText: (id: number, text: string) => void
     onCancelEdit?: (id: number) => void
+    onColorChange?: (id: number, color: Note["color"]) => void
 }
 
 export default function Note({
@@ -30,24 +32,12 @@ export default function Note({
     onPointerDown,
     onResizePointerDown,
     onStartEdit,
-    // onCommitText,
     onCancelEdit,
+    onColorChange,
 }: NoteProps) {
-    // const [draft, setDraft] = useState(note.text)
+    const editor = useNoteEditor(note.text)
 
-    const editor = useEditor({
-        extensions: [TextStyleKit, StarterKit],
-        content: note.text || "<h1>Title</h1><p>hello</p>",
-        // editable: !!note.isEditing,
-        // onUpdate: ({ editor }) => {
-        //     setDraft(editor.getHTML())
-        // },
-        editorProps: {
-            attributes: {
-                class: "prose prose-sm focus:outline-none",
-            },
-        },
-    })
+    const { bg: noteColor, headerBg } = getNoteColor(note.color ?? "yellow")
 
     useEffect(() => {
         if (note.isEditing && editor) {
@@ -59,8 +49,7 @@ export default function Note({
 
     return (
         <div
-            // onBlur={() => note.isEditing && onCommitText(note.id, draft)}
-            className="group absolute bg-yellow-200 rounded shadow flex flex-col"
+            className={`group absolute rounded shadow flex flex-col ${noteColor}`}
             style={{
                 left: note.x,
                 top: note.y,
@@ -69,7 +58,7 @@ export default function Note({
             }}
         >
             <div
-                className=" py-2 flex items-center px-2 bg-yellow-300 rounded-t"
+                className={`py-2 px-2 flex items-center rounded-t ${headerBg}`}
                 onPointerDown={onPointerDown}
             >
                 <span className="text-xs font-medium text-gray-700 pointer-events-auto">
@@ -77,7 +66,10 @@ export default function Note({
                 </span>
             </div>
 
-            <section className="flex-1 flex flex-col min-h-0 relative">
+            <section
+                data-no-drag
+                className="flex-1 flex flex-col min-h-0 relative"
+            >
                 <div className="p-2 flex-1 overflow-auto min-h-0">
                     {note.isEditing ? (
                         <EditorContent
@@ -93,7 +85,7 @@ export default function Note({
                         />
                     ) : (
                         <div
-                            className="tiptap prose prose-sm max-w-none"
+                            className="tiptap prose prose-sm max-w-none cursor-text"
                             onMouseDown={(e) => {
                                 e.stopPropagation()
                                 onStartEdit(note.id)
@@ -102,31 +94,25 @@ export default function Note({
                         />
                     )}
                 </div>
-
-                {editor && note.isEditing && (
-                    <div
-                        data-no-drag
-                        className="flex items-center gap-1 px-2 py-1 bg-white/50 border-t"
-                    >
-                        <MenuBar editor={editor} />
-                    </div>
-                )}
             </section>
 
-            <NoteTools
-                isEditing={note.isEditing}
-                onEdit={() => onStartEdit(note.id)}
-                onDelete={() => {}}
-                onResizePointerDown={onResizePointerDown}
-            />
+            <div className="bg-white/50">
+                {editor && note.isEditing && (
+                    <MenuBar data-no-drag editor={editor} />
+                )}
+
+                <NoteTools
+                    data-no-drag
+                    isEditing={note.isEditing}
+                    onEdit={() => onStartEdit(note.id)}
+                    onDelete={() => {}}
+                    onColorChange={(color: NoteColor) => {
+                        console.log("")
+                        onColorChange?.(note.id, color)
+                    }}
+                    onResizePointerDown={onResizePointerDown}
+                />
+            </div>
         </div>
     )
 }
-
-/*
-TODO
-- Editable note text
-- Note resize
-- Note selection / outline
-- Multiplayer ownership
-*/

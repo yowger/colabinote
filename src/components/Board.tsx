@@ -55,6 +55,7 @@ export default function Board() {
             width: DEFAULT_NOTE_SIZE.width,
             height: DEFAULT_NOTE_SIZE.height,
             text: "<h1>New Note</h1>",
+            color: "yellow",
         }
 
         setNotes((prev) => [...prev, newNote])
@@ -148,6 +149,18 @@ export default function Board() {
                                 onCommitText={commitText}
                                 onStartEdit={startEdit}
                                 onCancelEdit={cancelEdit}
+                                onColorChange={(noteId, color) => {
+                                    setNotes((prev) =>
+                                        prev.map((n) =>
+                                            n.id === noteId
+                                                ? {
+                                                      ...n,
+                                                      color: color as unknown as NoteType["color"],
+                                                  }
+                                                : n,
+                                        ),
+                                    )
+                                }}
                             />
                         ))}
                     </div>

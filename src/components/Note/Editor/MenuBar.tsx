@@ -109,7 +109,7 @@ export default function MenuBar({ editor }: { editor: Editor | null }) {
     ]
 
     return (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1 px-2 py-1 transition">
             {items.map(
                 ({ icon: Icon, label, onClick, isActive, isDisabled }) => (
                     <button
