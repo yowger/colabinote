@@ -1,7 +1,7 @@
 import { EditorContent } from "@tiptap/react"
 import { useEffect } from "react"
 
-import MenuBar from "./Editor/MenuBar"
+import Editor from "./Editor/Editor"
 import NoteTools from "./Tools/Tools"
 import { useNoteEditor } from "../../hooks/useNoteEditor"
 import { getNoteColor, type NoteColor } from "./constants/noteColors"
@@ -36,7 +36,6 @@ export default function Note({
     onColorChange,
 }: NoteProps) {
     const editor = useNoteEditor(note.text)
-
     const { bg: noteColor, headerBg } = getNoteColor(note.color ?? "yellow")
 
     useEffect(() => {
@@ -45,7 +44,7 @@ export default function Note({
                 editor.commands.focus("end")
             })
         }
-    }, [note.isEditing, editor])
+    }, [note, editor])
 
     return (
         <div
@@ -67,13 +66,12 @@ export default function Note({
             </div>
 
             <section
-                data-no-drag
+                data-component="note-content"
                 className="flex-1 flex flex-col min-h-0 relative"
             >
                 <div className="p-2 flex-1 overflow-auto min-h-0">
                     {note.isEditing ? (
                         <EditorContent
-                            data-no-drag
                             editor={editor}
                             onPointerDown={(e) => e.stopPropagation()}
                             onKeyDown={(e) => {
@@ -81,7 +79,7 @@ export default function Note({
                                     onCancelEdit?.(note.id)
                                 }
                             }}
-                            className="bg-white/25 rounded min-h-0"
+                            className="min-h-0"
                         />
                     ) : (
                         <div
@@ -97,12 +95,9 @@ export default function Note({
             </section>
 
             <div className="bg-white/50">
-                {editor && note.isEditing && (
-                    <MenuBar data-no-drag editor={editor} />
-                )}
+                {editor && note.isEditing && <Editor editor={editor} />}
 
                 <NoteTools
-                    data-no-drag
                     isEditing={note.isEditing}
                     onEdit={() => onStartEdit(note.id)}
                     onDelete={() => {}}

@@ -20,7 +20,12 @@ export function useBoardInteraction(
     const onPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
     ) => {
-        if ((pointerEvent.target as HTMLElement).closest("[data-no-drag]")) {
+        const target = pointerEvent.target as HTMLElement
+
+        if (
+            target.closest('[data-component="note-content"]') ||
+            target.closest('[data-component="note-editor"]')
+        ) {
             return
         }
 

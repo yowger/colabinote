@@ -1,5 +1,5 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
-import { ChevronDownIcon } from "lucide-react"
+import { PaletteIcon } from "lucide-react"
 
 import type { NOTE_COLORS, NoteColor } from "../constants/noteColors"
 
@@ -13,7 +13,7 @@ export default function ColorPicker({
     return (
         <Popover className="relative">
             <PopoverButton className="p-2 rounded hover:bg-gray-200">
-                <ChevronDownIcon className="w-4 h-4" />
+                <PaletteIcon className="w-4 h-4" />
             </PopoverButton>
 
             <PopoverPanel anchor="bottom" className="mt-2 z-10">

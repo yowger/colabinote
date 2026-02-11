@@ -30,7 +30,6 @@ export default function MenuBar({ editor }: { editor: Editor | null }) {
         editor,
         selector: menuBarStateSelector,
     })
-
     if (!editor || !state) return null
 
     const items: MenuItem[] = [
@@ -109,7 +108,10 @@ export default function MenuBar({ editor }: { editor: Editor | null }) {
     ]
 
     return (
-        <div className="flex flex-wrap gap-1 px-2 py-1 transition">
+        <div
+            data-component="note-editor"
+            className="flex flex-wrap gap-1 px-2 py-1 transition"
+        >
             {items.map(
                 ({ icon: Icon, label, onClick, isActive, isDisabled }) => (
                     <button

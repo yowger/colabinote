@@ -7,7 +7,7 @@ import { useBoardInteraction } from "../hooks/useBoardInteraction"
 import { useNoteInteraction } from "../hooks/useNoteInteraction"
 
 const BOARD_SIZE = { width: 2000, height: 2000 }
-const DEFAULT_NOTE_SIZE = { width: 200, height: 215 }
+const DEFAULT_NOTE_SIZE = { width: 215, height: 215 }
 
 export default function Board() {
     const [notes, setNotes] = useState<NoteType[]>([])
