@@ -5,12 +5,14 @@ import Note, { type Note as NoteType } from "./Note/Note"
 import GhostNote from "./GhostNote"
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
 import { useNoteInteraction } from "../hooks/useNoteInteraction"
+import FocusedNoteOverlay from "./NoteOverlay/NoteOverlay"
 
 const BOARD_SIZE = { width: 2000, height: 2000 }
 const DEFAULT_NOTE_SIZE = { width: 215, height: 215 }
 
 export default function Board() {
     const [notes, setNotes] = useState<NoteType[]>([])
+    const [focusedNoteId, setFocusedNoteId] = useState<number | null>(null)
     const viewportRef = useRef<HTMLDivElement | null>(null)
 
     const commitNote = (id: number, updates: Partial<NoteType>) => {
@@ -110,7 +112,7 @@ export default function Board() {
                 // className={`w-screen h-screen overflow-auto ${
                 //     isNoteInteracting ? getNoteCursor() : getBoardCursor()
                 // }`}
-                onPointerDown={onBoardPointerDown}
+                onPointerDown={focusedNoteId ? undefined : onBoardPointerDown}
                 onPointerMove={(e) => {
                     onBoardPointerMove(e)
                     onNotePointerMove(e)
@@ -149,6 +151,7 @@ export default function Board() {
                                 onCommitText={commitText}
                                 onStartEdit={startEdit}
                                 onCancelEdit={cancelEdit}
+                                onMaximize={() => setFocusedNoteId(note.id)}
                                 onColorChange={(noteId, color) => {
                                     setNotes((prev) =>
                                         prev.map((n) =>
@@ -166,6 +169,22 @@ export default function Board() {
                     </div>
                 </div>
             </div>
+
+            {focusedNoteId && (
+                <FocusedNoteOverlay
+                    note={notes.find((n) => n.id === focusedNoteId)!}
+                    onClose={() => setFocusedNoteId(null)}
+                    onCommitText={commitText}
+                    onColorChange={(noteId, color) => {
+                        console.log("onColorChange", noteId, color)
+                        setNotes((prev) =>
+                            prev.map((n) =>
+                                n.id === noteId ? { ...n, color } : n,
+                            ),
+                        )
+                    }}
+                />
+            )}
         </>
     )
 }

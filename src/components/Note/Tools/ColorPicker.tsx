@@ -18,7 +18,7 @@ export default function ColorPicker({
 
             <PopoverPanel anchor="bottom" className="mt-2 z-10">
                 <div className="flex gap-2 p-2 bg-white rounded shadow-lg border">
-                    {colors.map(({ name, bg }) => (
+                    {colors.map(({ name, background: bg }) => (
                         <button
                             key={name}
                             className="w-6 h-6 rounded-full ring-1 ring-black/10 hover:scale-110 transition"

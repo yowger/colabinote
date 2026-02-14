@@ -19,7 +19,7 @@ export default function GhostNote({
 
     return (
         <div
-            className={`absolute border-2 border-dashed border-gray-300 ${colorObj.bg} opacity-50 pointer-events-none z-20`}
+            className={`absolute border-2 border-dashed border-gray-300 ${colorObj.background} opacity-50 pointer-events-none z-20`}
             style={{ left: x, top: y, width, height }}
         />
     )

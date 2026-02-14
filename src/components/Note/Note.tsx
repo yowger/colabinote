@@ -25,6 +25,7 @@ export type NoteProps = {
     onCommitText: (id: number, text: string) => void
     onCancelEdit?: (id: number) => void
     onColorChange?: (id: number, color: Note["color"]) => void
+    onMaximize?: (id: number) => void
 }
 
 export default function Note({
@@ -34,9 +35,11 @@ export default function Note({
     onStartEdit,
     onCancelEdit,
     onColorChange,
+    onMaximize,
 }: NoteProps) {
     const editor = useNoteEditor(note.text)
-    const { bg: noteColor, headerBg } = getNoteColor(note.color ?? "yellow")
+    const { background: noteColor, headerBackground: headerBg } = getNoteColor(note.color ?? "yellow")
+    console.log("🚀 ~ Note ~ noteColor:", noteColor)
 
     useEffect(() => {
         if (note.isEditing && editor) {
@@ -94,7 +97,7 @@ export default function Note({
                 </div>
             </section>
 
-            <div className="bg-white/50">
+            <div>
                 {editor && note.isEditing && <Editor editor={editor} />}
 
                 <NoteTools
@@ -102,9 +105,9 @@ export default function Note({
                     onEdit={() => onStartEdit(note.id)}
                     onDelete={() => {}}
                     onColorChange={(color: NoteColor) => {
-                        console.log("")
                         onColorChange?.(note.id, color)
                     }}
+                    onMaximize={() => onMaximize?.(note.id)}
                     onResizePointerDown={onResizePointerDown}
                 />
             </div>

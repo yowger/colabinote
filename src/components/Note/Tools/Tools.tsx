@@ -90,7 +90,7 @@ export default function NoteTools({
         <div
             className={clsx(
                 "relative flex flex-wrap justify-end gap-2 px-2 py-1 transition",
-                "opacity-0 pointer-events-none",
+                "opacity-0 pointer-events-auto",
                 "group-hover:opacity-100 group-hover:pointer-events-auto",
                 isEditing && "opacity-100 pointer-events-auto",
             )}
@@ -108,18 +108,20 @@ export default function NoteTools({
                 const Icon = tool.icon
 
                 return (
-                    <button
-                        key={tool.id}
-                        title={tool.title}
-                        className="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-200"
-                        onClick={tool.onClick}
-                        onPointerDown={(e) => {
-                            e.stopPropagation()
-                            tool.onPointerDown?.(e)
-                        }}
-                    >
-                        <Icon className="w-4 h-4" />
-                    </button>
+                    <div className="relative z-90">
+                        <button
+                            key={tool.id}
+                            title={tool.title}
+                            className="flex items-center justify-center w-8 h-8 rounded hover:bg-gray-200"
+                            onClick={tool.onClick}
+                            onPointerDown={(e) => {
+                                e.stopPropagation()
+                                tool.onPointerDown?.(e)
+                            }}
+                        >
+                            <Icon className="w-4 h-4" />
+                        </button>
+                    </div>
                 )
             })}
         </div>
