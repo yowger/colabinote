@@ -5,17 +5,7 @@ import Editor from "./Editor/Editor"
 import NoteTools from "./Tools/Tools"
 import { useNoteEditor } from "../../hooks/useNoteEditor"
 import { getNoteColor, type NoteColor } from "./constants/noteColors"
-
-export type Note = {
-    id: number
-    x: number
-    y: number
-    width: number
-    height: number
-    text: string
-    color?: NoteColor
-    isEditing?: boolean
-}
+import type { Note } from "../../types/note"
 
 export type NoteProps = {
     note: Note
@@ -38,8 +28,9 @@ export default function Note({
     onMaximize,
 }: NoteProps) {
     const editor = useNoteEditor(note.text)
-    const { background: noteColor, headerBackground: headerBg } = getNoteColor(note.color ?? "yellow")
-    console.log("🚀 ~ Note ~ noteColor:", noteColor)
+    const { background: noteColor, headerBackground: headerBg } = getNoteColor(
+        note.color ?? "yellow",
+    )
 
     useEffect(() => {
         if (note.isEditing && editor) {

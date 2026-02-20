@@ -33,5 +33,9 @@ export const NOTE_COLORS = [
 
 export type NoteColor = (typeof NOTE_COLORS)[number]["name"]
 
-export const getNoteColor = (color: NoteColor | undefined) =>
-    NOTE_COLORS.find((c) => c.name === color) ?? NOTE_COLORS[0]
+const NOTE_COLOR_MAP = Object.fromEntries(
+    NOTE_COLORS.map((color) => [color.name, color]),
+) as Record<NoteColor, (typeof NOTE_COLORS)[number]>
+
+export const getNoteColor = (color?: NoteColor) =>
+    color ? NOTE_COLOR_MAP[color] : NOTE_COLORS[0]
