@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-import type { Note } from "../types/note"
+import type { Note } from "../features/notes/types/note"
 
 type NotesState = {
     notes: Record<string, Note>

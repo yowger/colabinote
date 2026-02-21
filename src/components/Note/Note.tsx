@@ -5,7 +5,7 @@ import Editor from "./Editor/Editor"
 import NoteTools from "./Tools/Tools"
 import { useNoteEditor } from "../../hooks/useNoteEditor"
 import { getNoteColor, type NoteColor } from "./constants/noteColors"
-import type { Note } from "../../types/note"
+import type { Note } from "../../features/notes/types/note"
 
 export type NoteProps = {
     note: Note

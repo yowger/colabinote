@@ -13,7 +13,8 @@ export default function BoardToolbar() {
                         y: 20,
                         width: 150,
                         height: 150,
-                        content: "",
+                        title: "New Note",
+                        content: "New note content",
                         updatedAt: Date.now(),
                     })
                 }

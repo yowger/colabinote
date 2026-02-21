@@ -12,6 +12,7 @@ export type Note = {
     y: number
     width: number
     height: number
+    title: string
     content: string
     color?: NoteColor
     updatedAt: number

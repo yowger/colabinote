@@ -1,6 +1,9 @@
 import { Rnd } from "react-rnd"
-import type { Note } from "../../types/note"
-import { useNotesStore } from "../../hooks/useNotesStore"
+
+import { DEFAULT_NOTE_SIZE } from "../constants/note"
+import { useNotesStore } from "../../../hooks/useNotesStore"
+import NoteFrame from "./NoteFrame"
+import type { Note } from "../types/note"
 
 type NoteItemProps = {
     note: Note
@@ -11,8 +14,12 @@ export default function NoteItem({ note }: NoteItemProps) {
 
     return (
         <Rnd
-            size={{ width: note.width, height: note.height }}
-            position={{ x: note.x, y: note.y }}
+            default={{
+                x: note.x,
+                y: note.y,
+                width: note.width,
+                height: note.height,
+            }}
             onDragStop={(_event, delta) =>
                 updateNote(note.id, { x: delta.x, y: delta.y })
             }
@@ -24,8 +31,12 @@ export default function NoteItem({ note }: NoteItemProps) {
                     y: position.y,
                 })
             }
+            dragHandleClassName="note-drag-handle"
+            bounds="window"
+            minWidth={DEFAULT_NOTE_SIZE.width}
+            minHeight={DEFAULT_NOTE_SIZE.height}
         >
-            <div className="flex bg-red-500 h-full w-full">Rnd</div>
+            <NoteFrame note={note} />
         </Rnd>
     )
 }
