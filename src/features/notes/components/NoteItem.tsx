@@ -1,7 +1,7 @@
 import { Rnd } from "react-rnd"
 
 import { DEFAULT_NOTE_SIZE } from "../constants/note"
-import { useNotesStore } from "../../../hooks/useNotesStore"
+import { useNotesStore } from "../hooks/useNotesStore"
 import NoteFrame from "./NoteFrame"
 import type { Note } from "../types/note"
 
@@ -11,6 +11,7 @@ type NoteItemProps = {
 
 export default function NoteItem({ note }: NoteItemProps) {
     const updateNote = useNotesStore((store) => store.updateNote)
+    const bringToFront = useNotesStore((store) => store.bringToFront)
 
     return (
         <Rnd
@@ -31,6 +32,10 @@ export default function NoteItem({ note }: NoteItemProps) {
                     y: position.y,
                 })
             }
+            onMouseDown={() => bringToFront(note.id)}
+            style={{
+                zIndex: note.zIndex,
+            }}
             dragHandleClassName="note-drag-handle"
             bounds="window"
             minWidth={DEFAULT_NOTE_SIZE.width}

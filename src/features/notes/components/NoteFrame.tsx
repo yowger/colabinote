@@ -8,7 +8,6 @@ type NoteFrameProps = {
 }
 
 export default function NoteFrame({ note }: NoteFrameProps) {
-    console.log("🚀 ~ NoteFrame ~ note:", note)
     return (
         <div className="shadow flex flex-col h-full w-full bg-yellow-500">
             <NoteHeader title={note.title} />
