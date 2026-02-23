@@ -20,6 +20,9 @@ export function useBoardInteraction() {
     const onPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
     ) => {
+        if ((pointerEvent.target as Element).closest('[data-no-pan="true"]'))
+            return
+
         const viewport = viewportRef.current
         if (!viewport) return
 

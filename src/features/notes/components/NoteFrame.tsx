@@ -9,7 +9,10 @@ type NoteFrameProps = {
 
 export default function NoteFrame({ note }: NoteFrameProps) {
     return (
-        <div className="shadow-md rounded-xs flex flex-col h-full w-full bg-yellow-500">
+        <div
+            data-no-pan="true"
+            className="shadow-md rounded-xs flex flex-col h-full w-full bg-yellow-500"
+        >
             <NoteHeader title={note.title} />
             <NoteContent content={note.content} />
             <NoteToolbar noteId={note.id} />
