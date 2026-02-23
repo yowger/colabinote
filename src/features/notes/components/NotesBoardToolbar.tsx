@@ -1,6 +1,6 @@
-import { useNotesStore } from "../../features/notes/hooks/useNotesStore"
+import { useNotesStore } from "../hooks/useNotesStore"
 
-export default function BoardToolbar() {
+export default function NotesBoardToolbar() {
     const { addNote } = useNotesStore()
 
     return (
@@ -16,6 +16,7 @@ export default function BoardToolbar() {
                         title: "New Note",
                         content: "New note content",
                         updatedAt: Date.now(),
+                        // zIndex: 1,
                     })
                 }
             >

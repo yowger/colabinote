@@ -1,4 +1,4 @@
-import NotesBoard from "./components/Note/NotesBoard"
+import NotesBoard from "./features/notes/components/NotesBoard"
 
 export default function App() {
     return (
