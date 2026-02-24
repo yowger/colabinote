@@ -16,6 +16,7 @@ export default function NotesBoard() {
     return (
         <div className="flex flex-col h-screen">
             <BoardToolbar />
+
             <div className="absolute z-20 top-0 right-0 m-4">
                 <MiniMap
                     viewportRef={viewportRef}
@@ -26,10 +27,11 @@ export default function NotesBoard() {
                     items={Object.values(notes)}
                 />
             </div>
+
             <div
                 ref={viewportRef}
                 {...handlers}
-                className={`flex-1 overflow-scroll bg-neutral-900 touch-none ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
+                className={`flex-1 overflow-hidden bg-neutral-900 touch-none ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
             >
                 <div
                     className="bg-red-900 relative"
