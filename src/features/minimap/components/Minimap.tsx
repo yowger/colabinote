@@ -32,8 +32,6 @@ export function MiniMap({
         miniHeight: height,
     })
 
-    if (viewportRef === null) return null
-
     return (
         <div
             onClick={onMiniMapClick}

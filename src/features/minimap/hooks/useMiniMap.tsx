@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 
 type UseMiniMapArgs = {
     viewportRef: React.RefObject<HTMLDivElement | null>
@@ -25,11 +25,15 @@ export function useMiniMap({
         height: 0,
     })
 
+    const requestAnimationFrameId = useRef<number | null>(null)
+
     useEffect(() => {
         const viewport = viewportRef.current
         if (!viewport) return
 
         const update = () => {
+            requestAnimationFrameId.current = null
+
             setViewportRect({
                 left: viewport.scrollLeft * scaleX,
                 top: viewport.scrollTop * scaleY,
@@ -38,11 +42,20 @@ export function useMiniMap({
             })
         }
 
+        const onScroll = () => {
+            if (requestAnimationFrameId.current !== null) return
+
+            requestAnimationFrameId.current = requestAnimationFrame(update)
+        }
+
         update()
-        viewport.addEventListener("scroll", update)
+        viewport.addEventListener("scroll", onScroll, { passive: true })
 
         return () => {
-            viewport.removeEventListener("scroll", update)
+            viewport.removeEventListener("scroll", onScroll)
+            if (requestAnimationFrameId.current !== null) {
+                cancelAnimationFrame(requestAnimationFrameId.current)
+            }
         }
     }, [viewportRef, scaleX, scaleY])
 
