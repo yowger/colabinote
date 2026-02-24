@@ -24,7 +24,7 @@ export function MiniMap({
     height,
     items,
 }: MiniMapProps) {
-    const { scaleX, scaleY, viewportRect, onMiniMapClick } = useMiniMap({
+    const { scaleX, scaleY, viewportRect, miniMapHandlers } = useMiniMap({
         viewportRef,
         boardWidth,
         boardHeight,
@@ -34,7 +34,7 @@ export function MiniMap({
 
     return (
         <div
-            onClick={onMiniMapClick}
+            {...miniMapHandlers}
             className="relative bg-gray-800 border border-gray-600"
             style={{ width, height }}
         >

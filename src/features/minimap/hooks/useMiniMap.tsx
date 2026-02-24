@@ -26,6 +26,7 @@ export function useMiniMap({
     })
 
     const requestAnimationFrameId = useRef<number | null>(null)
+    const isDragging = useRef(false)
 
     useEffect(() => {
         const viewport = viewportRef.current
@@ -33,7 +34,6 @@ export function useMiniMap({
 
         const update = () => {
             requestAnimationFrameId.current = null
-
             setViewportRect({
                 left: viewport.scrollLeft * scaleX,
                 top: viewport.scrollTop * scaleY,
@@ -44,7 +44,6 @@ export function useMiniMap({
 
         const onScroll = () => {
             if (requestAnimationFrameId.current !== null) return
-
             requestAnimationFrameId.current = requestAnimationFrame(update)
         }
 
@@ -53,31 +52,69 @@ export function useMiniMap({
 
         return () => {
             viewport.removeEventListener("scroll", onScroll)
-            if (requestAnimationFrameId.current !== null) {
+            if (requestAnimationFrameId.current)
                 cancelAnimationFrame(requestAnimationFrameId.current)
-            }
         }
     }, [viewportRef, scaleX, scaleY])
 
-    const onMiniMapClick = useCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
+    const panToMiniMapPoint = useCallback(
+        (clientX: number, clientY: number, target: HTMLDivElement) => {
             const viewport = viewportRef.current
             if (!viewport) return
 
-            const rect = e.currentTarget.getBoundingClientRect()
-            const clickX = e.clientX - rect.left
-            const clickY = e.clientY - rect.top
+            const rect = target.getBoundingClientRect()
+            const x = clientX - rect.left
+            const y = clientY - rect.top
 
-            viewport.scrollLeft = clickX / scaleX - viewport.clientWidth / 2
-            viewport.scrollTop = clickY / scaleY - viewport.clientHeight / 2
+            viewport.scrollLeft = x / scaleX - viewport.clientWidth / 2
+            viewport.scrollTop = y / scaleY - viewport.clientHeight / 2
         },
         [viewportRef, scaleX, scaleY],
+    )
+
+    const onPointerDown = useCallback(
+        (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
+            isDragging.current = true
+            pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
+            panToMiniMapPoint(
+                pointerEvent.clientX,
+                pointerEvent.clientY,
+                pointerEvent.currentTarget,
+            )
+        },
+        [panToMiniMapPoint],
+    )
+
+    const onPointerMove = useCallback(
+        (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
+            if (!isDragging.current) return
+            panToMiniMapPoint(
+                pointerEvent.clientX,
+                pointerEvent.clientY,
+                pointerEvent.currentTarget,
+            )
+        },
+        [panToMiniMapPoint],
+    )
+
+    const onPointerUp = useCallback(
+        (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
+            isDragging.current = false
+            pointerEvent.currentTarget.releasePointerCapture(
+                pointerEvent.pointerId,
+            )
+        },
+        [],
     )
 
     return {
         scaleX,
         scaleY,
         viewportRect,
-        onMiniMapClick,
+        miniMapHandlers: {
+            onPointerDown,
+            onPointerMove,
+            onPointerUp,
+        },
     }
 }
