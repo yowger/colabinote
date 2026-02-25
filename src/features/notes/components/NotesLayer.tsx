@@ -1,5 +1,5 @@
 import { useNotesStore } from "../hooks/useNotesStore"
-import NoteItem from "./NoteItem"
+import NoteItem from "./Note/NoteItem"
 
 export default function NotesLayer() {
     const notesMap = useNotesStore((s) => s.notes)

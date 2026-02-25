@@ -1,7 +1,7 @@
-import type { Note } from "../types/note"
+import type { Note } from "../../types/note"
 import NoteContent from "./NoteContent"
 import NoteHeader from "./NoteHeader"
-import NoteToolbar from "./NoteToolbar"
+import NoteToolbar from "../NoteTools/NoteToolbar"
 
 type NoteFrameProps = {
     note: Note

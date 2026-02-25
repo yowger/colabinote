@@ -5,16 +5,19 @@ import type { Note } from "../types/note"
 type NotesState = {
     notes: Record<string, Note>
     topZ: number
+    selectedNoteId: string | null
 
     addNote: (note: Note) => void
     updateNote: (id: string, patch: Partial<Note>) => void
     removeNote: (id: string) => void
     bringToFront: (id: string) => void
+    selectNote: (id: string | null) => void
 }
 
 export const useNotesStore = create<NotesState>((set) => ({
     notes: {},
     topZ: 1,
+    selectedNoteId: null,
 
     addNote: (note) =>
         set((state) => ({ notes: { ...state.notes, [note.id]: note } })),
@@ -54,4 +57,6 @@ export const useNotesStore = create<NotesState>((set) => ({
                 },
             }
         }),
+
+    selectNote: (id) => set({ selectedNoteId: id }),
 }))

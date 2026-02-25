@@ -1,9 +1,9 @@
 import { Rnd } from "react-rnd"
 
-import { DEFAULT_NOTE_SIZE } from "../constants/note"
-import { useNotesStore } from "../hooks/useNotesStore"
+import { DEFAULT_NOTE_SIZE } from "../../constants/note"
+import { useNotesStore } from "../../hooks/useNotesStore"
 import NoteFrame from "./NoteFrame"
-import type { Note } from "../types/note"
+import type { Note } from "../../types/note"
 
 type NoteItemProps = {
     note: Note
