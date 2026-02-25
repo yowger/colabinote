@@ -1,6 +1,8 @@
-import { MiniMap } from "../../minimap/components/Minimap"
+import { BoardCanvas } from "./BoardCanvas"
+import { BoardViewport } from "./BoardViewport"
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
 import { useNotesStore } from "../hooks/useNotesStore"
+import { MiniMap } from "../../minimap/components/Minimap"
 import BoardToolbar from "./NotesBoardToolbar"
 import NotesLayer from "./NotesLayer"
 
@@ -17,32 +19,28 @@ export default function NotesBoard() {
         <div className="flex flex-col h-screen">
             <BoardToolbar />
 
-            <div className="absolute z-20 top-0 right-0 m-4">
-                <MiniMap
-                    viewportRef={viewportRef}
-                    boardWidth={BOARD_DIMENSIONS.width}
-                    boardHeight={BOARD_DIMENSIONS.height}
-                    width={200}
-                    height={100}
-                    items={Object.values(notes)}
-                />
-            </div>
+            <MiniMap
+                className="absolute z-20 top-0 right-0 m-6"
+                viewportRef={viewportRef}
+                boardWidth={BOARD_DIMENSIONS.width}
+                boardHeight={BOARD_DIMENSIONS.height}
+                width={200}
+                height={100}
+                items={Object.values(notes)}
+            />
 
-            <div
+            <BoardViewport
                 ref={viewportRef}
+                isPanning={isPanning}
                 {...handlers}
-                className={`flex-1 overflow-hidden bg-neutral-900 touch-none ${isPanning ? "cursor-grabbing" : "cursor-grab"}`}
             >
-                <div
-                    className="bg-red-900 relative"
-                    style={{
-                        width: BOARD_DIMENSIONS.width,
-                        height: BOARD_DIMENSIONS.height,
-                    }}
+                <BoardCanvas
+                    width={BOARD_DIMENSIONS.width}
+                    height={BOARD_DIMENSIONS.height}
                 >
                     <NotesLayer />
-                </div>
-            </div>
+                </BoardCanvas>
+            </BoardViewport>
         </div>
     )
 }

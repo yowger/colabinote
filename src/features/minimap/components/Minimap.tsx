@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import { useMiniMap } from "../hooks/useMiniMap"
 
 export interface MiniMapItem {
@@ -8,6 +9,7 @@ export interface MiniMapItem {
 }
 
 type MiniMapProps = {
+    className?: string
     viewportRef: React.RefObject<HTMLDivElement | null>
     boardWidth: number
     boardHeight: number
@@ -17,6 +19,7 @@ type MiniMapProps = {
 }
 
 export function MiniMap({
+    className,
     viewportRef,
     boardWidth,
     boardHeight,
@@ -35,7 +38,10 @@ export function MiniMap({
     return (
         <div
             {...miniMapHandlers}
-            className="relative bg-gray-800 border border-gray-600"
+            className={clsx(
+                "bg-gray-800 border border-gray-600",
+                className,
+            )}
             style={{ width, height }}
         >
             {items.map((item, i) => (
