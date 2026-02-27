@@ -1,4 +1,4 @@
-import { useNotesStore } from "../hooks/useNotesStore"
+import { useNotesStore } from "../stores/useNotesStore"
 
 export default function NotesBoardToolbar() {
     const { addNote } = useNotesStore()

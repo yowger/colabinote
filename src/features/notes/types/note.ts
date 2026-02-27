@@ -1,10 +1,4 @@
-export type NoteColor =
-    | "white"
-    | "yellow"
-    | "blue"
-    | "green"
-    | "pink"
-    | "purple"
+import type { NoteColor } from "../../../components/Note/types/colors"
 
 export type Note = {
     id: string

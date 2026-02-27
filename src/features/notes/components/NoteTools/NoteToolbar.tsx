@@ -1,7 +1,13 @@
+import ColorTool from "./ColorTool"
+
 type NoteToolbarProps = {
     noteId: string
 }
 
 export default function NoteToolbar({ noteId }: NoteToolbarProps) {
-    return <div className="p-1 flex gap-1">NoteToolbar</div>
+    return (
+        <div className="flex gap-2">
+            <ColorTool noteId={noteId} />
+        </div>
+    )
 }

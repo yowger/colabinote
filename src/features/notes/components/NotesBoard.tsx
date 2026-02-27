@@ -1,7 +1,7 @@
 import { BoardCanvas } from "./BoardCanvas"
 import { BoardViewport } from "./BoardViewport"
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
-import { useNotesStore } from "../hooks/useNotesStore"
+import { useNotesStore } from "../stores/useNotesStore"
 import { MiniMap } from "../../minimap/components/Minimap"
 import BoardToolbar from "./NotesBoardToolbar"
 import NotesLayer from "./NotesLayer"

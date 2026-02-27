@@ -1,4 +1,4 @@
-import { useNotesStore } from "../hooks/useNotesStore"
+import { useNotesStore } from "../stores/useNotesStore"
 import NoteItem from "./Note/NoteItem"
 
 export default function NotesLayer() {

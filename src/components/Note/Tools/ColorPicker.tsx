@@ -11,7 +11,7 @@ export default function ColorPicker({
     onSelect: (color: NoteColor) => void
 }) {
     return (
-        <Popover className="relative">
+        <Popover>
             <PopoverButton className="p-2 rounded hover:bg-gray-200">
                 <PaletteIcon className="w-4 h-4" />
             </PopoverButton>
