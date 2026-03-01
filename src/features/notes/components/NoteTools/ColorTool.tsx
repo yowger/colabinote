@@ -39,7 +39,6 @@ export default function ColorTool({ noteId }: ColorToolProps) {
                                 event.stopPropagation()
 
                                 handleSelectColor(color)
-                                close()
                             }}
                         />
                     ))}
