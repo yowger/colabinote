@@ -1,25 +1,24 @@
-import { useState, useRef } from "react"
-
-export const BoardInteractionType = {
-    PAN: "pan" as const,
-}
-
-export type BoardInteraction = {
-    type: typeof BoardInteractionType.PAN
-    startX: number
-    startY: number
-    scrollLeft: number
-    scrollTop: number
-} | null
+import { useRef } from "react"
+import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 
 export function useBoardInteraction() {
     const viewportRef = useRef<HTMLDivElement | null>(null)
 
-    const [interaction, setInteraction] = useState<BoardInteraction>(null)
+    const activeInteraction = useBoardInteractionStore(
+        (s) => s.activeInteraction,
+    )
+
+    const panState = useBoardInteractionStore((s) => s.panState)
+
+    const startPan = useBoardInteractionStore((s) => s.startPan)
+
+    const stopPan = useBoardInteractionStore((s) => s.stopPan)
 
     const onPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
     ) => {
+        if (activeInteraction !== null) return
+
         if ((pointerEvent.target as Element).closest('[data-no-pan="true"]'))
             return
 
@@ -28,8 +27,7 @@ export function useBoardInteraction() {
 
         pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
 
-        setInteraction({
-            type: BoardInteractionType.PAN,
+        startPan({
             startX: pointerEvent.clientX,
             startY: pointerEvent.clientY,
             scrollLeft: viewport.scrollLeft,
@@ -40,21 +38,26 @@ export function useBoardInteraction() {
     const onPointerMove = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
     ) => {
-        if (interaction?.type !== BoardInteractionType.PAN) return
+        if (activeInteraction !== "pan" || !panState) return
 
         const viewport = viewportRef.current
         if (!viewport) return
 
-        const deltaX = pointerEvent.clientX - interaction.startX
-        const deltaY = pointerEvent.clientY - interaction.startY
+        const deltaX = pointerEvent.clientX - panState.startX
+        const deltaY = pointerEvent.clientY - panState.startY
 
-        viewport.scrollLeft = interaction.scrollLeft - deltaX
-        viewport.scrollTop = interaction.scrollTop - deltaY
+        viewport.scrollLeft = panState.scrollLeft - deltaX
+        viewport.scrollTop = panState.scrollTop - deltaY
     }
 
     const onPointerUp = (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
-        pointerEvent.currentTarget.releasePointerCapture(pointerEvent.pointerId)
-        setInteraction(null)
+        if (activeInteraction === "pan") {
+            pointerEvent.currentTarget.releasePointerCapture(
+                pointerEvent.pointerId,
+            )
+
+            stopPan()
+        }
     }
 
     return {
@@ -64,6 +67,5 @@ export function useBoardInteraction() {
             onPointerMove,
             onPointerUp,
         },
-        isPanning: interaction !== null,
     }
 }

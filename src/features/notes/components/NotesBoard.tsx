@@ -5,6 +5,7 @@ import { useNotesStore } from "../stores/useNotesStore"
 import { MiniMap } from "../../minimap/components/Minimap"
 import BoardToolbar from "./NotesBoardToolbar"
 import NotesLayer from "./NotesLayer"
+import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 
 const BOARD_DIMENSIONS = {
     width: 2000,
@@ -12,8 +13,12 @@ const BOARD_DIMENSIONS = {
 }
 
 export default function NotesBoard() {
-    const { viewportRef, handlers, isPanning } = useBoardInteraction()
+    const { viewportRef, handlers } = useBoardInteraction()
     const notes = useNotesStore((store) => store.notes)
+    const activeInteraction = useBoardInteractionStore(
+        (store) => store.activeInteraction,
+    )
+    const isPanning = activeInteraction === "pan"
 
     return (
         <div className="flex flex-col h-screen">

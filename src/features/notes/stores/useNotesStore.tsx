@@ -36,7 +36,7 @@ export const useNotesStore = create<NotesState>((set) => ({
             delete copy[id]
             return { notes: copy }
         }),
-
+        
     bringToFront: (id) =>
         set((state) => {
             const nextZ = state.topZ + 1

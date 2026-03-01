@@ -4,12 +4,15 @@ import { DEFAULT_NOTE_SIZE } from "../../constants/note"
 import { useNotesStore } from "../../stores/useNotesStore"
 import NoteFrame from "./NoteFrame"
 import type { Note } from "../../types/note"
+import { useBoardInteractionStore } from "../../stores/useBoardInteractionStore"
+// import { useBoardInteraction } from "../../hooks/useBoardInteraction"
 
 type NoteItemProps = {
     note: Note
 }
 
 export default function NoteItem({ note }: NoteItemProps) {
+    const { setActiveInteraction } = useBoardInteractionStore()
     const updateNote = useNotesStore((store) => store.updateNote)
     const bringToFront = useNotesStore((store) => store.bringToFront)
 
@@ -21,17 +24,27 @@ export default function NoteItem({ note }: NoteItemProps) {
                 width: note.width,
                 height: note.height,
             }}
-            onDragStop={(_event, delta) =>
+            onDragStart={() => {
+                setActiveInteraction("note-drag")
+            }}
+            onDragStop={(_event, delta) => {
+                setActiveInteraction(null)
+
                 updateNote(note.id, { x: delta.x, y: delta.y })
-            }
-            onResizeStop={(_event, _direction, ref, _delta, position) =>
+            }}
+            onResizeStart={() => {
+                setActiveInteraction("note-resize")
+            }}
+            onResizeStop={(_event, _direction, ref, _delta, position) => {
+                setActiveInteraction(null)
+
                 updateNote(note.id, {
                     width: ref.offsetWidth,
                     height: ref.offsetHeight,
                     x: position.x,
                     y: position.y,
                 })
-            }
+            }}
             onMouseDown={() => bringToFront(note.id)}
             style={{
                 zIndex: note.zIndex,
