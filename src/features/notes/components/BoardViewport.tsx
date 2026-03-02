@@ -10,9 +10,10 @@ export const BoardViewport = forwardRef<HTMLDivElement, BoardViewportProps>(
         return (
             <div
                 ref={ref}
+                data-board-viewport="true"
                 {...rest}
                 className={clsx(
-                    "flex-1 overflow-hidden bg-neutral-900 touch-none",
+                    "flex-1 overflow-hidden",
                     isPanning ? "cursor-grabbing" : "cursor-grab",
                     className,
                 )}

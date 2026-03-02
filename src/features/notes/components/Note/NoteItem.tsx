@@ -5,7 +5,6 @@ import { useNotesStore } from "../../stores/useNotesStore"
 import NoteFrame from "./NoteFrame"
 import type { Note } from "../../types/note"
 import { useBoardInteractionStore } from "../../stores/useBoardInteractionStore"
-// import { useBoardInteraction } from "../../hooks/useBoardInteraction"
 
 type NoteItemProps = {
     note: Note
@@ -50,7 +49,7 @@ export default function NoteItem({ note }: NoteItemProps) {
                 zIndex: note.zIndex,
             }}
             dragHandleClassName="note-drag-handle"
-            bounds="window"
+            bounds="parent"
             minWidth={DEFAULT_NOTE_SIZE.width}
             minHeight={DEFAULT_NOTE_SIZE.height}
         >

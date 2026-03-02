@@ -1,18 +1,58 @@
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
+
+const EDGE_SIZE = 75
+const MAX_SCROLL_SPEED = 10
 
 export function useBoardInteraction() {
     const viewportRef = useRef<HTMLDivElement | null>(null)
 
     const activeInteraction = useBoardInteractionStore(
-        (s) => s.activeInteraction,
+        (store) => store.activeInteraction,
     )
+    const panState = useBoardInteractionStore((store) => {
+        return store.panState
+    })
+    const startPan = useBoardInteractionStore((store) => store.startPan)
+    const stopPan = useBoardInteractionStore((store) => store.stopPan)
 
-    const panState = useBoardInteractionStore((s) => s.panState)
+    useEffect(() => {
+        if (activeInteraction !== "note-drag") return
 
-    const startPan = useBoardInteractionStore((s) => s.startPan)
+        const handleMouseMove = (event: MouseEvent) => {
+            const viewport = viewportRef.current
+            if (!viewport) return
 
-    const stopPan = useBoardInteractionStore((s) => s.stopPan)
+            const rect = viewport.getBoundingClientRect()
+
+            const distanceLeft = event.clientX - rect.left
+            const distanceRight = rect.right - event.clientX
+            const distanceTop = event.clientY - rect.top
+            const distanceBottom = rect.bottom - event.clientY
+
+            if (distanceTop < EDGE_SIZE) {
+                viewport.scrollTop -= MAX_SCROLL_SPEED
+            }
+
+            if (distanceBottom < EDGE_SIZE) {
+                viewport.scrollTop += MAX_SCROLL_SPEED
+            }
+
+            if (distanceLeft < EDGE_SIZE) {
+                viewport.scrollLeft -= MAX_SCROLL_SPEED
+            }
+
+            if (distanceRight < EDGE_SIZE) {
+                viewport.scrollLeft += MAX_SCROLL_SPEED
+            }
+        }
+
+        window.addEventListener("mousemove", handleMouseMove)
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove)
+        }
+    }, [activeInteraction])
 
     const onPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
@@ -38,16 +78,16 @@ export function useBoardInteraction() {
     const onPointerMove = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
     ) => {
-        if (activeInteraction !== "pan" || !panState) return
-
         const viewport = viewportRef.current
         if (!viewport) return
 
-        const deltaX = pointerEvent.clientX - panState.startX
-        const deltaY = pointerEvent.clientY - panState.startY
+        if (activeInteraction == "pan" && panState) {
+            const deltaX = pointerEvent.clientX - panState.startX
+            const deltaY = pointerEvent.clientY - panState.startY
 
-        viewport.scrollLeft = panState.scrollLeft - deltaX
-        viewport.scrollTop = panState.scrollTop - deltaY
+            viewport.scrollLeft = panState.scrollLeft - deltaX
+            viewport.scrollTop = panState.scrollTop - deltaY
+        }
     }
 
     const onPointerUp = (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
