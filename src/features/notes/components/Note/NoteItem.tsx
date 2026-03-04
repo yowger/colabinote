@@ -1,3 +1,4 @@
+import { forwardRef } from "react"
 import { Rnd } from "react-rnd"
 
 import { DEFAULT_NOTE_SIZE } from "../../constants/note"
@@ -10,8 +11,9 @@ type NoteItemProps = {
     note: Note
 }
 
-export default function NoteItem({ note }: NoteItemProps) {
+const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
     const { setActiveInteraction } = useBoardInteractionStore()
+    const setSelectedNoteId = useNotesStore((store) => store.selectNote)
     const updateNote = useNotesStore((store) => store.updateNote)
     const bringToFront = useNotesStore((store) => store.bringToFront)
 
@@ -44,7 +46,10 @@ export default function NoteItem({ note }: NoteItemProps) {
                     y: position.y,
                 })
             }}
-            onMouseDown={() => bringToFront(note.id)}
+            onMouseDown={() => {
+                setSelectedNoteId(note.id)
+                bringToFront(note.id)
+            }}
             style={{
                 zIndex: note.zIndex,
             }}
@@ -53,7 +58,9 @@ export default function NoteItem({ note }: NoteItemProps) {
             minWidth={DEFAULT_NOTE_SIZE.width}
             minHeight={DEFAULT_NOTE_SIZE.height}
         >
-            <NoteFrame note={note} />
+            <NoteFrame note={note} ref={ref} />
         </Rnd>
     )
-}
+})
+
+export default NoteItem

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.19",
+    "@floating-ui/react-dom": "^2.1.8",
     "@headlessui/react": "^2.2.9",
     "@hocuspocus/provider": "^3.4.4",
     "@tailwindcss/vite": "^4.1.18",
