@@ -6,8 +6,13 @@ import { useNotesStore } from "../../stores/useNotesStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import MenuIconButton from "./MenuIconButton"
+import type { NoteAnchorPosition } from "../../types/ui/notes"
 
-export default function RemoveTool() {
+type RemoveToolProps = {
+    position?: NoteAnchorPosition
+}
+
+export default function RemoveTool({ position = "right" }: RemoveToolProps) {
     const noteId = useNotesStore((store) => store.selectedNoteId)
     const { removeNote } = useNoteActions()
 
@@ -26,7 +31,7 @@ export default function RemoveTool() {
                     </PopoverButton>
 
                     <PopoverPanel
-                        anchor={{ to: "right", gap: 10 }}
+                        anchor={{ to: position, gap: 10 }}
                         data-no-pan="true"
                         className="z-20"
                         onPointerDown={(e) => e.stopPropagation()}

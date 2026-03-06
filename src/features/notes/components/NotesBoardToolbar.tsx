@@ -18,7 +18,6 @@ export default function NotesBoardToolbar() {
                         content: "New note content",
                         updatedAt: Date.now(),
                         color: DEFAULT_NOTE_COLOR,
-                        zIndex: 1,
                     })
                 }
             >

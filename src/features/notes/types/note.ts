@@ -10,5 +10,5 @@ export type Note = {
     content: string
     color?: NoteColor
     updatedAt: number
-    zIndex: number
+    zIndex?: number 
 }

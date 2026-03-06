@@ -12,8 +12,13 @@ import { useNotesStore } from "../../stores/useNotesStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
+import type { NoteAnchorPosition } from "../../types/ui/notes"
 
-export default function ColorTool() {
+type ColorToolProps = {
+    position?: NoteAnchorPosition
+}
+
+export default function ColorTool({ position = "right" }: ColorToolProps) {
     const noteId = useNotesStore((store) => store.selectedNoteId)
     const note = useNotesStore((store) => store.notes[noteId ?? ""])
     const selectedNoteColor = note ? note.color : { color: DEFAULT_NOTE_COLOR }
@@ -32,7 +37,7 @@ export default function ColorTool() {
             </PopoverButton>
 
             <PopoverPanel
-                anchor={{ to: "right", gap: 10 }}
+                anchor={{ to: position, gap: 10 }}
                 data-no-pan="true"
                 className="z-20"
                 onPointerDown={(event) => event.stopPropagation()}

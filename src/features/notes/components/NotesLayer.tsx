@@ -12,6 +12,7 @@ import NoteItem from "./Note/NoteItem"
 import FloatingToolbar from "./NoteTools/FloatingToolbar"
 import ColorTool from "./NoteTools/ColorTool"
 import RemoveTool from "./NoteTools/RemoveTool"
+import { getAnchorFromPlacement } from "./helpers/floating"
 
 export default function NotesLayer() {
     const notesMap = useNotesStore((store) => store.notes)
@@ -21,7 +22,7 @@ export default function NotesLayer() {
         (store) => store.activeInteraction,
     )
 
-    const { x, y, refs, strategy } = useFloating({
+    const { x, y, refs, strategy, placement } = useFloating({
         placement: "right-start",
         middleware: [offset(8), flip(), shift()],
         whileElementsMounted: (reference, floating, update) =>
@@ -29,6 +30,8 @@ export default function NotesLayer() {
                 animationFrame: true,
             }),
     })
+
+    const anchor = getAnchorFromPlacement(placement)
 
     return (
         <>
@@ -58,8 +61,8 @@ export default function NotesLayer() {
                         }}
                         className="pointer-events-auto flex flex-col gap-0.5 relative"
                     >
-                        <ColorTool />
-                        <RemoveTool />
+                        <ColorTool position={anchor} />
+                        <RemoveTool position={anchor} />
                     </FloatingToolbar>
                 )}
         </>
