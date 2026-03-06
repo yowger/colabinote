@@ -1,15 +1,19 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
-import { Trash2Icon } from "lucide-react"
+import { CheckIcon, Trash2Icon, XIcon } from "lucide-react"
+
 import { useNoteActions } from "../../hooks/useNoteActions"
+import { useNotesStore } from "../../stores/useNotesStore"
+import PopoverContent from "./PopoverContent"
+import ToolbarButton from "./ToolbarButton"
+import MenuIconButton from "./MenuIconButton"
 
-type DeleteToolProps = {
-    noteId: string
-}
-
-export default function RemoveTool({ noteId }: DeleteToolProps) {
+export default function RemoveTool() {
+    const noteId = useNotesStore((store) => store.selectedNoteId)
     const { removeNote } = useNoteActions()
 
-    const handleRemoveNote = (noteId: string) => {
+    const handleRemoveNote = () => {
+        if (!noteId) return
+
         removeNote(noteId)
     }
 
@@ -17,38 +21,34 @@ export default function RemoveTool({ noteId }: DeleteToolProps) {
         <Popover>
             {({ close }) => (
                 <>
-                    <PopoverButton className="p-2 rounded hover:bg-gray-200">
-                        <Trash2Icon className="w-4 h-4" />
+                    <PopoverButton as="div">
+                        <ToolbarButton icon={Trash2Icon} />
                     </PopoverButton>
 
                     <PopoverPanel
+                        anchor={{ to: "right", gap: 10 }}
                         data-no-pan="true"
-                        anchor="bottom"
-                        className="mt-2 z-20"
+                        className="z-20"
+                        onPointerDown={(e) => e.stopPropagation()}
                     >
-                        <div className="bg-white p-2 rounded shadow-lg border w-40">
-                            <p className="text-sm mb-3">Delete this note?</p>
+                        <PopoverContent>
+                            <span className="text-sm">Delete note?</span>
 
-                            <div className="flex justify-end gap-2">
-                                <button
-                                    className="text-xs px-2 py-1 rounded bg-gray-100"
-                                    onClick={() => close()}
-                                >
-                                    Cancel
-                                </button>
+                            <MenuIconButton
+                                icon={CheckIcon}
+                                className="text-red-400"
+                                onClick={() => {
+                                    handleRemoveNote()
+                                    close()
+                                }}
+                            />
 
-                                <button
-                                    className="text-xs px-2 py-1 rounded bg-red-500 text-white"
-                                    onClick={() => {
-                                        handleRemoveNote(noteId)
-
-                                        close()
-                                    }}
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+                            <MenuIconButton
+                                icon={XIcon}
+                                className="text-neutral-400"
+                                onClick={() => close()}
+                            />
+                        </PopoverContent>
                     </PopoverPanel>
                 </>
             )}

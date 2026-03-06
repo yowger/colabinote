@@ -19,7 +19,7 @@ export function useBoardInteraction() {
     useEffect(() => {
         if (activeInteraction !== "note-drag") return
 
-        const handleMouseMove = (event: MouseEvent) => {
+        const handleScrollEdge = (event: MouseEvent) => {
             const viewport = viewportRef.current
             if (!viewport) return
 
@@ -47,10 +47,10 @@ export function useBoardInteraction() {
             }
         }
 
-        window.addEventListener("mousemove", handleMouseMove)
+        window.addEventListener("mousemove", handleScrollEdge)
 
         return () => {
-            window.removeEventListener("mousemove", handleMouseMove)
+            window.removeEventListener("mousemove", handleScrollEdge)
         }
     }, [activeInteraction])
 

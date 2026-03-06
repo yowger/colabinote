@@ -1,4 +1,5 @@
 import { useNotesStore } from "../stores/useNotesStore"
+import { DEFAULT_NOTE_COLOR } from "./constants/defaults"
 
 export default function NotesBoardToolbar() {
     const { addNote } = useNotesStore()
@@ -16,7 +17,8 @@ export default function NotesBoardToolbar() {
                         title: "New Note",
                         content: "New note content",
                         updatedAt: Date.now(),
-                        // zIndex: 1,
+                        color: DEFAULT_NOTE_COLOR,
+                        zIndex: 1,
                     })
                 }
             >

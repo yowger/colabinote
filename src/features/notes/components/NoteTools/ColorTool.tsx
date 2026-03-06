@@ -1,5 +1,6 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { PaletteIcon } from "lucide-react"
+import clsx from "clsx"
 
 import {
     NOTE_COLORS,
@@ -7,42 +8,49 @@ import {
 } from "../../../../components/Note/types/colors"
 import { COLOR_BUTTON_STYLES } from "../../../../components/Note/styles/noteColorStyles"
 import { useNoteActions } from "../../hooks/useNoteActions"
+import { useNotesStore } from "../../stores/useNotesStore"
+import PopoverContent from "./PopoverContent"
+import ToolbarButton from "./ToolbarButton"
+import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
 
-type ColorToolProps = {
-    noteId: string
-}
+export default function ColorTool() {
+    const noteId = useNotesStore((store) => store.selectedNoteId)
+    const note = useNotesStore((store) => store.notes[noteId ?? ""])
+    const selectedNoteColor = note ? note.color : { color: DEFAULT_NOTE_COLOR }
 
-export default function ColorTool({ noteId }: ColorToolProps) {
     const { changeColor } = useNoteActions()
 
     const handleSelectColor = (color: NoteColor) => {
+        if (!noteId) return
         changeColor(noteId, color)
     }
 
     return (
         <Popover>
-            <PopoverButton className="p-2 rounded hover:bg-gray-200">
-                <PaletteIcon className="w-4 h-4" />
+            <PopoverButton as="div">
+                <ToolbarButton icon={PaletteIcon} />
             </PopoverButton>
 
             <PopoverPanel
+                anchor={{ to: "right", gap: 10 }}
                 data-no-pan="true"
-                anchor="bottom"
-                className="mt-2 z-10"
+                className="z-20"
+                onPointerDown={(event) => event.stopPropagation()}
             >
-                <div className="flex gap-2 p-2 bg-white rounded shadow-lg border">
+                <PopoverContent>
                     {NOTE_COLORS.map((color) => (
                         <button
                             key={color}
-                            className={`w-6 h-6 rounded-full ring-1 ring-black/10 hover:scale-110 transition ${COLOR_BUTTON_STYLES[color]}`}
-                            onClick={(event) => {
-                                event.stopPropagation()
-
-                                handleSelectColor(color)
-                            }}
+                            onClick={() => handleSelectColor(color)}
+                            className={clsx(
+                                "flex items-center justify-center w-5 h-5 rounded-xs ring-black/10 hover:scale-105 transition-transform",
+                                COLOR_BUTTON_STYLES[color],
+                                selectedNoteColor === color &&
+                                    "ring-2 ring-white ring-offset-1",
+                            )}
                         />
                     ))}
-                </div>
+                </PopoverContent>
             </PopoverPanel>
         </Popover>
     )

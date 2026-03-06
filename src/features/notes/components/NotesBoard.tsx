@@ -6,6 +6,7 @@ import { MiniMap } from "../../minimap/components/Minimap"
 import BoardToolbar from "./NotesBoardToolbar"
 import NotesLayer from "./NotesLayer"
 import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
+import { DEFAULT_NOTE_HEIGHT, DEFAULT_NOTE_WIDTH } from "./constants/defaults"
 
 const BOARD_DIMENSIONS = {
     width: 2000,
@@ -13,7 +14,7 @@ const BOARD_DIMENSIONS = {
 }
 
 export default function NotesBoard() {
-    const { viewportRef, handlers } = useBoardInteraction()
+    const { viewportRef, handlers: boardHandlers } = useBoardInteraction()
     const notes = useNotesStore((store) => store.notes)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
@@ -29,15 +30,15 @@ export default function NotesBoard() {
                 viewportRef={viewportRef}
                 boardWidth={BOARD_DIMENSIONS.width}
                 boardHeight={BOARD_DIMENSIONS.height}
-                width={200}
-                height={100}
+                width={DEFAULT_NOTE_WIDTH}
+                height={DEFAULT_NOTE_HEIGHT}
                 items={Object.values(notes)}
             />
 
             <BoardViewport
                 ref={viewportRef}
                 isPanning={isPanning}
-                {...handlers}
+                {...boardHandlers}
             >
                 <BoardCanvas
                     width={BOARD_DIMENSIONS.width}

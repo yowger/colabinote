@@ -1,5 +1,3 @@
-import { useNotesStore } from "../stores/useNotesStore"
-import NoteItem from "./Note/NoteItem"
 import {
     autoUpdate,
     flip,
@@ -8,17 +6,27 @@ import {
     useFloating,
 } from "@floating-ui/react"
 
+import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
+import { useNotesStore } from "../stores/useNotesStore"
+import NoteItem from "./Note/NoteItem"
+import FloatingToolbar from "./NoteTools/FloatingToolbar"
+import ColorTool from "./NoteTools/ColorTool"
+import RemoveTool from "./NoteTools/RemoveTool"
+
 export default function NotesLayer() {
     const notesMap = useNotesStore((store) => store.notes)
     const notes = Object.values(notesMap)
     const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
+    const activeInteraction = useBoardInteractionStore(
+        (store) => store.activeInteraction,
+    )
 
     const { x, y, refs, strategy } = useFloating({
-        placement: "bottom",
+        placement: "right-start",
         middleware: [offset(8), flip(), shift()],
         whileElementsMounted: (reference, floating, update) =>
             autoUpdate(reference, floating, update, {
-                animationFrame: true, 
+                animationFrame: true,
             }),
     })
 
@@ -36,27 +44,24 @@ export default function NotesLayer() {
                 />
             ))}
 
-            {selectedNoteId && (
-                <div
-                    ref={(node) => {
-                        refs.setFloating(node)
-                    }}
-                    style={{
-                        position: strategy,
-                        top: y ?? 0,
-                        left: x ?? 0,
-                        backgroundColor: "black",
-                        color: "white",
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        pointerEvents: "none",
-                        whiteSpace: "nowrap",
-                        zIndex: 100,
-                    }}
-                >
-                    Tooltip here
-                </div>
-            )}
+            {selectedNoteId &&
+                activeInteraction !== "note-drag" &&
+                activeInteraction !== "note-resize" && (
+                    <FloatingToolbar
+                        ref={(node) => {
+                            refs.setFloating(node)
+                        }}
+                        style={{
+                            position: strategy,
+                            top: y ?? 0,
+                            left: x ?? 0,
+                        }}
+                        className="pointer-events-auto flex flex-col gap-0.5 relative"
+                    >
+                        <ColorTool />
+                        <RemoveTool />
+                    </FloatingToolbar>
+                )}
         </>
     )
 }
