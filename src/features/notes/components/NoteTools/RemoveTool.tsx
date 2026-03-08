@@ -33,7 +33,7 @@ export default function RemoveTool({ position = "right" }: RemoveToolProps) {
                     <PopoverPanel
                         anchor={{ to: position, gap: 10 }}
                         data-no-pan="true"
-                        className="z-20"
+                        className="z-50"
                         onPointerDown={(e) => e.stopPropagation()}
                     >
                         <PopoverContent>

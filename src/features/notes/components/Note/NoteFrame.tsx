@@ -1,32 +1,27 @@
 import { forwardRef } from "react"
+import type { HTMLAttributes } from "react"
+import clsx from "clsx"
 
-import { NOTE_COLOR_STYLES } from "../../../../components/Note/styles/noteColorStyles"
-import type { Note } from "../../types/note"
-import NoteContent from "./NoteContent"
-import NoteHeader from "./NoteHeader"
-import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
-
-type NoteFrameProps = {
-    note: Note
-}
+type NoteFrameProps = HTMLAttributes<HTMLDivElement>
 
 const NoteFrame = forwardRef<HTMLDivElement, NoteFrameProps>(
-    ({ note }, ref) => {
-        const colorStyle =
-            NOTE_COLOR_STYLES[note.color ?? DEFAULT_NOTE_COLOR].background
-
+    ({ children, className, ...props }, ref) => {
         return (
             <div
                 ref={ref}
-                data-note-id={note.id}
+                {...props}
                 data-no-pan="true"
-                className={`shadow-md rounded-xs flex flex-col h-full w-full ${colorStyle}`}
+                className={clsx(
+                    "shadow-md rounded-xs flex flex-col h-full w-full",
+                    className,
+                )}
             >
-                <NoteHeader title={note.title} />
-                <NoteContent content={note.content} />
+                {children}
             </div>
         )
     },
 )
+
+NoteFrame.displayName = "NoteFrame"
 
 export default NoteFrame

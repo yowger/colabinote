@@ -6,6 +6,10 @@ import { useNotesStore } from "../../stores/useNotesStore"
 import NoteFrame from "./NoteFrame"
 import type { Note } from "../../types/note"
 import { useBoardInteractionStore } from "../../stores/useBoardInteractionStore"
+import { NOTE_COLOR_STYLES } from "../../../../components/Note/styles/noteColorStyles"
+import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
+import NoteHeader from "./NoteHeader"
+import NoteContent from "./NoteContent"
 
 type NoteItemProps = {
     note: Note
@@ -16,6 +20,8 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
     const setSelectedNoteId = useNotesStore((store) => store.selectNote)
     const updateNote = useNotesStore((store) => store.updateNote)
     const bringToFront = useNotesStore((store) => store.bringToFront)
+    const colorStyle =
+        NOTE_COLOR_STYLES[note.color ?? DEFAULT_NOTE_COLOR].background
 
     return (
         <Rnd
@@ -58,7 +64,10 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
             minWidth={DEFAULT_NOTE_SIZE.width}
             minHeight={DEFAULT_NOTE_SIZE.height}
         >
-            <NoteFrame note={note} ref={ref} />
+            <NoteFrame ref={ref} data-note-id={note.id} className={colorStyle}>
+                <NoteHeader title={note.title} />
+                <NoteContent content={note.content} />
+            </NoteFrame>
         </Rnd>
     )
 })

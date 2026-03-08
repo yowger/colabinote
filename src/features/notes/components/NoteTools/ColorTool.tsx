@@ -39,7 +39,7 @@ export default function ColorTool({ position = "right" }: ColorToolProps) {
             <PopoverPanel
                 anchor={{ to: position, gap: 10 }}
                 data-no-pan="true"
-                className="z-20"
+                className="z-50"
                 onPointerDown={(event) => event.stopPropagation()}
             >
                 <PopoverContent>
