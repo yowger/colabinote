@@ -2,7 +2,7 @@ import { useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { TextStyleKit } from "@tiptap/extension-text-style"
 
-export function useNoteEditor(content: string | undefined) {
+export function useNoteEditor(content?: string) {
     const editor = useEditor({
         extensions: [TextStyleKit, StarterKit],
         content: content || "<p>New note</p>",

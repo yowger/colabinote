@@ -10,7 +10,6 @@ const NoteFrame = forwardRef<HTMLDivElement, NoteFrameProps>(
             <div
                 ref={ref}
                 {...props}
-                data-no-pan="true"
                 className={clsx(
                     "shadow-md rounded-xs flex flex-col h-full w-full",
                     className,

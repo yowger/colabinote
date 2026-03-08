@@ -66,7 +66,7 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
         >
             <NoteFrame ref={ref} data-note-id={note.id} className={colorStyle}>
                 <NoteHeader title={note.title} />
-                <NoteContent content={note.content} />
+                <NoteContent note={note} />
             </NoteFrame>
         </Rnd>
     )
