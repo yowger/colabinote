@@ -1,7 +1,8 @@
 import clsx from "clsx"
 import type { LucideIcon } from "lucide-react"
+import type { ButtonHTMLAttributes } from "react"
 
-type ToolbarButtonProps = {
+type ToolbarButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     icon: LucideIcon
     className?: string
 }
@@ -9,11 +10,15 @@ type ToolbarButtonProps = {
 export default function ToolbarButton({
     icon: Icon,
     className,
+    ...props
 }: ToolbarButtonProps) {
     return (
         <button
+            {...props}
             className={clsx(
-                "flex items-center justify-center p-1.5 rounded hover:bg-neutral-700 transition",
+                "flex items-center justify-center p-1.5 rounded transition",
+                "hover:bg-neutral-700",
+                "disabled:opacity-40 disabled:cursor-not-allowed",
                 className,
             )}
         >

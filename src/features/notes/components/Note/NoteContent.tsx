@@ -4,6 +4,7 @@ import { useNotesStore } from "../../stores/useNotesStore"
 import type { Note } from "../../types/note"
 import { EditorContent } from "@tiptap/react"
 import { useNoteEditor } from "../../../../hooks/useNoteEditor"
+import BubbleMenuComponent from "../NoteTools/BubbleMenu"
 
 type NoteContentProps = {
     note: Note
@@ -15,6 +16,12 @@ export default function NoteContent({ note }: NoteContentProps) {
     const [localEditing, setLocalEditing] = useState(false)
 
     const isEditing = selectedNoteId === note.id && localEditing
+
+    const handleOnPointerDown = () => {
+        if (selectedNoteId !== note.id || isEditing) return
+
+        setLocalEditing(true)
+    }
 
     const handleDoubleClick = () => {
         if (selectedNoteId === note.id) {
@@ -31,18 +38,22 @@ export default function NoteContent({ note }: NoteContentProps) {
 
     return (
         <div
-            className="p-2 flex-1 overflow-auto min-h-0"
+            className="p-5 flex-1 overflow-auto min-h-0"
             onDoubleClick={handleDoubleClick}
-            data-no-pan={localEditing ? false : true}
+            data-no-pan={isEditing ? true : false}
         >
             {isEditing ? (
-                <EditorContent editor={editor} onKeyDown={onEscapeKeyDown} />
+                <>
+                    <EditorContent
+                        editor={editor}
+                        onKeyDown={onEscapeKeyDown}
+                    />
+                    <BubbleMenuComponent editor={editor} />
+                </>
             ) : (
                 <div
                     className="truncate"
-                    onPointerDown={() =>
-                        selectedNoteId === note.id && setLocalEditing(true)
-                    }
+                    onPointerDown={handleOnPointerDown}
                     dangerouslySetInnerHTML={{ __html: note.content }}
                 />
             )}
