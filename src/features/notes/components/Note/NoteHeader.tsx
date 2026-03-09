@@ -4,7 +4,7 @@ type NoteHeaderProps = {
 
 export default function NoteHeader({ title }: NoteHeaderProps) {
     return (
-        <div className="note-drag-handle px-2 py-1 cursor-move select-none">
+        <div className="note-drag-handle p-4 cursor-move select-none text-xl font-medium">
             {title}
         </div>
     )

@@ -2,7 +2,15 @@ import { useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import { TextStyleKit } from "@tiptap/extension-text-style"
 
-export function useNoteEditor(content?: string) {
+type UseNoteEditorOptions = {
+    content?: string
+    onUpdate?: (content: string) => void
+}
+
+export function useNoteEditor({
+    content,
+    onUpdate,
+}: UseNoteEditorOptions = {}) {
     const editor = useEditor({
         extensions: [TextStyleKit, StarterKit],
         content: content || "<p>New note</p>",
@@ -10,6 +18,9 @@ export function useNoteEditor(content?: string) {
             attributes: {
                 class: "prose prose-sm focus:outline-none",
             },
+        },
+        onUpdate({ editor }) {
+            onUpdate?.(editor.getHTML())
         },
     })
 

@@ -23,6 +23,7 @@ export default function NotesLayer() {
     )
 
     const { x, y, refs, strategy, placement } = useFloating({
+        strategy: "fixed",
         placement: "right-start",
         middleware: [offset(8), flip(), shift()],
         whileElementsMounted: (reference, floating, update) =>
@@ -59,7 +60,7 @@ export default function NotesLayer() {
                             top: y ?? 0,
                             left: x ?? 0,
                         }}
-                        className="pointer-events-auto flex flex-col gap-0.5 relative"
+                        className="pointer-events-auto flex flex-col gap-0.5 relative z-40"
                     >
                         <ColorTool position={anchor} />
                         <RemoveTool position={anchor} />

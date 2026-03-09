@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { EditorContent } from "@tiptap/react"
+import { useRef, useState, type RefObject } from "react"
+import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
 
 import { useNotesStore } from "../../stores/useNotesStore"
 import type { Note } from "../../types/note"
-import { EditorContent } from "@tiptap/react"
 import { useNoteEditor } from "../../../../hooks/useNoteEditor"
 import BubbleMenuComponent from "../NoteTools/BubbleMenu"
 
@@ -11,9 +12,17 @@ type NoteContentProps = {
 }
 
 export default function NoteContent({ note }: NoteContentProps) {
-    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
-    const editor = useNoteEditor()
+    const ref = useRef<HTMLDivElement>(null)
     const [localEditing, setLocalEditing] = useState(false)
+    const updateNote = useNotesStore((store) => store.updateNote)
+    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
+    const debouncedUpdate = useDebounceCallback((content: string) => {
+        updateNote(note.id, { content })
+    }, 500)
+    const editor = useNoteEditor({
+        content: note.content,
+        onUpdate: debouncedUpdate,
+    })
 
     const isEditing = selectedNoteId === note.id && localEditing
 
@@ -24,10 +33,10 @@ export default function NoteContent({ note }: NoteContentProps) {
     }
 
     const handleDoubleClick = () => {
-        if (selectedNoteId === note.id) {
-            setLocalEditing(true)
-            editor.commands.focus("end")
-        }
+        if (selectedNoteId !== note.id || isEditing) return
+
+        setLocalEditing(true)
+        editor.commands.focus("end")
     }
 
     const onEscapeKeyDown = (keyEvent: React.KeyboardEvent) => {
@@ -36,13 +45,22 @@ export default function NoteContent({ note }: NoteContentProps) {
         }
     }
 
+    const handleClickOutside = () => {
+        if (isEditing && !editor?.isFocused) {
+            setLocalEditing(false)
+        }
+    }
+
+    useOnClickOutside(ref as RefObject<HTMLElement>, handleClickOutside)
+
     return (
         <div
-            className="p-5 flex-1 overflow-auto min-h-0"
+            ref={ref}
+            className="px-4 pb-4 flex-1 overflow-auto min-h-0"
             onDoubleClick={handleDoubleClick}
             data-no-pan={isEditing ? true : false}
         >
-            {isEditing ? (
+            {isEditing && editor ? (
                 <>
                     <EditorContent
                         editor={editor}
@@ -52,7 +70,7 @@ export default function NoteContent({ note }: NoteContentProps) {
                 </>
             ) : (
                 <div
-                    className="truncate"
+                    className="flex-wrap"
                     onPointerDown={handleOnPointerDown}
                     dangerouslySetInnerHTML={{ __html: note.content }}
                 />

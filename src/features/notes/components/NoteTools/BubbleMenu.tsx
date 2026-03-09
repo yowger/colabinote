@@ -8,8 +8,8 @@ import {
     List,
     ListOrdered,
     Quote,
-    Undo,
-    Redo,
+    // Undo,
+    // Redo,
     type LucideIcon,
 } from "lucide-react"
 import { BubbleMenu } from "@tiptap/react/menus"
@@ -100,32 +100,33 @@ export default function BubbleMenuComponent({ editor }: BubbleMenuProps) {
             onClick: () => editor.chain().focus().toggleBlockquote().run(),
             isActive: state.isBlockquote,
         },
-        {
-            icon: Undo,
-            label: "Undo",
-            onClick: () => editor.chain().focus().undo().run(),
-            isDisabled: !state.canUndo,
-        },
-        {
-            icon: Redo,
-            label: "Redo",
-            onClick: () => editor.chain().focus().redo().run(),
-            isDisabled: !state.canRedo,
-        },
+        // {
+        //     icon: Undo,
+        //     label: "Undo",
+        //     onClick: () => editor.chain().focus().undo().run(),
+        //     isDisabled: !state.canUndo,
+        // },
+        // {
+        //     icon: Redo,
+        //     label: "Redo",
+        //     onClick: () => editor.chain().focus().redo().run(),
+        //     isDisabled: !state.canRedo,
+        // },
     ]
 
     return (
-        <BubbleMenu editor={editor}>
+        <BubbleMenu editor={editor} style={{ zIndex: 100 }}>
             <FloatingToolbar className="flex">
                 {items.map(
                     ({ icon: Icon, label, onClick, isActive, isDisabled }) => (
                         <ToolbarButton
+                            key={label}
                             icon={Icon}
                             title={label}
                             onClick={onClick}
                             disabled={isDisabled}
                             className={
-                                isActive ? "bg-neutral-700 text-white" : ""
+                                isActive ? "bg-neutral-700 text-white z-50" : ""
                             }
                         />
                     ),
