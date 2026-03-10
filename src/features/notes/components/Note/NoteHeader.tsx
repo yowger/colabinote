@@ -95,7 +95,7 @@ export default function NoteHeader({ noteId, title }: NoteHeaderProps) {
                     defaultValue={title}
                     rows={1}
                     maxLength={MAX_LENGTH}
-                    className="w-full text-xl resize-none outline-none bg-red-100 wrap-break-word whitespace-pre-wrap leading-tight"
+                    className="w-full text-xl resize-none outline-none wrap-break-word whitespace-pre-wrap leading-tight"
                     onInput={() => autoResize()}
                     onChange={(onChangeEvent) =>
                         handleChange(onChangeEvent.target.value)
