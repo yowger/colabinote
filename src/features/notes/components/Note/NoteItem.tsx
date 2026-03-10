@@ -64,8 +64,12 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
             minWidth={DEFAULT_NOTE_SIZE.width}
             minHeight={DEFAULT_NOTE_SIZE.height}
         >
-            <NoteFrame ref={ref} data-note-id={note.id} className={colorStyle}>
-                <NoteHeader title={note.title} />
+            <NoteFrame
+                ref={ref}
+                data-note-id={note.id}
+                className={`overflow-hidden ${colorStyle}`}
+            >
+                <NoteHeader noteId={note.id} title={note.title} />
                 <NoteContent note={note} />
             </NoteFrame>
         </Rnd>
