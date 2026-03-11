@@ -5,7 +5,7 @@ export default function NotesBoardToolbar() {
     const { addNote } = useNotesStore()
 
     return (
-        <div>
+        <div className="flex-none bg-green-100">
             <button
                 onClick={() =>
                     addNote({

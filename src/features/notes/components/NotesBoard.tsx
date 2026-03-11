@@ -22,7 +22,7 @@ export default function NotesBoard() {
     const isPanning = activeInteraction === "pan"
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col flex-1 overflow-hidden">
             <BoardToolbar />
 
             <MiniMap

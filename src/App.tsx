@@ -1,9 +1,5 @@
-import NotesBoard from "./features/notes/components/NotesBoard"
+import AppLayout from "./layouts/AppLayout"
 
 export default function App() {
-    return (
-        <div className="">
-            <NotesBoard />
-        </div>
-    )
+    return <AppLayout />
 }
