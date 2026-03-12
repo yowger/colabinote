@@ -1,6 +1,6 @@
 import NotesBoard from "../features/notes/components/NotesBoard"
-import RoomsSidebar from "../features/rooms/components/Sidebar"
 import Header from "../components/Header"
+import BoardsSidebar from "../features/boards/components/BoardsSidebar"
 
 export default function AppLayout() {
     return (
@@ -8,7 +8,7 @@ export default function AppLayout() {
             <Header />
 
             <div className="flex flex-1 overflow-hidden">
-                <RoomsSidebar />
+                <BoardsSidebar />
 
                 <NotesBoard />
             </div>
