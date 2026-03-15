@@ -22,22 +22,29 @@ export const useNotesStore = create<NotesState>((set) => ({
     addNote: (note) =>
         set((state) => ({ notes: { ...state.notes, [note.id]: note } })),
 
-    updateNote: (id, patch) =>
+    updateNote: (id, patch) => {
+        if (!id || !patch) return
+
         set((state) => ({
             notes: {
                 ...state.notes,
                 [id]: { ...state.notes[id], ...patch },
             },
-        })),
+        }))
+    },
 
     removeNote: (id) =>
         set((state) => {
+            if (!state.notes[id]) return state
+
             const copy = { ...state.notes }
             delete copy[id]
             return { notes: copy }
         }),
-        
-    bringToFront: (id) =>
+
+    bringToFront: (id) => {
+        if (!id) return
+
         set((state) => {
             const nextZ = state.topZ + 1
             const note = state.notes[id]
@@ -56,7 +63,12 @@ export const useNotesStore = create<NotesState>((set) => ({
                     },
                 },
             }
-        }),
+        })
+    },
 
-    selectNote: (id) => set({ selectedNoteId: id }),
+    selectNote: (id) => {
+        if (id === null) return
+
+        set({ selectedNoteId: id })
+    },
 }))

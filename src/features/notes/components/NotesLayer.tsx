@@ -16,12 +16,10 @@ import { getAnchorFromPlacement } from "./helpers/floating"
 
 export default function NotesLayer() {
     const notesMap = useNotesStore((store) => store.notes)
-    const notes = Object.values(notesMap)
     const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
     )
-
     const { x, y, refs, strategy, placement } = useFloating({
         strategy: "fixed",
         placement: "right-start",
@@ -32,7 +30,12 @@ export default function NotesLayer() {
             }),
     })
 
+    const notes = Object.values(notesMap)
+
     const anchor = getAnchorFromPlacement(placement)
+
+    const isNoteTransforming =
+        activeInteraction === "note-drag" || activeInteraction === "note-resize"
 
     return (
         <>
@@ -40,32 +43,26 @@ export default function NotesLayer() {
                 <NoteItem
                     key={note.id}
                     ref={(node) => {
-                        if (selectedNoteId === note.id) {
-                            refs.setReference(node)
-                        }
+                        if (selectedNoteId === note.id) refs.setReference(node)
                     }}
                     note={note}
                 />
             ))}
 
-            {selectedNoteId &&
-                activeInteraction !== "note-drag" &&
-                activeInteraction !== "note-resize" && (
-                    <FloatingToolbar
-                        ref={(node) => {
-                            refs.setFloating(node)
-                        }}
-                        style={{
-                            position: strategy,
-                            top: y ?? 0,
-                            left: x ?? 0,
-                        }}
-                        className="pointer-events-auto flex flex-col gap-0.5 relative z-40"
-                    >
-                        <ColorTool position={anchor} />
-                        <RemoveTool position={anchor} />
-                    </FloatingToolbar>
-                )}
+            {selectedNoteId && !isNoteTransforming && (
+                <FloatingToolbar
+                    ref={(node) => refs.setFloating(node)}
+                    style={{
+                        position: strategy,
+                        top: y ?? 0,
+                        left: x ?? 0,
+                    }}
+                    className="pointer-events-auto flex flex-col gap-0.5 relative z-40"
+                >
+                    <ColorTool position={anchor} />
+                    <RemoveTool position={anchor} />
+                </FloatingToolbar>
+            )}
         </>
     )
 }
