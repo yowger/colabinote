@@ -13,9 +13,13 @@ import FloatingToolbar from "./NoteTools/FloatingToolbar"
 import ColorTool from "./NoteTools/ColorTool"
 import RemoveTool from "./NoteTools/RemoveTool"
 import { getAnchorFromPlacement } from "./helpers/floating"
+import type { Note } from "../types/note"
 
-export default function NotesLayer() {
-    const notesMap = useNotesStore((store) => store.notes)
+type NotesLayerType = {
+    notes: Note[]
+}
+
+export default function NotesLayer({ notes }: NotesLayerType) {
     const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
@@ -30,8 +34,6 @@ export default function NotesLayer() {
             }),
     })
 
-    const notes = Object.values(notesMap)
-
     const anchor = getAnchorFromPlacement(placement)
 
     const isNoteTransforming =
@@ -42,9 +44,9 @@ export default function NotesLayer() {
             {notes.map((note) => (
                 <NoteItem
                     key={note.id}
-                    ref={(node) => {
-                        if (selectedNoteId === note.id) refs.setReference(node)
-                    }}
+                    // ref={(node) => {
+                    //     if (selectedNoteId === note.id) refs.setReference(node)
+                    // }}
                     note={note}
                 />
             ))}

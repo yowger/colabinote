@@ -1,12 +1,12 @@
 import { BoardCanvas } from "./BoardCanvas"
 import { BoardViewport } from "./BoardViewport"
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
-import { useNotesStore } from "../stores/useNotesStore"
 import { MiniMap } from "../../minimap/components/Minimap"
 import BoardToolbar from "./NotesBoardToolbar"
 import NotesLayer from "./NotesLayer"
 import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 import { DEFAULT_NOTE_HEIGHT, DEFAULT_NOTE_WIDTH } from "./constants/defaults"
+import { useNotesYjs } from "../../../hooks/useNotesYjs"
 
 const BOARD_DIMENSIONS = {
     width: 2000,
@@ -15,7 +15,7 @@ const BOARD_DIMENSIONS = {
 
 export default function NotesBoard() {
     const { viewportRef, handlers: boardHandlers } = useBoardInteraction()
-    const notes = useNotesStore((store) => store.notes)
+    const { notes } = useNotesYjs()
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
     )
@@ -44,7 +44,7 @@ export default function NotesBoard() {
                     width={BOARD_DIMENSIONS.width}
                     height={BOARD_DIMENSIONS.height}
                 >
-                    <NotesLayer />
+                    <NotesLayer notes={notes} />
                 </BoardCanvas>
             </BoardViewport>
         </div>

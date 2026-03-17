@@ -2,7 +2,6 @@ import { forwardRef } from "react"
 import { Rnd } from "react-rnd"
 
 import { DEFAULT_NOTE_SIZE } from "../../constants/note"
-import { useNotesStore } from "../../stores/useNotesStore"
 import NoteFrame from "./NoteFrame"
 import type { Note } from "../../types/note"
 import { useBoardInteractionStore } from "../../stores/useBoardInteractionStore"
@@ -10,6 +9,7 @@ import { NOTE_COLOR_STYLES } from "../../../../components/Note/styles/noteColorS
 import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
 import NoteHeader from "./NoteHeader"
 import NoteContent from "./NoteContent"
+import { useNotesYjs } from "../../../../hooks/useNotesYjs"
 
 type NoteItemProps = {
     note: Note
@@ -17,9 +17,9 @@ type NoteItemProps = {
 
 const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
     const { setActiveInteraction } = useBoardInteractionStore()
-    const setSelectedNoteId = useNotesStore((store) => store.selectNote)
-    const updateNote = useNotesStore((store) => store.updateNote)
-    const bringToFront = useNotesStore((store) => store.bringToFront)
+    const { updateNote } = useNotesYjs()
+    // const setSelectedNoteId = useNotesStore((store) => store.selectNote)
+    // const bringToFront = useNotesStore((store) => store.bringToFront)
     const colorStyle =
         NOTE_COLOR_STYLES[note.color ?? DEFAULT_NOTE_COLOR].background
 
@@ -53,8 +53,8 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
                 })
             }}
             onMouseDown={() => {
-                setSelectedNoteId(note.id)
-                bringToFront(note.id)
+                // setSelectedNoteId(note.id)
+                // bringToFront(note.id)
             }}
             style={{
                 zIndex: note.zIndex,
