@@ -1,12 +1,12 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { CheckIcon, Trash2Icon, XIcon } from "lucide-react"
 
-import { useNoteActions } from "../../hooks/useNoteActions"
 import { useNotesStore } from "../../stores/useNotesStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import MenuIconButton from "./MenuIconButton"
 import type { NoteAnchorPosition } from "../../types/ui/notes"
+import { useNotesYjs } from "../../../../hooks/useNotesYjs"
 
 type RemoveToolProps = {
     position?: NoteAnchorPosition
@@ -14,7 +14,7 @@ type RemoveToolProps = {
 
 export default function RemoveTool({ position = "right" }: RemoveToolProps) {
     const noteId = useNotesStore((store) => store.selectedNoteId)
-    const { removeNote } = useNoteActions()
+    const { removeNote } = useNotesYjs()
 
     const handleRemoveNote = () => {
         if (!noteId) return

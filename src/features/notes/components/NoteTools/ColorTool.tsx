@@ -7,12 +7,13 @@ import {
     type NoteColor,
 } from "../../../../components/Note/types/colors"
 import { COLOR_BUTTON_STYLES } from "../../../../components/Note/styles/noteColorStyles"
-import { useNoteActions } from "../../hooks/useNoteActions"
 import { useNotesStore } from "../../stores/useNotesStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
 import type { NoteAnchorPosition } from "../../types/ui/notes"
+import { useNotesYjs } from "../../../../hooks/useNotesYjs"
+import { useNoteYjs } from "../../../../hooks/useNoteYjs"
 
 type ColorToolProps = {
     position?: NoteAnchorPosition
@@ -20,14 +21,14 @@ type ColorToolProps = {
 
 export default function ColorTool({ position = "right" }: ColorToolProps) {
     const noteId = useNotesStore((store) => store.selectedNoteId)
-    const note = useNotesStore((store) => store.notes[noteId ?? ""])
+    const { updateNote } = useNotesYjs()
+    const note = useNoteYjs(noteId)
     const selectedNoteColor = note ? note.color : { color: DEFAULT_NOTE_COLOR }
-
-    const { changeColor } = useNoteActions()
 
     const handleSelectColor = (color: NoteColor) => {
         if (!noteId) return
-        changeColor(noteId, color)
+
+        updateNote(noteId, { color })
     }
 
     return (

@@ -44,9 +44,9 @@ export default function NotesLayer({ notes }: NotesLayerType) {
             {notes.map((note) => (
                 <NoteItem
                     key={note.id}
-                    // ref={(node) => {
-                    //     if (selectedNoteId === note.id) refs.setReference(node)
-                    // }}
+                    ref={(node) => {
+                        if (selectedNoteId === note.id) refs.setReference(node)
+                    }}
                     note={note}
                 />
             ))}

@@ -15,10 +15,11 @@ const BOARD_DIMENSIONS = {
 
 export default function NotesBoard() {
     const { viewportRef, handlers: boardHandlers } = useBoardInteraction()
-    const { notes } = useNotesYjs()
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
     )
+    const { notes } = useNotesYjs()
+
     const isPanning = activeInteraction === "pan"
 
     return (
@@ -32,7 +33,7 @@ export default function NotesBoard() {
                 boardHeight={BOARD_DIMENSIONS.height}
                 width={DEFAULT_NOTE_WIDTH}
                 height={DEFAULT_NOTE_HEIGHT}
-                items={Object.values(notes)}
+                items={notes}
             />
 
             <BoardViewport

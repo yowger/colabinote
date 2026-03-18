@@ -10,6 +10,7 @@ import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
 import NoteHeader from "./NoteHeader"
 import NoteContent from "./NoteContent"
 import { useNotesYjs } from "../../../../hooks/useNotesYjs"
+import { useNotesStore } from "../../stores/useNotesStore"
 
 type NoteItemProps = {
     note: Note
@@ -18,18 +19,20 @@ type NoteItemProps = {
 const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
     const { setActiveInteraction } = useBoardInteractionStore()
     const { updateNote } = useNotesYjs()
-    // const setSelectedNoteId = useNotesStore((store) => store.selectNote)
+    const setSelectedNoteId = useNotesStore((store) => store.selectNote)
     // const bringToFront = useNotesStore((store) => store.bringToFront)
     const colorStyle =
         NOTE_COLOR_STYLES[note.color ?? DEFAULT_NOTE_COLOR].background
 
     return (
         <Rnd
-            default={{
-                x: note.x,
-                y: note.y,
+            size={{
                 width: note.width,
                 height: note.height,
+            }}
+            position={{
+                x: note.x,
+                y: note.y,
             }}
             onDragStart={() => {
                 setActiveInteraction("note-drag")
@@ -53,7 +56,7 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(({ note }, ref) => {
                 })
             }}
             onMouseDown={() => {
-                // setSelectedNoteId(note.id)
+                setSelectedNoteId(note.id)
                 // bringToFront(note.id)
             }}
             style={{

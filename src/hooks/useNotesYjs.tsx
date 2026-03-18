@@ -2,8 +2,7 @@ import { useEffect, useState } from "react"
 
 import { useHocuspocusContext } from "./useHocuspocusContext"
 import type { Note } from "../features/notes/types/note"
-
-const MAP_ID = "notes"
+import { MAP_ID } from "../conts/noteMaps"
 
 export function useNotesYjs() {
     const { provider } = useHocuspocusContext()
@@ -17,7 +16,7 @@ export function useNotesYjs() {
         const yNotes = doc.getMap<Note>(MAP_ID)
 
         const updateNotes = () => {
-            setNotes(Array.from(yNotes.values()))
+            setNotes([...yNotes.values()])
         }
 
         updateNotes()
