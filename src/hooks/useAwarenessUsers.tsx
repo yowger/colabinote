@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react"
 
 import { useHocuspocusContext } from "./useHocuspocusContext"
+import type { AwarenessState } from "../features/notes/types/awareness"
 
 export function useAwarenessUsers() {
     const { provider } = useHocuspocusContext()
-    const [users, setUsers] = useState<any[]>([])
+    const [users, setUsers] = useState<
+        (AwarenessState & { clientId: number })[]
+    >([])
 
     useEffect(() => {
-        if (!provider || !provider.awareness) return
+        if (!provider?.awareness) return
+
         const awareness = provider.awareness
 
         const update = () => {
-            if (!awareness) return
+            const states = Array.from(awareness.getStates().entries()).map(
+                ([clientId, state]) => ({
+                    clientId,
+                    ...(state as AwarenessState),
+                }),
+            )
 
-            const states = Array.from(awareness.getStates().values())
             setUsers(states)
         }
 
