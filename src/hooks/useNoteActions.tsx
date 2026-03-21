@@ -36,8 +36,10 @@ export function useNoteActions() {
 
         const yNote = new Y.Map()
 
-        Object.entries(newNote).forEach(([key, value]) => {
-            yNote.set(key, value)
+        doc.transact(() => {
+            Object.entries(newNote).forEach(([key, value]) => {
+                yNote.set(key, value)
+            })
         })
 
         yNotes.set(noteId, yNote)
@@ -67,7 +69,7 @@ export function useNoteActions() {
         const doc = provider?.document
         if (!doc) return
 
-        doc?.getMap<Note>(MAP_ID).delete(id)
+        doc.getMap<Note>(MAP_ID).delete(id)
     }
 
     return { addNote, updateNote, removeNote }

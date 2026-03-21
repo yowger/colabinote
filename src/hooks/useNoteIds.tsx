@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
+import * as Y from "yjs"
 
 import { useHocuspocusContext } from "./useHocuspocusContext"
-import type { Note } from "../features/notes/types/note"
 import { MAP_ID } from "../conts/noteMaps"
 
 export function useNoteIdsYjs() {
@@ -12,8 +12,8 @@ export function useNoteIdsYjs() {
         const doc = provider?.document
         if (!doc) return
 
-        const yNotes = doc.getMap<Note>(MAP_ID)
-        if (!yNotes) return
+        const yNotes = doc.getMap<unknown>(MAP_ID)
+        if (!yNotes || !(yNotes instanceof Y.Map)) return
 
         const updateNoteIds = () => {
             setNoteIds([...yNotes.keys()])
