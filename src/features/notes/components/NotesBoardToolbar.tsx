@@ -1,14 +1,13 @@
-import { useNotesYjs } from "../../../hooks/useNotesYjs"
+import { useNoteActions } from "../../../hooks/useNoteActions"
 import { DEFAULT_NOTE_COLOR } from "./constants/defaults"
 
 export default function NotesBoardToolbar() {
-    const { addNote } = useNotesYjs()
+    const { addNote } = useNoteActions()
 
     const handleAddNote = () => {
         addNote({
-            id: Date.now().toLocaleString(),
-            x: 20,
-            y: 20,
+            x: 200,
+            y: 200,
             width: 150,
             height: 150,
             title: "New Note",
