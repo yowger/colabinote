@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 
-import type { Note as NoteType } from "../components/Note/Note"
-import type { GhostNoteProps } from "../components/GhostNote"
+import type { GhostNoteProps } from "../../../components/GhostNote"
+import type { Note } from "../types/note"
 
 const MIN_NOTE_DIMENSIONS = { width: 215, height: 215 }
 
@@ -12,51 +12,51 @@ export const NoteInteractionType = {
 
 export type NoteInteraction =
     | {
-          type: typeof NoteInteractionType.DRAG
+          noteId: string
+          type: "drag"
           startX: number
           startY: number
-          noteId: number
           noteStartX: number
           noteStartY: number
           noteWidth: number
           noteHeight: number
-          noColor: NoteType["color"] | undefined
+          noteColor?: Note["color"]
       }
     | {
-          type: typeof NoteInteractionType.RESIZE
+          noteId: string
+          type: "resize"
           startX: number
           startY: number
-          noteId: number
           noteStartX: number
           noteStartY: number
           noteStartWidth: number
           noteStartHeight: number
-          noColor: NoteType["color"] | undefined
+          noteColor?: Note["color"]
       }
     | null
 
 export function useNoteInteraction(
     boardSize: { width: number; height: number },
-    onCommitNote: (id: number, updates: Partial<NoteType>) => void,
+    onCommitNote: (id: string, updates: Partial<Note>) => void,
 ) {
     const [interaction, setInteraction] = useState<NoteInteraction>(null)
     const [ghostNote, setGhostNote] = useState<GhostNoteProps | null>(null)
 
     const liveDragRef = useRef<{
-        noteId: number
+        noteId: string
         x: number
         y: number
     } | null>(null)
 
     const liveResizeRef = useRef<{
-        noteId: number
+        noteId: string
         width: number
         height: number
     } | null>(null)
 
     const onDragPointerDown = (
         pointerEvent: React.PointerEvent<HTMLDivElement>,
-        note: NoteType,
+        note: Note,
     ) => {
         pointerEvent.preventDefault()
         pointerEvent.stopPropagation()
@@ -71,13 +71,13 @@ export function useNoteInteraction(
             noteStartY: note.y,
             noteWidth: note.width,
             noteHeight: note.height,
-            noColor: note.color,
+            noteColor: note.color,
         })
     }
 
     const onResizePointerDown = (
         pointerEvent: React.PointerEvent,
-        note: NoteType,
+        note: Note,
     ) => {
         pointerEvent.preventDefault()
         pointerEvent.stopPropagation()
@@ -92,7 +92,7 @@ export function useNoteInteraction(
             noteStartY: note.y,
             noteStartWidth: note.width,
             noteStartHeight: note.height,
-            noColor: note.color,
+            noteColor: note.color,
         })
     }
 
@@ -126,7 +126,7 @@ export function useNoteInteraction(
                 y,
                 width: interaction.noteWidth,
                 height: interaction.noteHeight,
-                color: interaction.noColor,
+                color: interaction.noteColor,
             })
 
             liveDragRef.current = {
@@ -155,7 +155,7 @@ export function useNoteInteraction(
                 y: interaction.noteStartY,
                 width,
                 height,
-                color: interaction.noColor,
+                color: interaction.noteColor,
             })
 
             liveResizeRef.current = {

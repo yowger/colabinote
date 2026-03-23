@@ -10,8 +10,9 @@ import NoteHeader from "./NoteHeader"
 import NoteContent from "./NoteContent"
 // import { useNotesYjs } from "../../../../hooks/useNotesYjs"
 import { useNotesStore } from "../../stores/useNotesStore"
-import { useSingleNoteYjs } from "../../../../hooks/useSingleNoteYjs"
-import { useNoteActions } from "../../../../hooks/useNoteActions"
+import { useSingleNoteYjs } from "../../hooks/useSingleNoteYjs"
+import { useNoteActions } from "../../hooks/useNoteActions"
+// import { usePresence } from "../../../presence/hooks/usePresence"
 
 type NoteItemProps = {
     noteId: string

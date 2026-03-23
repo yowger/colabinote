@@ -12,8 +12,8 @@ import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
 import type { NoteAnchorPosition } from "../../types/ui/notes"
-import { useNotesYjs } from "../../../../hooks/useNotesYjs"
-import { useNoteYjs } from "../../../../hooks/useNoteYjs"
+import { useNotesYjs } from "../../hooks/useNotesYjs"
+import { useNoteYjs } from "../../hooks/useNoteYjs"
 
 type ColorToolProps = {
     position?: NoteAnchorPosition

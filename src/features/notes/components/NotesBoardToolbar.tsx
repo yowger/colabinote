@@ -1,4 +1,4 @@
-import { useNoteActions } from "../../../hooks/useNoteActions"
+import { useNoteActions } from "../hooks/useNoteActions"
 import { DEFAULT_NOTE_COLOR } from "./constants/defaults"
 
 export default function NotesBoardToolbar() {

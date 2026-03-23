@@ -4,7 +4,7 @@ import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
 
 import { useNotesStore } from "../../stores/useNotesStore"
 import type { Note } from "../../types/note"
-import { useNoteEditor } from "../../../../hooks/useNoteEditor"
+import { useNoteEditor } from "../../hooks/useNoteEditor"
 import BubbleMenuComponent from "../NoteTools/BubbleMenu"
 
 type NoteContentProps = {

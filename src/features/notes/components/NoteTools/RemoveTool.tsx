@@ -6,7 +6,7 @@ import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import MenuIconButton from "./MenuIconButton"
 import type { NoteAnchorPosition } from "../../types/ui/notes"
-import { useNotesYjs } from "../../../../hooks/useNotesYjs"
+import { useNotesYjs } from "../../hooks/useNotesYjs"
 
 type RemoveToolProps = {
     position?: NoteAnchorPosition

@@ -1,13 +1,13 @@
 import * as Y from "yjs"
 
-import { MAP_ID } from "../conts/noteMaps"
-import type { Note } from "../features/notes/types/note"
-import { useHocuspocusContext } from "./useHocuspocusContext"
+import { MAP_ID } from "../../../conts/noteMaps"
+import type { Note } from "../types/note"
+import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
 import {
     DEFAULT_NOTE_COLOR,
     DEFAULT_NOTE_HEIGHT,
     DEFAULT_NOTE_WIDTH,
-} from "../features/notes/components/constants/defaults"
+} from "../components/constants/defaults"
 
 export function useNoteActions() {
     const { provider } = useHocuspocusContext()

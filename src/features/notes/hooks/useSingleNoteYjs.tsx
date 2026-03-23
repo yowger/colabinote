@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 
-import { useHocuspocusContext } from "./useHocuspocusContext"
-import type { Note } from "../features/notes/types/note"
-import { MAP_ID } from "../conts/noteMaps"
+import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import type { Note } from "../types/note"
+import { MAP_ID } from "../../../conts/noteMaps"
 import * as Y from "yjs"
 
 export function useSingleNoteYjs(id: string) {

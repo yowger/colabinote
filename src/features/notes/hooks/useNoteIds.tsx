@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import * as Y from "yjs"
 
-import { useHocuspocusContext } from "./useHocuspocusContext"
-import { MAP_ID } from "../conts/noteMaps"
+import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { MAP_ID } from "../../../conts/noteMaps"
 
 export function useNoteIdsYjs() {
     const { provider } = useHocuspocusContext()

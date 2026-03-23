@@ -1,4 +1,4 @@
-import { usePresence } from "../../presence/hooks/usePresence"
+import { usePresenceCursor } from "../../presence/hooks/usePresenceCursor"
 
 type BoardCanvasProps = {
     width: number
@@ -6,11 +6,8 @@ type BoardCanvasProps = {
     children: React.ReactNode
 }
 
-const name = Date.now().toString()
-const color = "#" + Math.floor(Math.random() * 16777215).toString(16)
-
 export function BoardCanvas({ width, height, children }: BoardCanvasProps) {
-    const { updateCursor } = usePresence({ name, color })
+    const { updateCursor } = usePresenceCursor()
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect()
