@@ -5,7 +5,8 @@ import BoardToolbar from "./NotesBoardToolbar"
 import NotesLayer from "./NotesLayer"
 import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 import { useNoteIdsYjs } from "../../../hooks/useNoteIds"
-import { useAwarenessUsers } from "../../../hooks/useAwarenessUsers"
+import { useAwarenessUsers } from "../../presence/hooks/useAwarenessUsers"
+import CursorsLayer from "../../presence/components/CursorsLayer"
 
 const BOARD_DIMENSIONS = {
     width: 2000,
@@ -15,6 +16,7 @@ const BOARD_DIMENSIONS = {
 export default function NotesBoard() {
     const { viewportRef, handlers: boardHandlers } = useBoardInteraction()
     const users = useAwarenessUsers()
+    console.log("🚀 ~ NotesBoard ~ users:", users)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
     )
@@ -47,24 +49,7 @@ export default function NotesBoard() {
                 >
                     <NotesLayer noteIds={noteIds} />
 
-                    {users.map((u, i) => {
-                        if (!u.cursor) return null
-
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    position: "absolute",
-                                    left: u.cursor.x,
-                                    top: u.cursor.y,
-                                    background: u.user?.color,
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: "50%",
-                                }}
-                            />
-                        )
-                    })}
+                    <CursorsLayer users={users} />
                 </BoardCanvas>
             </BoardViewport>
         </div>

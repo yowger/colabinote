@@ -8,7 +8,10 @@ export type AwarenessCursor = {
     y: number
 } | null
 
+export type AwarenessStatus = "active" | "idle"
+
 export type AwarenessState = {
-    user?: AwarenessUser
-    cursor?: AwarenessCursor
+    user: AwarenessUser
+    cursor: AwarenessCursor
+    status: AwarenessStatus
 }

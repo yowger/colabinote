@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
-import { useHocuspocusContext } from "./useHocuspocusContext"
-import type { AwarenessState } from "../features/notes/types/awareness"
+import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import type { AwarenessState } from "../../notes/types/awareness"
 
 export function useAwarenessUsers() {
     const { provider } = useHocuspocusContext()
