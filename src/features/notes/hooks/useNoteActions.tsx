@@ -1,6 +1,6 @@
 import * as Y from "yjs"
 
-import { MAP_ID } from "../../../conts/noteMaps"
+import { MAP_ID } from "../conts/noteMaps"
 import type { Note } from "../types/note"
 import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
 import {

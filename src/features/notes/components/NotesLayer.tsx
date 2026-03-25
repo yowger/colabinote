@@ -8,21 +8,26 @@ import {
 
 import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 import { useNotesStore } from "../stores/useNotesStore"
-import NoteItem from "./Note/NoteItem"
+import { useNoteActions } from "../hooks/useNoteActions"
 import FloatingToolbar from "./NoteTools/FloatingToolbar"
 import ColorTool from "./NoteTools/ColorTool"
 import RemoveTool from "./NoteTools/RemoveTool"
+import DraggableNote, { type DropDataProps } from "./Note/DraggableNote"
 import { getAnchorFromPlacement } from "./helpers/floating"
 
-type NotesLayerType = {
+type NotesLayerProps = {
     noteIds: string[]
+    canvasRef: React.RefObject<HTMLDivElement | null>
 }
 
-export default function NotesLayer({ noteIds }: NotesLayerType) {
-    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
+export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
+    const { updateNote } = useNoteActions()
+
+    const selectedNoteId = useNotesStore((s) => s.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
-        (store) => store.activeInteraction,
+        (s) => s.activeInteraction,
     )
+
     const { x, y, refs, strategy, placement } = useFloating({
         strategy: "fixed",
         placement: "right-start",
@@ -35,22 +40,40 @@ export default function NotesLayer({ noteIds }: NotesLayerType) {
 
     const anchor = getAnchorFromPlacement(placement)
 
-    const isNoteTransforming =
+    const isTransforming =
         activeInteraction === "note-drag" || activeInteraction === "note-resize"
+
+    const handleDrop = ({
+        noteId,
+        clientX,
+        clientY,
+        offsetX,
+        offsetY,
+    }: DropDataProps) => {
+        if (!canvasRef.current) return
+        const rect = canvasRef.current.getBoundingClientRect()
+
+        const mouseX = clientX - rect.left
+        const mouseY = clientY - rect.top
+
+        const x = mouseX - offsetX
+        const y = mouseY - offsetY
+
+        updateNote(noteId, { x, y })
+    }
 
     return (
         <>
             {noteIds.map((noteId) => (
-                <NoteItem
+                <DraggableNote
                     key={noteId}
-                    ref={(node) => {
-                        if (selectedNoteId === noteId) refs.setReference(node)
-                    }}
+                    canvasRef={canvasRef}
                     noteId={noteId}
+                    onDrop={handleDrop}
                 />
             ))}
 
-            {selectedNoteId && !isNoteTransforming && (
+            {selectedNoteId && !isTransforming && (
                 <FloatingToolbar
                     ref={(node) => refs.setFloating(node)}
                     style={{
@@ -67,3 +90,11 @@ export default function NotesLayer({ noteIds }: NotesLayerType) {
         </>
     )
 }
+
+// <NoteItem
+//     key={noteId}
+//     ref={(node) => {
+//         if (selectedNoteId === noteId) refs.setReference(node)
+//     }}
+//     noteId={noteId}
+// />

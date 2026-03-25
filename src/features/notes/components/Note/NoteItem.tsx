@@ -12,6 +12,8 @@ import NoteContent from "./NoteContent"
 import { useNotesStore } from "../../stores/useNotesStore"
 import { useSingleNoteYjs } from "../../hooks/useSingleNoteYjs"
 import { useNoteActions } from "../../hooks/useNoteActions"
+import { usePresenceActions } from "../../../presence/hooks/usePresenceActions"
+import { useNotesMetaActions } from "../../../presence/hooks/useNotesMetaActions"
 // import { usePresence } from "../../../presence/hooks/usePresence"
 
 type NoteItemProps = {
@@ -20,11 +22,13 @@ type NoteItemProps = {
 
 const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(
     ({ noteId }, ref) => {
+        // const { updateNotesMeta } = useNotesMetaActions()
         const note = useSingleNoteYjs(noteId)
-        const { setActiveInteraction } = useBoardInteractionStore()
+        // const { setActiveInteraction } = useBoardInteractionStore()
+        // const { setInteraction, setActiveNoteId } = usePresenceActions()
         // const { updateNote } = useNotesYjs()
-        const { updateNote } = useNoteActions()
-        const setSelectedNoteId = useNotesStore((store) => store.selectNote)
+        // const { updateNote } = useNoteActions()
+        // const setSelectedNoteId = useNotesStore((store) => store.selectNote)
         // const bringToFront = useNotesStore((store) => store.bringToFront)
 
         const colorStyle =
@@ -34,37 +38,46 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(
 
         return (
             <Rnd
-                size={{
-                    width: note.width,
-                    height: note.height,
-                }}
-                position={{
-                    x: note.x,
-                    y: note.y,
-                }}
+                // default={{
+                //     height: note.height,
+                //     width: note.width,
+                //     x: note.x,
+                //     y: note.y,
+                // }}
+                // size={{
+                //     width: note.width,
+                //     height: note.height,
+                // }}
+                // position={{
+                //     x: note.x,
+                //     y: note.y,
+                // }}
+
                 onDragStart={() => {
-                    setActiveInteraction("note-drag")
+                    // setActiveInteraction("note-drag")
+                    // setInteraction("dragging")
                 }}
                 onDragStop={(_event, delta) => {
-                    setActiveInteraction(null)
-
-                    updateNote(note.id, { x: delta.x, y: delta.y })
+                    // setActiveInteraction(null)
+                    // updateNote(note.id, { x: delta.x, y: delta.y })
+                    // updateNotesMeta(note.id, { x: delta.x, y: delta.y })
                 }}
                 onResizeStart={() => {
-                    setActiveInteraction("note-resize")
+                    // setActiveInteraction("note-resize")
                 }}
                 onResizeStop={(_event, _direction, ref, _delta, position) => {
-                    setActiveInteraction(null)
-
-                    updateNote(note.id, {
-                        width: ref.offsetWidth,
-                        height: ref.offsetHeight,
-                        x: position.x,
-                        y: position.y,
-                    })
+                    // setActiveInteraction(null)
+                    // updateNote(note.id, {
+                    //     width: ref.offsetWidth,
+                    //     height: ref.offsetHeight,
+                    //     x: position.x,
+                    //     y: position.y,
+                    // })
+                    // updateNotesMeta(note.id, { x: position.x, y: position.y })
                 }}
                 onMouseDown={() => {
-                    setSelectedNoteId(note.id)
+                    // setSelectedNoteId(note.id)
+                    // setActiveNoteId(note.id)
                     // bringToFront(note.id)
                 }}
                 style={{
@@ -80,8 +93,8 @@ const NoteItem = forwardRef<HTMLDivElement, NoteItemProps>(
                     data-note-id={note.id}
                     className={`overflow-hidden ${colorStyle}`}
                 >
-                    <NoteHeader noteId={note.id} title={note.title} />
-                    <NoteContent note={note} />
+                    <NoteHeader noteId={note.id} />
+                    {/* <NoteContent note={note} /> */}
                 </NoteFrame>
             </Rnd>
         )

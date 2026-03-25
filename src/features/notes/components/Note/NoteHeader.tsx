@@ -1,94 +1,97 @@
-import { useRef, useState, useEffect, type RefObject } from "react"
-import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
+import { useRef, useEffect } from "react"
+// import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
 import { useNotesStore } from "../../stores/useNotesStore"
 
 type NoteHeaderProps = {
     noteId: string
-    title: string
 }
 
-const MAX_HEIGHT = 200
-const MAX_LENGTH = 200
+// const MAX_HEIGHT = 200
+// const MAX_LENGTH = 200
 
-const focusAtEnd = (element: HTMLTextAreaElement | null) => {
-    if (!element) return
-    element.focus()
-    const length = element.value.length
-    element.setSelectionRange(length, length)
-}
+// const focusAtEnd = (element: HTMLTextAreaElement | null) => {
+//     if (!element) return
+//     element.focus()
+//     const length = element.value.length
+//     element.setSelectionRange(length, length)
+// }
 
-export default function NoteHeader({ noteId, title }: NoteHeaderProps) {
+export default function NoteHeader({ noteId }: NoteHeaderProps) {
     const ref = useRef<HTMLDivElement>(null)
-    const textareaRef = useRef<HTMLTextAreaElement>(null)
-    const [localEditing, setLocalEditing] = useState(false)
+    // const textareaRef = useRef<HTMLTextAreaElement>(null)
+    // const [localEditing, setLocalEditing] = useState(false)
 
     const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
-    const updateNote = useNotesStore((store) => store.updateNote)
+    // const updateNote = useNotesStore((store) => store.updateNote)
 
-    const debouncedUpdate = useDebounceCallback((value: string) => {
-        updateNote(noteId, { title: value })
-    }, 400)
+    // const debouncedUpdate = useDebounceCallback((value: string) => {
+    //     updateNote(noteId, { title: value })
+    // }, 400)
 
-    const isEditing = selectedNoteId === noteId && localEditing
+    const isEditing = selectedNoteId === noteId
 
-    const autoResize = () => {
-        const element = textareaRef.current
-        if (!element) return
+    // const autoResize = () => {
+    //     const element = textareaRef.current
+    //     if (!element) return
 
-        element.style.height = "auto"
-        const newHeight = Math.min(element.scrollHeight, MAX_HEIGHT)
-        element.style.height = newHeight + "px"
+    //     element.style.height = "auto"
+    //     const newHeight = Math.min(element.scrollHeight, MAX_HEIGHT)
+    //     element.style.height = newHeight + "px"
 
-        element.style.overflowY =
-            element.scrollHeight > MAX_HEIGHT ? "auto" : "hidden"
-    }
+    //     element.style.overflowY =
+    //         element.scrollHeight > MAX_HEIGHT ? "auto" : "hidden"
+    // }
 
-    useEffect(() => {
-        if (isEditing) {
-            autoResize()
-            textareaRef.current?.focus()
-        }
-    }, [isEditing])
+    // useEffect(() => {
+    //     if (isEditing) {
+    //         autoResize()
+    //         textareaRef.current?.focus()
+    //     }
+    // }, [isEditing])
 
-    const handleClickOutside = () => {
-        if (isEditing) {
-            setLocalEditing(false)
-        }
-    }
-    useOnClickOutside(ref as RefObject<HTMLElement>, handleClickOutside)
+    // const handleClickOutside = () => {
+    //     if (isEditing) {
+    //         setLocalEditing(false)
+    //     }
+    // }
+    // useOnClickOutside(ref as RefObject<HTMLElement>, handleClickOutside)
 
-    const handleDoubleClick = () => {
-        if (selectedNoteId !== noteId || isEditing) return
-        setLocalEditing(true)
-    }
+    // const handleDoubleClick = () => {
+    //     if (selectedNoteId !== noteId || isEditing) return
+    //     setLocalEditing(true)
+    // }
 
-    const handleChange = (value: string) => {
-        const trimmedValue = value.slice(0, MAX_LENGTH)
-        debouncedUpdate(trimmedValue)
-        autoResize()
-    }
+    // const handleChange = (value: string) => {
+    //     const trimmedValue = value.slice(0, MAX_LENGTH)
+    //     debouncedUpdate(trimmedValue)
+    //     autoResize()
+    // }
 
     useEffect(() => {
         if (!isEditing) return
 
         requestAnimationFrame(() => {
-            const textAreaElement = textareaRef.current
-            autoResize()
-            focusAtEnd(textAreaElement)
+            // const textAreaElement = textareaRef.current
+            // autoResize()
+            // focusAtEnd(textAreaElement)
         })
     }, [isEditing])
 
     return (
         <div
             ref={ref}
-            data-no-pan={isEditing}
-            className={`p-4 text-xl font-medium ${
-                isEditing
-                    ? "cursor-text"
-                    : "note-drag-handle cursor-move select-none"
-            }`}
+            // data-no-pan={isEditing}
+            data-no-pan={true}
+            // className={`h-12 bg-black/5 ${
+            //     isEditing
+            //         ? "cursor-text"
+            //         : "note-drag-handle cursor-move select-none"
+            // }`}
+
+            className={`h-12 bg-black/5 note-drag-handle cursor-move select-none"
+            `}
         >
-            {isEditing ? (
+            {/* {isEditing ? (
                 <textarea
                     ref={textareaRef}
                     autoFocus
@@ -118,7 +121,7 @@ export default function NoteHeader({ noteId, title }: NoteHeaderProps) {
                 >
                     {title}
                 </div>
-            )}
+            )} */}
         </div>
     )
 }
