@@ -20,6 +20,10 @@ type NotesLayerProps = {
     canvasRef: React.RefObject<HTMLDivElement | null>
 }
 
+const clamp = (value: number, min: number, max: number) => {
+    return Math.max(min, Math.min(value, max))
+}
+
 export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const { updateNote } = useNoteActions()
 
@@ -44,7 +48,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         activeInteraction === "note-drag" || activeInteraction === "note-resize"
 
     const handleDrop = ({
-        noteId,
+        note,
         clientX,
         clientY,
         offsetX,
@@ -56,10 +60,16 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         const mouseX = clientX - rect.left
         const mouseY = clientY - rect.top
 
-        const x = mouseX - offsetX
-        const y = mouseY - offsetY
+        let x = mouseX - offsetX
+        let y = mouseY - offsetY
 
-        updateNote(noteId, { x, y })
+        const maxX = rect.width - (note?.width ?? 0)
+        const maxY = rect.height - (note?.height ?? 0)
+
+        x = clamp(x, 0, maxX)
+        y = clamp(y, 0, maxY)
+
+        updateNote(note.id, { x, y })
     }
 
     return (

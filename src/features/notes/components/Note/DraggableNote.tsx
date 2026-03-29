@@ -11,6 +11,7 @@ import type {
     BaseEventPayload,
     ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
+
 export type DraggableState =
     | {
           type: "idle"
@@ -22,13 +23,19 @@ export type DraggableState =
     | {
           type: "dragging"
       }
+
 export type DropDataProps = {
-    noteId: string
+    note: {
+        id: string
+        width: number
+        height: number
+    }
     clientX: number
     clientY: number
     offsetX: number
     offsetY: number
 }
+
 export type DraggableNoteProps = {
     noteId: string
     canvasRef: React.RefObject<HTMLDivElement | null>
@@ -80,7 +87,11 @@ export default function DraggableNote({
         setDragState({ type: "idle" })
 
         onDrop?.({
-            noteId: note!.id,
+            note: {
+                id: noteId,
+                width: note?.width || 0,
+                height: note?.height || 0,
+            },
             clientX,
             clientY,
             offsetX: offsetRef.current.x,
@@ -142,18 +153,16 @@ export default function DraggableNote({
                     background: note.color ?? "yellow",
                 }}
                 className={clsx(
-                    "bg-neutral-800 text-white shadow-lg rounded-md flex-inline",
+                    "rounded-md shadow-md flex-inline overflow-hidden",
                     dragState.type === "dragging" && "opacity-50",
                 )}
             >
                 <div
                     ref={headerRef}
-                    className="cursor-grab active:cursor-grabbing p-2 bg-black/20"
-                >
-                    Header
-                </div>
+                    className="cursor-grab active:cursor-grabbing p-2 bg-slate-900/20 h-9"
+                />
 
-                <div className="flex-1 p-2">DraggableNote content</div>
+                <div className="flex-1 p-3">DraggableNote content</div>
             </div>
 
             {dragState.type === "preview" &&

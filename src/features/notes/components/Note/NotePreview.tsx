@@ -20,12 +20,12 @@ export default function NoteDragPreview({
             }}
             className={clsx(
                 "pointer-events-none",
-                "rounded-md shadow-xl",
+                "rounded-md shadow-md",
                 "opacity-90 scale-[1.02]",
                 "flex flex-col overflow-hidden",
             )}
         >
-            <div className="p-2 bg-black/20 text-xs font-medium">Note</div>
+            <div className="bg-black/20 h-9" />
 
             <div className="flex-1 bg-black/10" />
         </div>
