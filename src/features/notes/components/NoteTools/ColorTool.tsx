@@ -2,18 +2,17 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react"
 import { PaletteIcon } from "lucide-react"
 import clsx from "clsx"
 
-import {
-    NOTE_COLORS,
-    type NoteColor,
-} from "../../../../components/Note/types/colors"
+import { NOTE_COLORS } from "../../../../components/Note/types/colors"
 import { COLOR_BUTTON_STYLES } from "../../../../components/Note/styles/noteColorStyles"
 import { useNotesStore } from "../../stores/useNotesStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import { DEFAULT_NOTE_COLOR } from "../constants/defaults"
+import { useNoteActions } from "../../hooks/useNoteActions"
+import { useSingleNoteYjs } from "../../hooks/useSingleNoteYjs"
+
+import { type NoteColor } from "../../../../components/Note/types/colors"
 import type { NoteAnchorPosition } from "../../types/ui/notes"
-import { useNotesYjs } from "../../hooks/useNotesYjs"
-import { useNoteYjs } from "../../hooks/useNoteYjs"
 
 type ColorToolProps = {
     position?: NoteAnchorPosition
@@ -21,9 +20,9 @@ type ColorToolProps = {
 
 export default function ColorTool({ position = "right" }: ColorToolProps) {
     const noteId = useNotesStore((store) => store.selectedNoteId)
-    const { updateNote } = useNotesYjs()
-    const note = useNoteYjs(noteId)
-    const selectedNoteColor = note ? note.color : { color: DEFAULT_NOTE_COLOR }
+    const { updateNote } = useNoteActions()
+    const note = useSingleNoteYjs(noteId || "")
+    const selectedNoteColor = note?.color ?? DEFAULT_NOTE_COLOR
 
     const handleSelectColor = (color: NoteColor) => {
         if (!noteId) return

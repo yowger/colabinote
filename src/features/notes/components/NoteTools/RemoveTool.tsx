@@ -5,8 +5,9 @@ import { useNotesStore } from "../../stores/useNotesStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import MenuIconButton from "./MenuIconButton"
+import { useNoteActions } from "../../hooks/useNoteActions"
+
 import type { NoteAnchorPosition } from "../../types/ui/notes"
-import { useNotesYjs } from "../../hooks/useNotesYjs"
 
 type RemoveToolProps = {
     position?: NoteAnchorPosition
@@ -14,7 +15,7 @@ type RemoveToolProps = {
 
 export default function RemoveTool({ position = "right" }: RemoveToolProps) {
     const noteId = useNotesStore((store) => store.selectedNoteId)
-    const { removeNote } = useNotesYjs()
+    const { removeNote } = useNoteActions()
 
     const handleRemoveNote = () => {
         if (!noteId) return

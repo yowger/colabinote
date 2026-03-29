@@ -11,7 +11,7 @@ export const BoardCanvas = forwardRef<HTMLDivElement, BoardCanvasProps>(
     ({ width, height, children }, ref) => {
         const { updateCursor } = usePresenceCursor()
 
-        const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
             const rect = e.currentTarget.getBoundingClientRect()
 
             const x = e.clientX - rect.left
@@ -22,8 +22,8 @@ export const BoardCanvas = forwardRef<HTMLDivElement, BoardCanvasProps>(
 
         return (
             <div
-                ref={ref} 
-                onMouseMove={handleMouseMove}
+                ref={ref}
+                onPointerMove={handlePointerMove}
                 className="relative bg-[url('/images/bg.png')] bg-repeat"
                 style={{ width, height }}
             >
