@@ -5,6 +5,7 @@ import {
     shift,
     useFloating,
 } from "@floating-ui/react"
+import { useLayoutEffect, useRef } from "react"
 
 import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 import { useNotesStore } from "../stores/useNotesStore"
@@ -42,6 +43,8 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
             }),
     })
 
+    const noteRefs = useRef(new Map<string, HTMLDivElement | null>())
+
     const anchor = getAnchorFromPlacement(placement)
 
     const isTransforming =
@@ -72,6 +75,16 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         updateNote(note.id, { x, y })
     }
 
+    useLayoutEffect(() => {
+        const element = selectedNoteId
+            ? noteRefs.current.get(selectedNoteId)
+            : null
+
+        if (!element) return
+
+        refs.setReference(element)
+    }, [selectedNoteId, refs])
+
     return (
         <>
             {noteIds.map((noteId) => (
@@ -79,6 +92,13 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                     key={noteId}
                     noteId={noteId}
                     onDragEnd={handleDrop}
+                    setNode={(element) => {
+                        if (element) {
+                            noteRefs.current.set(noteId, element)
+                        } else {
+                            noteRefs.current.delete(noteId)
+                        }
+                    }}
                 />
             ))}
 
@@ -99,11 +119,3 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         </>
     )
 }
-
-// <NoteItem
-//     key={noteId}
-//     ref={(node) => {
-//         if (selectedNoteId === noteId) refs.setReference(node)
-//     }}
-//     noteId={noteId}
-// />

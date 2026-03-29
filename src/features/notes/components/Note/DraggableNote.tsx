@@ -40,11 +40,13 @@ export type DropDataProps = {
 export type DraggableNoteProps = {
     noteId: string
     onDragEnd?: (data: DropDataProps) => void
+    setNode?: (el: HTMLDivElement | null) => void
 }
 
 export default function DraggableNote({
     noteId,
     onDragEnd: onDrop,
+    setNode,
 }: DraggableNoteProps) {
     const note = useSingleNoteYjs(noteId)
 
@@ -53,6 +55,11 @@ export default function DraggableNote({
     const offsetRef = useRef({ x: 0, y: 0 })
     const [dragState, setDragState] = useState<DraggableState>({ type: "idle" })
     const selectNote = useNotesStore((store) => store.selectNote)
+
+    const setContainerRef = (node: HTMLDivElement | null) => {
+        containerRef.current = node
+        setNode?.(node)
+    }
 
     const computeOffset = (clientX: number, clientY: number) => {
         if (!note) return
@@ -134,10 +141,10 @@ export default function DraggableNote({
     return (
         <>
             <div
+                ref={setContainerRef}
                 onMouseDown={() => {
                     selectNote(noteId)
                 }}
-                ref={containerRef}
                 data-no-pan={true}
                 style={{
                     position: "absolute",
