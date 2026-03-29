@@ -13,6 +13,8 @@ import type {
     ElementDragType,
 } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 
+export type NoteAction = "move" | "resize"
+
 export type DraggableState =
     | {
           type: "idle"
@@ -25,27 +27,37 @@ export type DraggableState =
           type: "dragging"
       }
 
-export type DropDataProps = {
-    note: {
-        id: string
-        width: number
-        height: number
-    }
-    clientX: number
-    clientY: number
-    offsetX: number
-    offsetY: number
-}
+export type NoteActionPayload =
+    | {
+          action: "move"
+          note: {
+              id: string
+              width: number
+              height: number
+          }
+          clientX: number
+          clientY: number
+          offsetX: number
+          offsetY: number
+      }
+    | {
+          action: "resize"
+          note: {
+              id: string
+              width: number
+              height: number
+          }
+      }
 
 export type DraggableNoteProps = {
     noteId: string
-    onDragEnd?: (data: DropDataProps) => void
+    onInteractionEnd?: (data: NoteActionPayload) => void
     setNode?: (el: HTMLDivElement | null) => void
 }
 
 export default function DraggableNote({
     noteId,
-    onDragEnd,
+    onInteractionEnd: onDragEnd,
     setNode,
 }: DraggableNoteProps) {
     const note = useSingleNoteYjs(noteId)
@@ -53,6 +65,13 @@ export default function DraggableNote({
     const containerRef = useRef<HTMLDivElement | null>(null)
     const headerRef = useRef<HTMLDivElement | null>(null)
     const offsetRef = useRef({ x: 0, y: 0 })
+    const isResizing = useRef(false)
+    const resizeStart = useRef({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    })
     const [dragState, setDragState] = useState<DraggableState>({ type: "idle" })
     const selectNote = useNotesStore((store) => store.selectNote)
 
@@ -86,6 +105,7 @@ export default function DraggableNote({
         setDragState({ type: "idle" })
 
         onDragEnd?.({
+            action: "move",
             note: {
                 id: noteId,
                 width: note?.width || 0,
@@ -123,6 +143,24 @@ export default function DraggableNote({
         })
     }
 
+    const handleResizeStart = (event: React.PointerEvent) => {
+        if (!note) return
+
+        event.preventDefault()
+        event.stopPropagation()
+
+        isResizing.current = true
+
+        resizeStart.current = {
+            x: event.clientX,
+            y: event.clientY,
+            width: note.width,
+            height: note.height,
+        }
+
+        event.currentTarget.setPointerCapture(event.pointerId)
+    }
+
     useEffect(() => {
         if (!headerRef.current) return
 
@@ -135,6 +173,57 @@ export default function DraggableNote({
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [note?.id])
+
+    useEffect(() => {
+        const el = containerRef.current
+        if (!el) return
+
+        const onMove = (e: PointerEvent) => {
+            if (!isResizing.current) return
+
+            const dx = e.clientX - resizeStart.current.x
+            const dy = e.clientY - resizeStart.current.y
+
+            const newWidth = resizeStart.current.width + dx
+            const newHeight = resizeStart.current.height + dy
+
+            if (containerRef.current) {
+                containerRef.current.style.width = `${newWidth}px`
+                containerRef.current.style.height = `${newHeight}px`
+            }
+        }
+
+        const onUp = (event: PointerEvent) => {
+            if (!isResizing.current || !note) return
+
+            isResizing.current = false
+
+            el.releasePointerCapture(event.pointerId)
+
+            const finalWidth = containerRef.current?.offsetWidth || note.width
+            const finalHeight =
+                containerRef.current?.offsetHeight || note.height
+
+            onDragEnd?.({
+                action: "resize",
+                note: {
+                    id: noteId,
+                    width: finalWidth,
+                    height: finalHeight,
+                },
+            })
+        }
+
+        window.addEventListener("pointermove", onMove)
+        window.addEventListener("pointerup", onUp)
+
+        return () => {
+            window.removeEventListener("pointermove", onMove)
+            window.removeEventListener("pointerup", onUp)
+        }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [note])
 
     if (!note) return null
 
@@ -155,7 +244,7 @@ export default function DraggableNote({
                     background: note.color ?? "yellow",
                 }}
                 className={clsx(
-                    "rounded-md shadow-md flex-inline overflow-hidden",
+                    "relative rounded-md shadow-md flex-inline overflow-hidden",
                     dragState.type === "dragging" && "opacity-50",
                 )}
             >
@@ -165,6 +254,11 @@ export default function DraggableNote({
                 />
 
                 <div className="flex-1 p-3">DraggableNote content</div>
+
+                <div
+                    onPointerDown={handleResizeStart}
+                    className="absolute bottom-0 right-0 w-3 h-3 cursor-se-resize bg-black/40"
+                />
             </div>
 
             {dragState.type === "preview" &&

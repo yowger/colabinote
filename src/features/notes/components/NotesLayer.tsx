@@ -13,7 +13,7 @@ import { useNoteActions } from "../hooks/useNoteActions"
 import FloatingToolbar from "./NoteTools/FloatingToolbar"
 import ColorTool from "./NoteTools/ColorTool"
 import RemoveTool from "./NoteTools/RemoveTool"
-import DraggableNote, { type DropDataProps } from "./Note/DraggableNote"
+import DraggableNote, { type NoteActionPayload } from "./Note/DraggableNote"
 import { getAnchorFromPlacement } from "./helpers/floating"
 import { useNotesMetaActions } from "../../presence/hooks/useNotesMetaActions"
 
@@ -32,7 +32,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
 
     const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
-        (s) => s.activeInteraction,
+        (store) => store.activeInteraction,
     )
 
     const { x, y, refs, strategy, placement } = useFloating({
@@ -50,30 +50,42 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const isTransforming =
         activeInteraction === "note-drag" || activeInteraction === "note-resize"
 
-    const handleDrop = ({
-        note,
-        clientX,
-        clientY,
-        offsetX,
-        offsetY,
-    }: DropDataProps) => {
+    const handleInteractionEnd = (data: NoteActionPayload) => {
+        console.log("🚀 ~ handleInteractionEnd ~ data:", data)
+        const { note } = data
+
         if (!canvasRef.current) return
+
         const rect = canvasRef.current.getBoundingClientRect()
 
-        const mouseX = clientX - rect.left
-        const mouseY = clientY - rect.top
+        if (data.action === "move") {
+            const mouseX = data.clientX - rect.left
+            const mouseY = data.clientY - rect.top
 
-        let x = mouseX - offsetX
-        let y = mouseY - offsetY
+            let x = mouseX - data.offsetX
+            let y = mouseY - data.offsetY
 
-        const maxX = rect.width - (note?.width ?? 0)
-        const maxY = rect.height - (note?.height ?? 0)
+            const maxX = rect.width - (note.width ?? 0)
+            const maxY = rect.height - (note.height ?? 0)
 
-        x = clamp(x, 0, maxX)
-        y = clamp(y, 0, maxY)
+            x = clamp(x, 0, maxX)
+            y = clamp(y, 0, maxY)
 
-        updateNote(note.id, { x, y })
-        updateNotesMeta(note.id, { x, y })
+            updateNote(note.id, { x, y })
+            updateNotesMeta(note.id, { x, y })
+
+            return
+        }
+
+        if (data.action === "resize") {
+            const width = note.width
+            const height = note.height
+
+            updateNote(note.id, { width, height })
+            updateNotesMeta(note.id, { width, height })
+
+            return
+        }
     }
 
     useLayoutEffect(() => {
@@ -92,7 +104,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                 <DraggableNote
                     key={noteId}
                     noteId={noteId}
-                    onDragEnd={handleDrop}
+                    onInteractionEnd={handleInteractionEnd}
                     setNode={(element) => {
                         if (element) {
                             noteRefs.current.set(noteId, element)
