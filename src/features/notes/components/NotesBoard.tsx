@@ -28,7 +28,7 @@ export default function NotesBoard() {
 
     const { viewportRef, handlers } = useBoardInteraction()
     const activeInteraction = useBoardInteractionStore(
-        (s) => s.activeInteraction,
+        (store) => store.activeInteraction,
     )
     const isPanning = activeInteraction === "pan"
 

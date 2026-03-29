@@ -15,6 +15,7 @@ import ColorTool from "./NoteTools/ColorTool"
 import RemoveTool from "./NoteTools/RemoveTool"
 import DraggableNote, { type DropDataProps } from "./Note/DraggableNote"
 import { getAnchorFromPlacement } from "./helpers/floating"
+import { useNotesMetaActions } from "../../presence/hooks/useNotesMetaActions"
 
 type NotesLayerProps = {
     noteIds: string[]
@@ -27,6 +28,7 @@ const clamp = (value: number, min: number, max: number) => {
 
 export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const { updateNote } = useNoteActions()
+    const { updateNotesMeta } = useNotesMetaActions()
 
     const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
@@ -38,9 +40,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         placement: "right-start",
         middleware: [offset(8), flip(), shift()],
         whileElementsMounted: (reference, floating, update) =>
-            autoUpdate(reference, floating, update, {
-                animationFrame: true,
-            }),
+            autoUpdate(reference, floating, update),
     })
 
     const noteRefs = useRef(new Map<string, HTMLDivElement | null>())
@@ -73,6 +73,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         y = clamp(y, 0, maxY)
 
         updateNote(note.id, { x, y })
+        updateNotesMeta(note.id, { x, y })
     }
 
     useLayoutEffect(() => {

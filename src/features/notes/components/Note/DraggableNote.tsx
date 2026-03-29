@@ -45,7 +45,7 @@ export type DraggableNoteProps = {
 
 export default function DraggableNote({
     noteId,
-    onDragEnd: onDrop,
+    onDragEnd,
     setNode,
 }: DraggableNoteProps) {
     const note = useSingleNoteYjs(noteId)
@@ -85,7 +85,7 @@ export default function DraggableNote({
 
         setDragState({ type: "idle" })
 
-        onDrop?.({
+        onDragEnd?.({
             note: {
                 id: noteId,
                 width: note?.width || 0,

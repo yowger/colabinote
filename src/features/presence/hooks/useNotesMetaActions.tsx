@@ -25,10 +25,13 @@ export function useNotesMetaActions() {
             notesMeta.set(noteId, noteMeta)
         }
 
-        if (updates.x !== undefined) noteMeta.set("x", updates.x)
-        if (updates.y !== undefined) noteMeta.set("y", updates.y)
-        if (updates.width !== undefined) noteMeta.set("width", updates.width)
-        if (updates.height !== undefined) noteMeta.set("height", updates.height)
+        ydoc.transact(() => {
+            Object.entries(updates).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    noteMeta.set(key, value)
+                }
+            })
+        })
     }
 
     return { updateNotesMeta }

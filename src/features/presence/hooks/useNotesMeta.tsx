@@ -29,8 +29,8 @@ export function useNotesMeta(): NoteMeta[] {
                     id,
                     x: value.get("x") ?? 0,
                     y: value.get("y") ?? 0,
-                    width: value.get("width") ?? 0,
-                    height: value.get("height") ?? 0,
+                    width: value.get("width") ?? 100,
+                    height: value.get("height") ?? 100,
                 })
             })
 
