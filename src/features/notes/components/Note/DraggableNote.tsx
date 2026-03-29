@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react"
 
 import { useSingleNoteYjs } from "../../hooks/useSingleNoteYjs"
 import NoteDragPreview from "./NotePreview"
+import { useNotesStore } from "../../stores/useNotesStore"
 
 import type {
     BaseEventPayload,
@@ -38,14 +39,12 @@ export type DropDataProps = {
 
 export type DraggableNoteProps = {
     noteId: string
-    canvasRef: React.RefObject<HTMLDivElement | null>
-    onDrop?: (data: DropDataProps) => void
+    onDragEnd?: (data: DropDataProps) => void
 }
 
 export default function DraggableNote({
     noteId,
-    onDrop,
-    canvasRef,
+    onDragEnd: onDrop,
 }: DraggableNoteProps) {
     const note = useSingleNoteYjs(noteId)
 
@@ -53,24 +52,17 @@ export default function DraggableNote({
     const headerRef = useRef<HTMLDivElement | null>(null)
     const offsetRef = useRef({ x: 0, y: 0 })
     const [dragState, setDragState] = useState<DraggableState>({ type: "idle" })
-
-    const getCanvasMousePosition = (clientX: number, clientY: number) => {
-        const rect = canvasRef.current?.getBoundingClientRect()
-        if (!rect) return null
-
-        return {
-            x: clientX - rect.left,
-            y: clientY - rect.top,
-        }
-    }
+    const selectNote = useNotesStore((store) => store.selectNote)
 
     const computeOffset = (clientX: number, clientY: number) => {
-        const mouse = getCanvasMousePosition(clientX, clientY)
-        if (!mouse || !note) return
+        if (!note) return
+
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect) return
 
         offsetRef.current = {
-            x: mouse.x - note.x,
-            y: mouse.y - note.y,
+            x: clientX - rect.left,
+            y: clientY - rect.top,
         }
     }
 
@@ -125,7 +117,7 @@ export default function DraggableNote({
     }
 
     useEffect(() => {
-        if (!note || !headerRef.current) return
+        if (!headerRef.current) return
 
         return draggable({
             element: headerRef.current,
@@ -135,13 +127,16 @@ export default function DraggableNote({
         })
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [note])
+    }, [note?.id])
 
     if (!note) return null
 
     return (
         <>
             <div
+                onMouseDown={() => {
+                    selectNote(noteId)
+                }}
                 ref={containerRef}
                 data-no-pan={true}
                 style={{

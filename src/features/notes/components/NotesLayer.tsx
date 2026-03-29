@@ -27,7 +27,7 @@ const clamp = (value: number, min: number, max: number) => {
 export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const { updateNote } = useNoteActions()
 
-    const selectedNoteId = useNotesStore((s) => s.selectedNoteId)
+    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
         (s) => s.activeInteraction,
     )
@@ -77,9 +77,8 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
             {noteIds.map((noteId) => (
                 <DraggableNote
                     key={noteId}
-                    canvasRef={canvasRef}
                     noteId={noteId}
-                    onDrop={handleDrop}
+                    onDragEnd={handleDrop}
                 />
             ))}
 
