@@ -1,4 +1,4 @@
-import AppLayout from "./layouts/AppLayout"
+import AppLayout from "./ui/layouts/AppLayout"
 import { HocuspocusProviderWrapper } from "./providers/hocuspocusProvider"
 
 export default function App() {

@@ -4,7 +4,7 @@ import BoardBackground from "./Background"
 import Note, { type Note as NoteType } from "./Note/Note"
 import GhostNote from "./GhostNote"
 import { useBoardInteraction } from "../hooks/useBoardInteraction"
-import { useNoteInteraction } from "../features/notes/hooks/useNoteInteraction"
+import { useNoteInteraction } from "../core/notes/hooks/useNoteInteraction"
 import FocusedNoteOverlay from "./NoteOverlay/NoteOverlay"
 
 const BOARD_SIZE = { width: 2000, height: 2000 }
