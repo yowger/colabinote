@@ -1,218 +1,204 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import type { GhostNoteProps } from "../../../components/GhostNote"
-import type { Note } from "../types/note"
+import type {
+    BaseEventPayload,
+    ElementDragType,
+} from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 
-const MIN_NOTE_DIMENSIONS = { width: 215, height: 215 }
+type InteractionState =
+    | { type: "idle" }
+    | { type: "drag-preview"; container: HTMLElement }
+    | { type: "dragging" }
+    | { type: "resizing" }
 
-export const NoteInteractionType = {
-    DRAG: "drag" as const,
-    RESIZE: "resize" as const,
+type Note = {
+    id: string
+    width: number
+    height: number
 }
 
-export type NoteInteraction =
-    | {
-          noteId: string
-          type: "drag"
-          startX: number
-          startY: number
-          noteStartX: number
-          noteStartY: number
-          noteWidth: number
-          noteHeight: number
-          noteColor?: Note["color"]
-      }
-    | {
-          noteId: string
-          type: "resize"
-          startX: number
-          startY: number
-          noteStartX: number
-          noteStartY: number
-          noteStartWidth: number
-          noteStartHeight: number
-          noteColor?: Note["color"]
-      }
-    | null
+type Params = {
+    note: Note | null
+    noteId: string
+    containerRef: React.RefObject<HTMLDivElement | null>
+    headerRef: React.RefObject<HTMLElement | null>
 
-export function useNoteInteraction(
-    boardSize: { width: number; height: number },
-    onCommitNote: (id: string, updates: Partial<Note>) => void,
-) {
-    const [interaction, setInteraction] = useState<NoteInteraction>(null)
-    const [ghostNote, setGhostNote] = useState<GhostNoteProps | null>(null)
+    onCommit?: (
+        data:
+            | {
+                  action: "move"
+                  note: Note
+                  clientX: number
+                  clientY: number
+                  offsetX: number
+                  offsetY: number
+              }
+            | {
+                  action: "resize"
+                  note: Note
+              },
+    ) => void
+}
 
-    const liveDragRef = useRef<{
-        noteId: string
-        x: number
-        y: number
-    } | null>(null)
+const MIN_WIDTH = 120
+const MIN_HEIGHT = 80
+const MAX_WIDTH = 600
+const MAX_HEIGHT = 500
 
-    const liveResizeRef = useRef<{
-        noteId: string
-        width: number
-        height: number
-    } | null>(null)
+const clamp = (v: number, min: number, max: number) =>
+    Math.max(min, Math.min(v, max))
 
-    const onDragPointerDown = (
-        pointerEvent: React.PointerEvent<HTMLDivElement>,
-        note: Note,
+export function useNoteInteractions({
+    note,
+    containerRef,
+    headerRef,
+    onCommit,
+}: Params) {
+    const [state, setState] = useState<InteractionState>({ type: "idle" })
+
+    const offsetRef = useRef({ x: 0, y: 0 })
+
+    const resizeStart = useRef({
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+    })
+
+    const onDragStart = (data: BaseEventPayload<ElementDragType>) => {
+        const { clientX, clientY } = data.location.current.input
+        const rect = containerRef.current?.getBoundingClientRect()
+        if (!rect) return
+
+        offsetRef.current = {
+            x: clientX - rect.left,
+            y: clientY - rect.top,
+        }
+
+        setState({ type: "dragging" })
+    }
+
+    const onDragPreview = (
+        data: BaseEventPayload<ElementDragType> & {
+            nativeSetDragImage: DataTransfer["setDragImage"] | null
+        },
     ) => {
-        pointerEvent.preventDefault()
-        pointerEvent.stopPropagation()
-        pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
+        const { nativeSetDragImage } = data
 
-        setInteraction({
-            type: NoteInteractionType.DRAG,
-            startX: pointerEvent.clientX,
-            startY: pointerEvent.clientY,
-            noteId: note.id,
-            noteStartX: note.x,
-            noteStartY: note.y,
-            noteWidth: note.width,
-            noteHeight: note.height,
-            noteColor: note.color,
+        setCustomNativeDragPreview({
+            nativeSetDragImage,
+            getOffset: () => offsetRef.current,
+            render({ container }) {
+                setState({ type: "drag-preview", container })
+            },
         })
     }
 
-    const onResizePointerDown = (
-        pointerEvent: React.PointerEvent,
-        note: Note,
-    ) => {
-        pointerEvent.preventDefault()
-        pointerEvent.stopPropagation()
-        pointerEvent.currentTarget.setPointerCapture(pointerEvent.pointerId)
+    const onDrop = (data: BaseEventPayload<ElementDragType>) => {
+        const { clientX, clientY } = data.location.current.input
 
-        setInteraction({
-            type: NoteInteractionType.RESIZE,
-            startX: pointerEvent.clientX,
-            startY: pointerEvent.clientY,
-            noteId: note.id,
-            noteStartX: note.x,
-            noteStartY: note.y,
-            noteStartWidth: note.width,
-            noteStartHeight: note.height,
-            noteColor: note.color,
+        setState({ type: "idle" })
+
+        if (!note) return
+
+        onCommit?.({
+            action: "move",
+            note,
+            clientX,
+            clientY,
+            offsetX: offsetRef.current.x,
+            offsetY: offsetRef.current.y,
         })
     }
 
-    const onPointerMove = (
-        pointerEvent: React.PointerEvent<HTMLDivElement>,
-    ) => {
-        if (!interaction) return
+    useEffect(() => {
+        if (!headerRef.current) return
 
-        if (interaction.type === NoteInteractionType.DRAG) {
-            const deltaX = pointerEvent.clientX - interaction.startX
-            const deltaY = pointerEvent.clientY - interaction.startY
+        return draggable({
+            element: headerRef.current,
+            onDragStart,
+            onGenerateDragPreview: onDragPreview,
+            onDrop,
+        })
 
-            const x = Math.max(
-                0,
-                Math.min(
-                    boardSize.width - interaction.noteWidth,
-                    interaction.noteStartX + deltaX,
-                ),
-            )
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [headerRef.current])
 
-            const y = Math.max(
-                0,
-                Math.min(
-                    boardSize.height - interaction.noteHeight,
-                    interaction.noteStartY + deltaY,
-                ),
-            )
+    const onResizeStart = (e: React.PointerEvent) => {
+        if (!note) return
 
-            setGhostNote({
-                x,
-                y,
-                width: interaction.noteWidth,
-                height: interaction.noteHeight,
-                color: interaction.noteColor,
-            })
+        e.preventDefault()
+        e.stopPropagation()
 
-            liveDragRef.current = {
-                noteId: interaction.noteId,
-                x,
-                y,
-            }
+        setState({ type: "resizing" })
+
+        resizeStart.current = {
+            x: e.clientX,
+            y: e.clientY,
+            width: note.width,
+            height: note.height,
         }
 
-        if (interaction.type === NoteInteractionType.RESIZE) {
-            const deltaX = pointerEvent.clientX - interaction.startX
-            const deltaY = pointerEvent.clientY - interaction.startY
-
-            const width = Math.max(
-                MIN_NOTE_DIMENSIONS.width,
-                interaction.noteStartWidth + deltaX,
-            )
-
-            const height = Math.max(
-                MIN_NOTE_DIMENSIONS.height,
-                interaction.noteStartHeight + deltaY,
-            )
-
-            setGhostNote({
-                x: interaction.noteStartX,
-                y: interaction.noteStartY,
-                width,
-                height,
-                color: interaction.noteColor,
-            })
-
-            liveResizeRef.current = {
-                noteId: interaction.noteId,
-                width,
-                height,
-            }
-        }
+        e.currentTarget.setPointerCapture(e.pointerId)
     }
 
-    const onPointerUp = (pointerEvent: React.PointerEvent<HTMLDivElement>) => {
-        pointerEvent.currentTarget.releasePointerCapture(pointerEvent.pointerId)
+    useEffect(() => {
+        const containerElement = containerRef.current
+        if (!containerElement) return
 
-        if (
-            interaction?.type === NoteInteractionType.DRAG &&
-            liveDragRef.current
-        ) {
-            onCommitNote(liveDragRef.current.noteId, {
-                x: liveDragRef.current.x,
-                y: liveDragRef.current.y,
+        const onMove = (pointerEvent: PointerEvent) => {
+            if (state.type !== "resizing") return
+
+            const dimensionX = pointerEvent.clientX - resizeStart.current.x
+            const dimensionY = pointerEvent.clientY - resizeStart.current.y
+
+            const newWidth = clamp(
+                resizeStart.current.width + dimensionX,
+                MIN_WIDTH,
+                MAX_WIDTH,
+            )
+
+            const newHeight = clamp(
+                resizeStart.current.height + dimensionY,
+                MIN_HEIGHT,
+                MAX_HEIGHT,
+            )
+
+            containerElement.style.width = `${newWidth}px`
+            containerElement.style.height = `${newHeight}px`
+        }
+
+        const onUp = (e: PointerEvent) => {
+            if (state.type !== "resizing" || !note) return
+
+            setState({ type: "idle" })
+            containerElement.releasePointerCapture(e.pointerId)
+
+            onCommit?.({
+                action: "resize",
+                note: {
+                    id: note.id,
+                    width: containerElement.offsetWidth,
+                    height: containerElement.offsetHeight,
+                },
             })
         }
 
-        if (
-            interaction?.type === NoteInteractionType.RESIZE &&
-            liveResizeRef.current
-        ) {
-            onCommitNote(liveResizeRef.current.noteId, {
-                width: liveResizeRef.current.width,
-                height: liveResizeRef.current.height,
-            })
+        window.addEventListener("pointermove", onMove)
+        window.addEventListener("pointerup", onUp)
+
+        return () => {
+            window.removeEventListener("pointermove", onMove)
+            window.removeEventListener("pointerup", onUp)
         }
 
-        setInteraction(null)
-        setGhostNote(null)
-        liveDragRef.current = null
-        liveResizeRef.current = null
-    }
-
-    const getCursorClass = () => {
-        switch (interaction?.type) {
-            case NoteInteractionType.DRAG:
-                return "cursor-grabbing"
-            case NoteInteractionType.RESIZE:
-                return "cursor-se-resize"
-            default:
-                return "cursor-default"
-        }
-    }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state, note])
 
     return {
-        ghostNote,
-        onDragPointerDown,
-        onResizePointerDown,
-        onPointerMove,
-        onPointerUp,
-        getCursorClass,
-        isInteracting: interaction !== null,
+        state,
+        onResizeStart,
     }
 }

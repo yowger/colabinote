@@ -13,9 +13,11 @@ import { useNoteActions } from "../hooks/useNoteActions"
 import FloatingToolbar from "./NoteTools/FloatingToolbar"
 import ColorTool from "./NoteTools/ColorTool"
 import RemoveTool from "./NoteTools/RemoveTool"
-import DraggableNote, { type NoteActionPayload } from "./Note/DraggableNote"
+import DraggableNote from "./Note/DraggableNote"
 import { getAnchorFromPlacement } from "./helpers/floating"
 import { useNotesMetaActions } from "../../presence/hooks/useNotesMetaActions"
+
+import type { NoteActionPayload } from "../types/note"
 
 type NotesLayerProps = {
     noteIds: string[]
@@ -51,7 +53,6 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         activeInteraction === "note-drag" || activeInteraction === "note-resize"
 
     const handleInteractionEnd = (data: NoteActionPayload) => {
-        console.log("🚀 ~ handleInteractionEnd ~ data:", data)
         const { note } = data
 
         if (!canvasRef.current) return
