@@ -8,7 +8,7 @@ import {
 import { useLayoutEffect, useRef } from "react"
 
 import { useBoardInteractionStore } from "../../features/boards/stores/useBoardInteractionStore"
-import { useNotesStore } from "../../core/notes/stores/useNotesStore"
+import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import { useNoteActions } from "../../core/yjs/notes/useNoteActions"
 import FloatingToolbar from "../toolbar/FloatingToolbar"
 import ColorTool from "../toolbar/ColorTool"
@@ -51,7 +51,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const { updateNote } = useNoteActions()
     // const { updateNotesMeta } = useNotesMetaActions()
 
-    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
+    const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
     )

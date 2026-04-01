@@ -2,7 +2,7 @@ import { EditorContent } from "@tiptap/react"
 import { useRef, useState, type RefObject } from "react"
 import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
 
-import { useNotesStore } from "../../core/notes/stores/useNotesStore"
+import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import type { Note } from "../../core/notes/types/note"
 import { useNoteEditor } from "../../features/editor/hooks/useNoteEditor"
 import BubbleMenuComponent from "../toolbar/BubbleMenu"
@@ -14,8 +14,8 @@ type NoteContentProps = {
 export default function NoteContent({ note }: NoteContentProps) {
     const ref = useRef<HTMLDivElement>(null)
     const [localEditing, setLocalEditing] = useState(false)
-    const updateNote = useNotesStore((store) => store.updateNote)
-    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
+    const updateNote = useNoteUiStateStore((store) => store.updateNote)
+    const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
     const debouncedUpdate = useDebounceCallback((content: string) => {
         updateNote(note.id, { content })
     }, 500)

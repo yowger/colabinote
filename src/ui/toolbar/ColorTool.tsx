@@ -4,7 +4,7 @@ import clsx from "clsx"
 
 import { NOTE_COLORS } from "../../components/Note/types/colors"
 import { COLOR_BUTTON_STYLES } from "../../components/Note/styles/noteColorStyles"
-import { useNotesStore } from "../../core/notes/stores/useNotesStore"
+import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import PopoverContent from "./PopoverContent"
 import ToolbarButton from "./ToolbarButton"
 import { DEFAULT_NOTE_COLOR } from "../../core/notes/constants/defaults"
@@ -19,7 +19,7 @@ type ColorToolProps = {
 }
 
 export default function ColorTool({ position = "right" }: ColorToolProps) {
-    const noteId = useNotesStore((store) => store.selectedNoteId)
+    const noteId = useNoteUiStateStore((store) => store.selectedNoteId)
     const { updateNote } = useNoteActions()
     const note = useSingleNoteYjs(noteId || "")
     const selectedNoteColor = note?.color ?? DEFAULT_NOTE_COLOR

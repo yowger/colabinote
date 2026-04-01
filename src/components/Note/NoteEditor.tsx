@@ -1,11 +1,11 @@
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 
-import { useNotesStore } from "../../core/notes/stores/useNotesStore"
+import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import type { Note } from "../../core/notes/types/note"
 
 export default function NoteEditor({ note }: { note: Note }) {
-    const updateNote = useNotesStore((s) => s.updateNote)
+    const updateNote = useNoteUiStateStore((s) => s.updateNote)
 
     const editor = useEditor({
         extensions: [StarterKit],

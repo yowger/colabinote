@@ -14,7 +14,7 @@ type NotesState = {
     selectNote: (id: string | null) => void
 }
 
-export const useNotesStore = create<NotesState>((set) => ({
+export const useNoteUiStateStore = create<NotesState>((set) => ({
     notes: {},
     topZ: 1,
     selectedNoteId: null,

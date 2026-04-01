@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react"
 // import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
-import { useNotesStore } from "../../core/notes/stores/useNotesStore"
+import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 
 type NoteHeaderProps = {
     noteId: string
@@ -21,7 +21,7 @@ export default function NoteHeader({ noteId }: NoteHeaderProps) {
     // const textareaRef = useRef<HTMLTextAreaElement>(null)
     // const [localEditing, setLocalEditing] = useState(false)
 
-    const selectedNoteId = useNotesStore((store) => store.selectedNoteId)
+    const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
     // const updateNote = useNotesStore((store) => store.updateNote)
 
     // const debouncedUpdate = useDebounceCallback((value: string) => {

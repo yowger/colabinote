@@ -3,7 +3,7 @@ import clsx from "clsx"
 import { useRef } from "react"
 
 import { useSingleNoteYjs } from "../../core/yjs/notes/useSingleNoteYjs"
-import { useNotesStore } from "../../core/notes/stores/useNotesStore"
+import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import NoteDragPreview from "./NotePreview"
 
 import type { NoteActionPayload } from "../../core/notes/types/note"
@@ -25,7 +25,7 @@ export default function DraggableNote({
     const containerRef = useRef<HTMLDivElement | null>(null)
     const headerRef = useRef<HTMLDivElement | null>(null)
 
-    const selectNote = useNotesStore((store) => store.selectNote)
+    const selectNote = useNoteUiStateStore((store) => store.selectNote)
 
     const { state, onResizeStart } = useNoteInteractions({
         note,
