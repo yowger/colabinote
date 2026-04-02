@@ -15,7 +15,9 @@ import ColorTool from "../toolbar/ColorTool"
 import RemoveTool from "../toolbar/RemoveTool"
 import DraggableNote from "./DraggableNote"
 import { getAnchorFromPlacement } from "../../core/notes/helpers/floating"
-// import { useNotesMetaActions } from "../../presence/hooks/useNotesMetaActions"
+import { usePresenceUsers } from "../../core/presence/hooks/usePresenceUsers"
+import PresenceOverlayLayer from "../presence/PresenceOverlayLayer"
+import { usePresenceActions } from "../../core/presence/hooks/usePresenceActions"
 
 import type { NoteActionPayload } from "../../core/notes/types/note"
 
@@ -49,12 +51,14 @@ function computeNextPosition(
 
 export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const { updateNote } = useNoteActions()
-    // const { updateNotesMeta } = useNotesMetaActions()
 
     const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
     )
+
+    const users = usePresenceUsers()
+    const { clearAction } = usePresenceActions()
 
     const { x, y, refs, strategy, placement } = useFloating({
         strategy: "fixed",
@@ -75,11 +79,12 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         if (!canvasRef.current) return
         const rect = canvasRef.current.getBoundingClientRect()
 
+        clearAction()
+
         if (data.action === "move") {
             const { x, y } = computeNextPosition(data, rect)
 
             updateNote(data.note.id, { x, y })
-            // updateNotesMeta(data.note.id, { x, y })
             return
         }
 
@@ -88,11 +93,6 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                 width: data.note.width,
                 height: data.note.height,
             })
-
-            // updateNotesMeta(data.note.id, {
-            //     width: data.note.width,
-            //     height: data.note.height,
-            // })
         }
     }
 
@@ -124,6 +124,12 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                     }}
                 />
             ))}
+
+            <PresenceOverlayLayer
+                users={users}
+                noteRefs={noteRefs}
+                canvasRef={canvasRef}
+            />
 
             {selectedNoteId && !isTransforming && (
                 <FloatingToolbar

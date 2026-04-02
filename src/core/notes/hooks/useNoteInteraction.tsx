@@ -19,27 +19,31 @@ type Note = {
     height: number
 }
 
+type MovePayload = {
+    action: "move"
+    note: Note
+    clientX: number
+    clientY: number
+    offsetX: number
+    offsetY: number
+}
+
+type ResizePayload = {
+    action: "resize"
+    note: Note
+}
+
 type Params = {
     note: Note | null
     noteId: string
     containerRef: React.RefObject<HTMLDivElement | null>
     headerRef: React.RefObject<HTMLElement | null>
-
-    onCommit?: (
-        data:
-            | {
-                  action: "move"
-                  note: Note
-                  clientX: number
-                  clientY: number
-                  offsetX: number
-                  offsetY: number
-              }
-            | {
-                  action: "resize"
-                  note: Note
-              },
-    ) => void
+    onCommit?: (data: MovePayload | ResizePayload) => void
+    onDragStart?: (note: Note) => void
+    onDragMove?: (payload: MovePayload) => void
+    onDragEnd?: (payload: MovePayload) => void
+    onResizeStart?: (note: Note) => void
+    onResizeEnd?: (payload: ResizePayload) => void
 }
 
 const MIN_WIDTH = 120
@@ -55,6 +59,10 @@ export function useNoteInteractions({
     containerRef,
     headerRef,
     onCommit,
+    onDragStart,
+    onDragEnd,
+    onResizeStart,
+    onResizeEnd,
 }: Params) {
     const [state, setState] = useState<InteractionState>({ type: "idle" })
 
@@ -67,7 +75,9 @@ export function useNoteInteractions({
         height: 0,
     })
 
-    const onDragStart = (data: BaseEventPayload<ElementDragType>) => {
+    const handleDragStart = (data: BaseEventPayload<ElementDragType>) => {
+        if (!note) return
+
         const { clientX, clientY } = data.location.current.input
         const rect = containerRef.current?.getBoundingClientRect()
         if (!rect) return
@@ -78,9 +88,11 @@ export function useNoteInteractions({
         }
 
         setState({ type: "dragging" })
+
+        onDragStart?.(note)
     }
 
-    const onDragPreview = (
+    const handleDragPreview = (
         data: BaseEventPayload<ElementDragType> & {
             nativeSetDragImage: DataTransfer["setDragImage"] | null
         },
@@ -96,21 +108,24 @@ export function useNoteInteractions({
         })
     }
 
-    const onDrop = (data: BaseEventPayload<ElementDragType>) => {
+    const handleDrop = (data: BaseEventPayload<ElementDragType>) => {
         const { clientX, clientY } = data.location.current.input
 
         setState({ type: "idle" })
 
         if (!note) return
 
-        onCommit?.({
+        const payload: MovePayload = {
             action: "move",
             note,
             clientX,
             clientY,
             offsetX: offsetRef.current.x,
             offsetY: offsetRef.current.y,
-        })
+        }
+
+        onCommit?.(payload)
+        onDragEnd?.(payload)
     }
 
     useEffect(() => {
@@ -118,15 +133,15 @@ export function useNoteInteractions({
 
         return draggable({
             element: headerRef.current,
-            onDragStart,
-            onGenerateDragPreview: onDragPreview,
-            onDrop,
+            onDragStart: handleDragStart,
+            onGenerateDragPreview: handleDragPreview,
+            onDrop: handleDrop,
         })
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [headerRef.current])
 
-    const onResizeStart = (e: React.PointerEvent) => {
+    const handleResizeStart = (e: React.PointerEvent) => {
         if (!note) return
 
         e.preventDefault()
@@ -141,6 +156,8 @@ export function useNoteInteractions({
             height: note.height,
         }
 
+        onResizeStart?.(note)
+
         e.currentTarget.setPointerCapture(e.pointerId)
     }
 
@@ -151,17 +168,17 @@ export function useNoteInteractions({
         const onMove = (pointerEvent: PointerEvent) => {
             if (state.type !== "resizing") return
 
-            const dimensionX = pointerEvent.clientX - resizeStart.current.x
-            const dimensionY = pointerEvent.clientY - resizeStart.current.y
+            const dx = pointerEvent.clientX - resizeStart.current.x
+            const dy = pointerEvent.clientY - resizeStart.current.y
 
             const newWidth = clamp(
-                resizeStart.current.width + dimensionX,
+                resizeStart.current.width + dx,
                 MIN_WIDTH,
                 MAX_WIDTH,
             )
 
             const newHeight = clamp(
-                resizeStart.current.height + dimensionY,
+                resizeStart.current.height + dy,
                 MIN_HEIGHT,
                 MAX_HEIGHT,
             )
@@ -176,14 +193,17 @@ export function useNoteInteractions({
             setState({ type: "idle" })
             containerElement.releasePointerCapture(e.pointerId)
 
-            onCommit?.({
+            const payload: ResizePayload = {
                 action: "resize",
                 note: {
                     id: note.id,
                     width: containerElement.offsetWidth,
                     height: containerElement.offsetHeight,
                 },
-            })
+            }
+
+            onCommit?.(payload)
+            onResizeEnd?.(payload)
         }
 
         window.addEventListener("pointermove", onMove)
@@ -199,6 +219,6 @@ export function useNoteInteractions({
 
     return {
         state,
-        onResizeStart,
+        onResizeStart: handleResizeStart,
     }
 }

@@ -5,9 +5,10 @@ import { useRef } from "react"
 import { useSingleNoteYjs } from "../../core/yjs/notes/useSingleNoteYjs"
 import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import NoteDragPreview from "./NotePreview"
+import { useNoteInteractions } from "../../core/notes/hooks/useNoteInteraction"
+import { usePresenceActions } from "../../core/presence/hooks/usePresenceActions"
 
 import type { NoteActionPayload } from "../../core/notes/types/note"
-import { useNoteInteractions } from "../../core/notes/hooks/useNoteInteraction"
 
 export type DraggableNoteProps = {
     noteId: string
@@ -27,12 +28,25 @@ export default function DraggableNote({
 
     const selectNote = useNoteUiStateStore((store) => store.selectNote)
 
+    const { setAction } = usePresenceActions()
     const { state, onResizeStart } = useNoteInteractions({
         note,
         noteId,
         containerRef,
         headerRef,
         onCommit: onDragEnd,
+        onDragStart: (note) => {
+            setAction({
+                type: "dragging-note",
+                noteId: note.id,
+            })
+        },
+        onResizeStart: (note) => {
+            setAction({
+                type: "resizing-note",
+                noteId: note.id,
+            })
+        },
     })
 
     const setContainerRef = (node: HTMLDivElement | null) => {

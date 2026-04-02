@@ -14,6 +14,7 @@ export type PresenceStatus = "active" | "idle"
 export type PresenceAction =
     | { type: "dragging-note"; noteId: string }
     | { type: "editing-note"; noteId: string }
+    | { type: "resizing-note"; noteId: string }
     | { type: "panning" }
     | null
 
