@@ -1,16 +1,16 @@
 import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
-import type { AwarenessInteraction } from "../types/awareness"
+import type { PresenceAction } from "../types/presence"
 
 export function usePresenceActions() {
     const { provider } = useHocuspocusContext()
 
-    const setActiveNoteId = (noteId: string | null) => {
-        provider?.awareness?.setLocalStateField("activeNoteId", noteId)
+    const setAction = (action: PresenceAction) => {
+        provider?.awareness?.setLocalStateField("action", action)
     }
 
-    const setInteraction = (interaction: AwarenessInteraction) => {
-        provider?.awareness?.setLocalStateField("interaction", interaction)
+    const clearAction = () => {
+        provider?.awareness?.setLocalStateField("action", null)
     }
 
-    return { setActiveNoteId, setInteraction }
+    return { setAction, clearAction }
 }

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 
 import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
-import type { AwarenessState } from "../types/awareness"
+import type { PresenceState } from "../types/presence"
 
-export function useAwarenessUsers() {
+export function usePresenceUsers() {
     const { provider } = useHocuspocusContext()
     const [users, setUsers] = useState<
-        (AwarenessState & { clientId: number })[]
+        (PresenceState & { clientId: number })[]
     >([])
 
     useEffect(() => {
@@ -15,12 +15,14 @@ export function useAwarenessUsers() {
         const awareness = provider.awareness
 
         const update = () => {
-            const states = Array.from(awareness.getStates().entries()).map(
-                ([clientId, state]) => ({
+            const states = Array.from(awareness.getStates().entries())
+                .map(([clientId, state]) => ({
                     clientId,
-                    ...(state as AwarenessState),
-                }),
-            )
+                    ...(state as Partial<PresenceState>),
+                }))
+                .filter((u): u is PresenceState & { clientId: number } => {
+                    return !!u.user
+                })
 
             setUsers(states)
         }

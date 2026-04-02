@@ -4,9 +4,17 @@ import * as Y from "yjs"
 import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
 import { MAP_ID } from "../constants/note"
 
+export type NoteMeta = {
+    id: string
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
 export function useNotesMeta() {
     const { provider } = useHocuspocusContext()
-    const [notesMeta, setNotesMeta] = useState<unknown[]>([])
+    const [notesMeta, setNotesMeta] = useState<NoteMeta[]>([])
 
     useEffect(() => {
         const doc = provider?.document
@@ -16,15 +24,15 @@ export function useNotesMeta() {
         if (!yNotes || !(yNotes instanceof Y.Map)) return
 
         const update = () => {
-            const result: unknown[] = []
+            const result: NoteMeta[] = []
 
             yNotes.forEach((yNote, id) => {
                 result.push({
                     id,
-                    x: yNote.get("x"),
-                    y: yNote.get("y"),
-                    width: yNote.get("width"),
-                    height: yNote.get("height"),
+                    x: yNote.get("x") as number,
+                    y: yNote.get("y") as number,
+                    width: yNote.get("width") as number,
+                    height: yNote.get("height") as number,
                 })
             })
 
@@ -35,7 +43,7 @@ export function useNotesMeta() {
         yNotes.observeDeep(update)
 
         return () => {
-            yNotes.observeDeep(update)
+            yNotes.unobserveDeep(update)
         }
     }, [provider])
 

@@ -1,24 +1,41 @@
-import { useEffect } from "react"
-
+import { useEffect, useRef } from "react"
 import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
 
+function generateColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16)
+}
+
 const name = Date.now().toString()
-const color = "#" + Math.floor(Math.random() * 16777215).toString(16)
 
 export function usePresenceUser() {
     const { provider } = useHocuspocusContext()
 
-    useEffect(() => {
-        function handleStorageChange() {
-            const awareness = provider?.awareness
-            if (!awareness) return
+    const userRef = useRef({
+        id: crypto.randomUUID(),
+        name: name,
+        color: generateColor(),
+    })
 
-            const currentState = provider?.awareness.getLocalState()
-            if (!currentState?.user) {
-                provider?.awareness.setLocalStateField("user", { name, color })
-            }
+    useEffect(() => {
+        const awareness = provider?.awareness
+        if (!awareness) return
+
+        const currentState = awareness.getLocalState()
+
+        if (!currentState?.user) {
+            awareness.setLocalStateField("user", userRef.current)
         }
 
-        handleStorageChange()
+        if (!currentState?.cursor) {
+            awareness.setLocalStateField("cursor", null)
+        }
+
+        if (!currentState?.status) {
+            awareness.setLocalStateField("status", "active")
+        }
+
+        if (!currentState?.action) {
+            awareness.setLocalStateField("action", null)
+        }
     }, [provider])
 }

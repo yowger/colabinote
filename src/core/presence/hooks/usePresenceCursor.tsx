@@ -9,24 +9,35 @@ export function usePresenceCursor() {
     const idleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     const resetIdle = () => {
-        if (!provider?.awareness) return
+        const awareness = provider?.awareness
+        if (!awareness) return
 
-        provider.awareness.setLocalStateField("status", "active")
+        const current = awareness.getLocalState()
+
+        if (current?.status !== "active") {
+            awareness.setLocalStateField("status", "active")
+        }
 
         if (idleTimeout.current) {
             clearTimeout(idleTimeout.current)
         }
 
         idleTimeout.current = setTimeout(() => {
-            provider.awareness?.setLocalStateField("status", "idle")
+            awareness.setLocalStateField("status", "idle")
         }, 5000)
     }
 
     const updateCursor = (x: number, y: number) => {
-        if (!provider?.awareness || frame.current !== null) return
+        const awareness = provider?.awareness
+        if (!awareness || frame.current !== null) return
 
         frame.current = requestAnimationFrame(() => {
-            provider.awareness?.setLocalStateField("cursor", { x, y })
+            const current = awareness.getLocalState()
+
+            if (current?.cursor?.x !== x || current?.cursor?.y !== y) {
+                awareness.setLocalStateField("cursor", { x, y })
+            }
+
             frame.current = null
         })
 
@@ -34,12 +45,20 @@ export function usePresenceCursor() {
     }
 
     useEffect(() => {
-        if (!provider?.awareness) return
+        const awareness = provider?.awareness
+        if (!awareness) return
 
         const handleVisibility = () => {
             if (document.hidden) {
-                provider.awareness?.setLocalStateField("cursor", null)
-                provider.awareness?.setLocalStateField("status", "idle")
+                const current = awareness.getLocalState()
+
+                if (current?.cursor !== null) {
+                    awareness.setLocalStateField("cursor", null)
+                }
+
+                if (current?.status !== "idle") {
+                    awareness.setLocalStateField("status", "idle")
+                }
             }
         }
 
@@ -52,8 +71,13 @@ export function usePresenceCursor() {
 
     useEffect(() => {
         return () => {
-            if (frame.current) cancelAnimationFrame(frame.current)
-            if (idleTimeout.current) clearTimeout(idleTimeout.current)
+            if (frame.current) {
+                cancelAnimationFrame(frame.current)
+            }
+
+            if (idleTimeout.current) {
+                clearTimeout(idleTimeout.current)
+            }
         }
     }, [])
 

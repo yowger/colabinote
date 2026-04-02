@@ -8,7 +8,7 @@ import { MiniMap } from "../../features/minimap/components/Minimap"
 import { useBoardInteraction } from "../../features/interactions/hooks/useBoardInteraction"
 import { useBoardInteractionStore } from "../../features/boards/stores/useBoardInteractionStore"
 import { useNoteIdsYjs } from "../../core/yjs/notes/useNoteIds"
-import { useAwarenessUsers } from "../../core/presence/hooks/useAwarenessUsers"
+import { usePresenceUsers } from "../../core/presence/hooks/usePresenceUsers"
 import { usePresenceUser } from "../../core/presence/hooks/usePresenceUser"
 // import { useNotesMeta } from "../../presence/hooks/useNotesMeta"
 import CursorsLayer from "../cursor/components/CursorsLayer"
@@ -25,7 +25,7 @@ export default function NotesBoard() {
     usePresenceUser()
 
     const { provider } = useHocuspocusContext()
-    const users = useAwarenessUsers()
+    const users = usePresenceUsers()
 
     const { viewportRef, handlers } = useBoardInteraction()
     const activeInteraction = useBoardInteractionStore(

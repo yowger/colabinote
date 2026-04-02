@@ -1,7 +1,7 @@
-import type { AwarenessState } from "../../../core/presence/types/awareness"
+import type { PresenceState } from "../../../core/presence/types/presence"
 import { Cursor } from "./Cursor"
 
-type CursorUser = AwarenessState & { clientId: number }
+type CursorUser = PresenceState & { clientId: number }
 
 type CursorsLayerProps = {
     users: CursorUser[]
