@@ -1,5 +1,3 @@
-import { useLayoutEffect, useState } from "react"
-
 import {
     isDragging,
     isEditing,
@@ -11,14 +9,9 @@ import type { PresenceState } from "../../core/presence/types/presence"
 type Props = {
     users: (PresenceState & { clientId: number })[]
     noteRefs: React.RefObject<Map<string, HTMLDivElement | null>>
-    canvasRef: React.RefObject<HTMLDivElement | null>
 }
 
-export default function PresenceOverlayLayer({
-    users,
-    noteRefs,
-    // canvasRef,
-}: Props) {
+export default function PresenceOverlayLayer({ users, noteRefs }: Props) {
     return (
         <>
             {users.map((user) => {
@@ -33,47 +26,48 @@ export default function PresenceOverlayLayer({
                 return (
                     <div
                         key={user.clientId}
-                        className="absolute pointer-events-none z-50"
+                        className="fixed pointer-events-none z-50"
                         style={{
                             top: rect.top,
                             left: rect.left,
                             width: rect.width,
                             height: rect.height,
+                            border: `2.5px solid ${user.user.color}`,
                         }}
                     >
                         {isDragging(action) && (
-                            <div className="absolute -top-24">
+                            <div className="absolute -top-10">
                                 <div
-                                    className="text-[10px] px-2 py-0.5 rounded text-white whitespace-nowrap"
+                                    className="text-[14px] px-2 py-0.5 rounded text-white whitespace-nowrap"
                                     style={{
                                         backgroundColor: user.user.color,
                                     }}
                                 >
-                                    {user.user.name} is dragging this note
+                                    {user.user.name} is dragging
                                 </div>
                             </div>
                         )}
                         {isResizing(action) && (
-                            <div className="absolute -top-24">
+                            <div className="absolute -top-10">
                                 <div
-                                    className="text-[10px] px-2 py-0.5 rounded text-white whitespace-nowrap"
+                                    className="text-[13.75px] px-2 py-0.5 rounded text-white whitespace-nowrap"
                                     style={{
                                         backgroundColor: user.user.color,
                                     }}
                                 >
-                                    {user.user.name} is resizing this note
+                                    {user.user.name} is resizing
                                 </div>
                             </div>
                         )}
                         {isEditing(action) && (
-                            <div className="absolute -top-6">
+                            <div className="absolute -top-10">
                                 <div
-                                    className="text-[10px] px-2 py-0.5 rounded text-white whitespace-nowrap"
+                                    className="text-[13.75px] px-2 py-0.5 rounded text-white whitespace-nowrap"
                                     style={{
                                         backgroundColor: user.user.color,
                                     }}
                                 >
-                                    {user.user.name} editing
+                                    {user.user.name} is editing
                                 </div>
                             </div>
                         )}

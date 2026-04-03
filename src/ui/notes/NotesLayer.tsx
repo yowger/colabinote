@@ -125,11 +125,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                 />
             ))}
 
-            <PresenceOverlayLayer
-                users={users}
-                noteRefs={noteRefs}
-                canvasRef={canvasRef}
-            />
+            <PresenceOverlayLayer users={users} noteRefs={noteRefs} />
 
             {selectedNoteId && !isTransforming && (
                 <FloatingToolbar
