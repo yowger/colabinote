@@ -11,7 +11,6 @@ import { useNoteIdsYjs } from "../../core/yjs/notes/useNoteIds"
 import { usePresenceUsers } from "../../core/presence/hooks/usePresenceUsers"
 import { usePresenceUser } from "../../core/presence/hooks/usePresenceUser"
 import CursorsLayer from "../cursor/components/CursorsLayer"
-import { useHocuspocusContext } from "../../hooks/useHocuspocusContext"
 import {
     DEFAULT_NOTE_HEIGHT,
     DEFAULT_NOTE_WIDTH,
@@ -26,8 +25,7 @@ const BOARD_DIMENSIONS = {
 export default function NotesBoard() {
     usePresenceUser()
 
-    const { provider } = useHocuspocusContext()
-    const users = usePresenceUsers()
+    const otherUsers = usePresenceUsers({ excludeSelf: true })
 
     const { viewportRef, handlers } = useBoardInteraction()
     const activeInteraction = useBoardInteractionStore(
@@ -39,9 +37,6 @@ export default function NotesBoard() {
     const notesMeta = useNotesMeta()
 
     const canvasRef = useRef<HTMLDivElement | null>(null)
-
-    const clientId = provider?.awareness?.clientID
-    const otherUsers = users.filter((u) => u.clientId !== clientId)
 
     return (
         <div className="flex flex-col flex-1 overflow-hidden">

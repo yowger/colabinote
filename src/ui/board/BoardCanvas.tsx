@@ -25,7 +25,7 @@ export const BoardCanvas = forwardRef<HTMLDivElement, BoardCanvasProps>(
             <div
                 ref={ref}
                 onPointerMove={handlePointerMove}
-                className="relative bg-[url('/images/bg.png')] bg-repeat"
+                className="relative "
                 style={{ width, height }}
             >
                 {children}

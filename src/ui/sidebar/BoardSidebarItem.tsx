@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { EllipsisVertical } from "lucide-react"
+
 import { useBoardsStore } from "../../features/boards/stores/useBoardsStore"
-import { Pencil, Trash2 } from "lucide-react"
 
 type BoardItemProps = {
     id: string
@@ -32,7 +34,7 @@ export default function BoardSidebarItem({
 
     if (isEditing) {
         return (
-            <div className="px-3 py-2 rounded-md border bg-white flex gap-2 items-center shadow-sm">
+            <div className="px-3 py-2 rounded-md border border-slate-200 bg-white flex gap-2 items-center shadow-sm">
                 <input
                     autoFocus
                     className="flex-1 outline-none text-sm"
@@ -44,16 +46,8 @@ export default function BoardSidebarItem({
                     }}
                 />
 
-                <button
-                    className=""
-                    onClick={() => onFinishEdit(id, localTitle)}
-                >
-                    ✓
-                </button>
-
-                <button className="" onClick={() => onFinishEdit(id, null)}>
-                    ✕
-                </button>
+                <button onClick={() => onFinishEdit(id, localTitle)}>✓</button>
+                <button onClick={() => onFinishEdit(id, null)}>✕</button>
             </div>
         )
     }
@@ -62,34 +56,60 @@ export default function BoardSidebarItem({
         <div
             onClick={() => setActiveBoard(id)}
             className={`
-                group flex items-center justify-between px-4 py-4 rounded-tr-md rounded-br-md cursor-pointer
+                group flex items-center justify-between px-4 h-11 rounded-md cursor-pointer
                 transition-all duration-150
-                ${isActive ? "bg-slate-200 font-medium" : "hover:bg-neutral-100"}
+                ${isActive ? "bg-white font-medium" : "hover:bg-slate-200/70"}
             `}
         >
-            <span className="text-sm truncate">{title || "Untitled"}</span>
+            <span className="text-sm truncate ms-2">{title || "Untitled"}</span>
 
-            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onStartEdit(id)
-                    }}
-                    className="p-1 rounded hover:bg-neutral-200"
+            <Menu as="div" className="relative">
+                <MenuButton
+                    onClick={(event) => event.stopPropagation()}
+                    className="p-2 rounded-md opacity-0 group-hover:opacity-100 hover:bg-slate-300/60 transition"
                 >
-                    <Pencil size={14} />
-                </button>
+                    <EllipsisVertical size={16} />
+                </MenuButton>
 
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation()
-                        onDelete?.(id)
-                    }}
-                    className="p-1 rounded hover:bg-red-100 text-red-500"
+                <MenuItems
+                    anchor="right start"
+                    className="
+                        mt-2 w-36 origin-top-right
+                        rounded-md bg-white shadow-md border border-slate-200
+                        focus:outline-none z-50
+                    "
                 >
-                    <Trash2 size={14} />
-                </button>
-            </div>
+                    <div className="py-1 text-sm">
+                        <MenuItem>
+                            {() => (
+                                <button
+                                    onClick={(event) => {
+                                        event.stopPropagation()
+                                        onStartEdit(id)
+                                    }}
+                                    className={`flex items-center gap-2 w-full px-3 py-2 hover:bg-slate-100 transition`}
+                                >
+                                    Rename
+                                </button>
+                            )}
+                        </MenuItem>
+
+                        <MenuItem>
+                            {() => (
+                                <button
+                                    onClick={(event) => {
+                                        event.stopPropagation()
+                                        onDelete?.(id)
+                                    }}
+                                    className={`flex items-center gap-2 w-full px-3 py-2 hover:bg-slate-100 transition`}
+                                >
+                                    Remove
+                                </button>
+                            )}
+                        </MenuItem>
+                    </div>
+                </MenuItems>
+            </Menu>
         </div>
     )
 }
