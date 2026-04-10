@@ -29,6 +29,15 @@ export default function Header() {
                             focus:outline-none z-50
                         "
                     >
+                        <div className="px-4 py-3 border-b border-slate-200">
+                            <div className="text-sm font-medium text-slate-800">
+                                Roger Pantil
+                            </div>
+                            <div className="text-xs text-slate-500 truncate">
+                                roger@gmail.com
+                            </div>
+                        </div>
+
                         <div className="py-1 text-sm">
                             <MenuItem>
                                 {() => (

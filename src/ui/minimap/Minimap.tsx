@@ -1,11 +1,13 @@
 import clsx from "clsx"
 import { useMiniMap } from "../../features/minimap/hooks/useMiniMap"
+import type { NoteColor } from "../../components/Note/constants/noteColors"
 
 export interface MiniMapItem {
     x: number
     y: number
     width: number
     height: number
+    color: NoteColor
 }
 
 type MiniMapProps = {
@@ -16,6 +18,15 @@ type MiniMapProps = {
     width: number
     height: number
     items: MiniMapItem[]
+}
+
+const MINI_MAP_COLOR: Record<NoteColor, string> = {
+    white: "bg-slate-400",
+    yellow: "bg-yellow-400",
+    blue: "bg-blue-400",
+    green: "bg-green-400",
+    pink: "bg-pink-400",
+    purple: "bg-purple-400",
 }
 
 export function MiniMap({
@@ -39,7 +50,7 @@ export function MiniMap({
         <div
             {...miniMapHandlers}
             className={clsx(
-                "bg-gray-800 border border-gray-600",
+                "bg-slate-200 border border-slate-300 rounded-md",
                 className,
             )}
             style={{ width, height }}
@@ -47,7 +58,10 @@ export function MiniMap({
             {items.map((item, i) => (
                 <div
                     key={i}
-                    className="absolute bg-blue-400"
+                    className={clsx(
+                        "absolute",
+                        MINI_MAP_COLOR[item.color as NoteColor],
+                    )}
                     style={{
                         left: item.x * scaleX,
                         top: item.y * scaleY,

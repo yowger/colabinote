@@ -3,6 +3,7 @@ import * as Y from "yjs"
 
 import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
 import { MAP_ID } from "../constants/note"
+import type { NoteColor } from "../../../components/Note/constants/noteColors"
 
 export type NoteMeta = {
     id: string
@@ -10,6 +11,7 @@ export type NoteMeta = {
     y: number
     width: number
     height: number
+    color: NoteColor
 }
 
 export function useNotesMeta() {
@@ -33,6 +35,7 @@ export function useNotesMeta() {
                     y: yNote.get("y") as number,
                     width: yNote.get("width") as number,
                     height: yNote.get("height") as number,
+                    color: yNote.get("color") as NoteColor,
                 })
             })
 

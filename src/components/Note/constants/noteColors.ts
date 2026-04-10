@@ -2,32 +2,32 @@ export const NOTE_COLORS = [
     {
         name: "white",
         background: "bg-white",
-        headerBackground: "bg-gray-100",
+        headerBackground: "bg-slate-100",
     },
     {
         name: "yellow",
-        background: "bg-yellow-200",
-        headerBackground: "bg-yellow-300",
+        background: "bg-yellow-100",
+        headerBackground: "bg-yellow-200",
     },
     {
         name: "blue",
-        background: "bg-blue-200",
-        headerBackground: "bg-blue-300",
+        background: "bg-blue-100",
+        headerBackground: "bg-blue-200",
     },
     {
         name: "green",
-        background: "bg-green-200",
-        headerBackground: "bg-green-300",
+        background: "bg-green-100",
+        headerBackground: "bg-green-200",
     },
     {
         name: "pink",
-        background: "bg-pink-200",
-        headerBackground: "bg-pink-300",
+        background: "bg-pink-100",
+        headerBackground: "bg-pink-200",
     },
     {
         name: "purple",
-        background: "bg-purple-200",
-        headerBackground: "bg-purple-300",
+        background: "bg-purple-100",
+        headerBackground: "bg-purple-200",
     },
 ] as const
 
