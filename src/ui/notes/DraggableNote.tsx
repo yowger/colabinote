@@ -75,7 +75,7 @@ export default function DraggableNote({
                     height: note.height ?? 0,
                 }}
                 className={clsx(
-                    "group relative rounded-sm overflow-hidden",
+                    "group relative rounded-xs overflow-hidden",
                     theme.body,
                     theme.text,
                     theme.border,
@@ -96,7 +96,7 @@ export default function DraggableNote({
                     onPointerDown={onResizeStart}
                     className="
                         absolute bottom-0 right-0 w-3.5 h-3.5
-                        cursor-se-resize rounded-sm
+                        cursor-se-resize rounded-xs
                         bg-black/30
                         opacity-0 group-hover:opacity-100
                         transition-opacity

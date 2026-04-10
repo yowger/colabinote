@@ -5,7 +5,6 @@ export const NOTE_COLORS = [
         header: "bg-slate-200",
         text: "text-slate-800",
         border: "border-slate-200",
-        minimap: "bg-slate-400",
     },
     {
         name: "yellow",
@@ -13,7 +12,6 @@ export const NOTE_COLORS = [
         header: "bg-yellow-200",
         text: "text-slate-800",
         border: "border-yellow-200",
-        minimap: "bg-yellow-400",
     },
     {
         name: "blue",
@@ -21,7 +19,6 @@ export const NOTE_COLORS = [
         header: "bg-blue-200",
         text: "text-slate-800",
         border: "border-blue-200",
-        minimap: "bg-blue-400",
     },
     {
         name: "green",
@@ -29,7 +26,6 @@ export const NOTE_COLORS = [
         header: "bg-green-200",
         text: "text-slate-800",
         border: "border-green-200",
-        minimap: "bg-green-400",
     },
     {
         name: "pink",
@@ -37,7 +33,6 @@ export const NOTE_COLORS = [
         header: "bg-pink-200",
         text: "text-slate-800",
         border: "border-pink-200",
-        minimap: "bg-pink-400",
     },
     {
         name: "purple",
@@ -45,7 +40,6 @@ export const NOTE_COLORS = [
         header: "bg-purple-200",
         text: "text-slate-800",
         border: "border-purple-200",
-        minimap: "bg-purple-400",
     },
 ] as const
 

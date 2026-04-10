@@ -15,7 +15,7 @@ const FloatingToolbar = forwardRef<HTMLDivElement, FloatingToolbarProps>(
                 ref={ref}
                 style={style}
                 className={clsx(
-                    "bg-neutral-800 text-white shadow-lg rounded-md p-1 z-100",
+                    "bg-neutral-200 rounded-sm p-1 z-100",
                     className,
                 )}
             >

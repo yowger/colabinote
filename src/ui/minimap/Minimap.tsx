@@ -1,7 +1,6 @@
 import clsx from "clsx"
 
 import { useMiniMap } from "../../features/minimap/hooks/useMiniMap"
-import { getNoteTheme } from "../../components/Note/constants/noteColors"
 
 import { type NoteColor } from "../../components/Note/constants/noteColors"
 
@@ -43,19 +42,16 @@ export function MiniMap({
     return (
         <div
             {...miniMapHandlers}
-            className={clsx(
-                "bg-slate-200 border border-slate-300 rounded-xs",
-                className,
-            )}
+            className={clsx("border border-slate-200 rounded-xs", className)}
             style={{ width, height }}
         >
             {items.map((item, i) => {
-                const theme = getNoteTheme(item.color as NoteColor)
-
                 return (
                     <div
                         key={i}
-                        className={clsx("absolute rounded-sm", theme.minimap)}
+                        className={clsx(
+                            "absolute rounded-sm border border-slate-400",
+                        )}
                         style={{
                             left: item.x * scaleX,
                             top: item.y * scaleY,
