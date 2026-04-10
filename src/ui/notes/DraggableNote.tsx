@@ -9,6 +9,10 @@ import { useNoteInteractions } from "../../core/notes/hooks/useNoteInteraction"
 import { usePresenceActions } from "../../core/presence/hooks/usePresenceActions"
 
 import type { NoteActionPayload } from "../../core/notes/types/note"
+import {
+    getNoteTheme,
+    type NoteColor,
+} from "../../components/Note/constants/noteColors"
 
 export type DraggableNoteProps = {
     noteId: string
@@ -22,6 +26,7 @@ export default function DraggableNote({
     setNode,
 }: DraggableNoteProps) {
     const note = useSingleNoteYjs(noteId)
+    const theme = getNoteTheme(note?.color as NoteColor)
 
     const containerRef = useRef<HTMLDivElement | null>(null)
     const headerRef = useRef<HTMLDivElement | null>(null)
@@ -68,23 +73,34 @@ export default function DraggableNote({
                     top: note.y ?? 0,
                     width: note.width ?? 0,
                     height: note.height ?? 0,
-                    background: note.color ?? "yellow",
                 }}
                 className={clsx(
-                    "relative rounded-md shadow-md overflow-hidden",
+                    "group relative rounded-sm overflow-hidden",
+                    theme.body,
+                    theme.text,
+                    theme.border,
                     state.type === "dragging" && "opacity-50",
                 )}
             >
                 <div
                     ref={headerRef}
-                    className="cursor-grab active:cursor-grabbing p-2 bg-slate-900/20 h-9"
+                    className={clsx(
+                        "cursor-grab active:cursor-grabbing p-2 h-9",
+                        theme.header,
+                    )}
                 />
 
                 <div className="flex-1 p-3">DraggableNote content</div>
 
                 <div
                     onPointerDown={onResizeStart}
-                    className="absolute bottom-0 right-0 w-3 h-3 cursor-se-resize bg-black/40"
+                    className="
+                        absolute bottom-0 right-0 w-3.5 h-3.5
+                        cursor-se-resize rounded-sm
+                        bg-black/30
+                        opacity-0 group-hover:opacity-100
+                        transition-opacity
+                    "
                 />
             </div>
 
