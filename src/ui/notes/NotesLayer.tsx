@@ -57,7 +57,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
         (store) => store.activeInteraction,
     )
 
-    const users = usePresenceUsers()
+    const users = usePresenceUsers({ excludeSelf: true })
     const { clearAction } = usePresenceActions()
 
     const { x, y, refs, strategy, placement } = useFloating({

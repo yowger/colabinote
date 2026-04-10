@@ -1,5 +1,5 @@
 import clsx from "clsx"
-import { useMiniMap } from "../hooks/useMiniMap"
+import { useMiniMap } from "../../features/minimap/hooks/useMiniMap"
 
 export interface MiniMapItem {
     x: number

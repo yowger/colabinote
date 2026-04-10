@@ -4,7 +4,13 @@ import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
 
 import type { PresenceAction, PresenceState } from "../types/presence"
 
-export function usePresenceUsers() {
+type UsePresenceOptions = {
+    excludeSelf?: boolean
+}
+
+export function usePresenceUsers({
+    excludeSelf = false,
+}: UsePresenceOptions = {}) {
     const { provider } = useHocuspocusContext()
     const [users, setUsers] = useState<
         (PresenceState & { clientId: number })[]
@@ -16,13 +22,21 @@ export function usePresenceUsers() {
         const awareness = provider.awareness
 
         const update = () => {
+            const myClientId = awareness.clientID
+
             const states = Array.from(awareness.getStates().entries())
                 .map(([clientId, state]) => ({
                     clientId,
                     ...(state as Partial<PresenceState>),
                 }))
-                .filter((u): u is PresenceState & { clientId: number } => {
-                    return !!u.user
+                .filter(
+                    (user): user is PresenceState & { clientId: number } => {
+                        return !!user.user
+                    },
+                )
+                .filter((user) => {
+                    if (!excludeSelf) return true
+                    return user.clientId !== myClientId
                 })
 
             setUsers(states)
@@ -34,7 +48,7 @@ export function usePresenceUsers() {
         return () => {
             awareness.off("change", update)
         }
-    }, [provider])
+    }, [provider, excludeSelf])
 
     return users
 }

@@ -1,6 +1,6 @@
 import NotesBoard from "../board/NotesBoard"
 import Header from "../../components/Header"
-import BoardsSidebar from "../../features/boards/components/BoardsSidebar"
+import BoardsSidebar from "../sidebar/BoardSidebar"
 
 export default function AppLayout() {
     return (

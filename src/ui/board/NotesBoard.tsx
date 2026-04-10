@@ -4,16 +4,18 @@ import { BoardCanvas } from "./BoardCanvas"
 import { BoardViewport } from "./BoardViewport"
 import BoardToolbar from "../toolbar/NotesBoardToolbar"
 import NotesLayer from "../notes/NotesLayer"
-import { MiniMap } from "../../features/minimap/components/Minimap"
+import { MiniMap } from "../minimap/Minimap"
 import { useBoardInteraction } from "../../features/interactions/hooks/useBoardInteraction"
 import { useBoardInteractionStore } from "../../features/boards/stores/useBoardInteractionStore"
 import { useNoteIdsYjs } from "../../core/yjs/notes/useNoteIds"
 import { usePresenceUsers } from "../../core/presence/hooks/usePresenceUsers"
 import { usePresenceUser } from "../../core/presence/hooks/usePresenceUser"
-// import { useNotesMeta } from "../../presence/hooks/useNotesMeta"
 import CursorsLayer from "../cursor/components/CursorsLayer"
 import { useHocuspocusContext } from "../../hooks/useHocuspocusContext"
-import { DEFAULT_NOTE_HEIGHT, DEFAULT_NOTE_WIDTH } from "../../core/notes/constants/defaults"
+import {
+    DEFAULT_NOTE_HEIGHT,
+    DEFAULT_NOTE_WIDTH,
+} from "../../core/notes/constants/defaults"
 import { useNotesMeta } from "../../core/yjs/notes/useNotesMeta"
 
 const BOARD_DIMENSIONS = {
@@ -46,7 +48,7 @@ export default function NotesBoard() {
             <BoardToolbar />
 
             <MiniMap
-                className="absolute z-20 top-0 right-0 m-6"
+                className="absolute z-20 bottom-0 right-0 m-6"
                 viewportRef={viewportRef}
                 boardWidth={BOARD_DIMENSIONS.width}
                 boardHeight={BOARD_DIMENSIONS.height}

@@ -1,8 +1,9 @@
 import { useState } from "react"
-import { useBoardsStore } from "../stores/useBoardsStore"
-import BoardItem from "./BoardItem"
+import { useBoardsStore } from "../../features/boards/stores/useBoardsStore"
 
-export default function BoardsSidebar() {
+import BoardSidebarItem from "./BoardSidebarItem"
+
+export default function BoardSidebar() {
     const boards = useBoardsStore((store) => store.boards)
     const setBoardTitle = useBoardsStore((store) => store.setBoardTitle)
     const addBoard = useBoardsStore((store) => store.addBoard)
@@ -26,10 +27,10 @@ export default function BoardsSidebar() {
     }
 
     return (
-        <aside className="w-64 shrink-0 border-r p-2 flex flex-col">
-            <div className="flex-1 space-y-1  overflow-hidden">
+        <aside className="w-64 shrink-0 py-3 pr-3 flex flex-col">
+            <div className="flex-1 overflow-y-auto">
                 {boards.map((board) => (
-                    <BoardItem
+                    <BoardSidebarItem
                         key={board.id}
                         id={board.id}
                         title={board.title}
@@ -38,14 +39,14 @@ export default function BoardsSidebar() {
                         onFinishEdit={handleFinishEdit}
                     />
                 ))}
-            </div>
 
-            <button
-                onClick={handleAddBoard}
-                className="mt-2 text-sm px-3 py-2 rounded hover:bg-neutral-100 text-left"
-            >
-                + Add Board
-            </button>
+                <button
+                    onClick={handleAddBoard}
+                    className="mt-2 text-sm px-3 py-2 rounded hover:bg-neutral-100 text-left w-full"
+                >
+                    Add board
+                </button>
+            </div>
         </aside>
     )
 }
