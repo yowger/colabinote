@@ -39,19 +39,21 @@ export default function BoardSidebar() {
 
     return (
         <>
-            <aside className="w-64 shrink-0 flex flex-col bg-slate-100 border-r border-slate-200">
+            <aside className="w-64 shrink-0 flex flex-col bg-bg-soft border-r border-border">
                 <div className="flex items-center justify-between px-4 h-12">
-                    <span className="ml-2 tracking-wide">Notebooks</span>
+                    <span className="ml-2 tracking-wide text-text">
+                        Notebooks
+                    </span>
 
                     <button
                         onClick={handleAddBoard}
                         className="
-                    p-1.5 rounded-md
-                  hover:bg-slate-200
-                    transition
-                    "
+                p-1.5 rounded-md
+                hover:bg-bg
+                transition
+            "
                     >
-                        <Plus size={16} />
+                        <Plus size={16} className="text-text-muted" />
                     </button>
                 </div>
 
@@ -69,7 +71,7 @@ export default function BoardSidebar() {
                     ))}
 
                     {boards.length === 0 && (
-                        <div className="text-xs text-neutral-400 px-2 py-3">
+                        <div className="text-xs text-text-muted px-2 py-3">
                             No notebooks yet
                         </div>
                     )}
@@ -84,26 +86,26 @@ export default function BoardSidebar() {
                 <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
                 <div className="fixed inset-0 flex items-center justify-center p-4">
-                    <DialogPanel className="bg-white rounded-xl shadow-lg p-6 w-full max-w-sm">
-                        <DialogTitle className="text-lg font-medium">
+                    <DialogPanel className="bg-bg-soft border border-border rounded-xl shadow-lg p-6 w-full max-w-sm">
+                        <DialogTitle className="text-lg font-medium text-text">
                             Delete notebook?
                         </DialogTitle>
 
-                        <p className="text-sm text-slate-500 mt-2">
+                        <p className="text-sm text-text-muted mt-2">
                             This action cannot be undone.
                         </p>
 
                         <div className="mt-5 flex justify-end gap-2">
                             <button
                                 onClick={() => setBoardToDelete(null)}
-                                className="px-3 py-1.5 rounded-md hover:bg-slate-100"
+                                className="px-3 py-1.5 rounded-md hover:bg-bg text-text"
                             >
                                 Cancel
                             </button>
 
                             <button
                                 onClick={handleConfirmDelete}
-                                className="px-3 py-1.5 rounded-md bg-red-500 text-white hover:bg-red-600"
+                                className="px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90"
                             >
                                 Delete
                             </button>

@@ -37,21 +37,25 @@ export default function ColorTool({ position = "right" }: ColorToolProps) {
             </PopoverButton>
 
             <PopoverPanel
-                anchor={{ to: position, gap: 10 }}
+                anchor={{ to: position, gap: 12 }}
                 data-no-pan="true"
-                className="z-50"
+                className="z-50 bg-bg-soft p-1 rounded-md shadow-sm backdrop-blur "
                 onPointerDown={(event) => event.stopPropagation()}
             >
-                <PopoverContent>
+                <PopoverContent className="bg-transparent border-0 shadow-none">
                     {NOTE_COLORS.map((color) => (
                         <button
                             key={color}
                             onClick={() => handleSelectColor(color)}
                             className={clsx(
-                                "flex items-center justify-center w-5 h-5 rounded-xs ring-black/10 hover:scale-105 transition-transform",
+                                `
+                                w-5 h-5 rounded-xs
+                                hover:scale-110
+                                transition
+                                `,
                                 COLOR_BUTTON_STYLES[color],
                                 selectedNoteColor === color &&
-                                    "ring-2 ring-white ring-offset-1",
+                                    "ring-1 ring-offset-1 ring-offset-bg",
                             )}
                         />
                     ))}

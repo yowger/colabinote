@@ -16,7 +16,7 @@ export default function MenuIconButton({
         <button
             onClick={onClick}
             className={clsx(
-                "p-1 rounded hover:bg-neutral-700 transition flex items-center justify-center",
+                "p-1 rounded hover:bg-bg text-text-muted transition flex items-center justify-center",
                 className,
             )}
         >

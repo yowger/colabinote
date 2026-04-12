@@ -32,28 +32,31 @@ export default function RemoveTool({ position = "right" }: RemoveToolProps) {
                     </PopoverButton>
 
                     <PopoverPanel
-                        anchor={{ to: position, gap: 10 }}
+                        anchor={{ to: position, gap: 12 }}
                         data-no-pan="true"
-                        className="z-50"
+                        className="z-50 bg-bg-soft p-1 rounded-md shadow-sm backdrop-blur "
                         onPointerDown={(e) => e.stopPropagation()}
                     >
-                        <PopoverContent>
-                            <span className="text-sm">Delete note?</span>
+                        <PopoverContent className="bg-transparent border-0 shadow-none">
+                            <div className="flex items-center px-1">
+                                <span className="text-sm mr-5 text-text">
+                                    Delete note?
+                                </span>
 
-                            <MenuIconButton
-                                icon={CheckIcon}
-                                className="text-red-400"
-                                onClick={() => {
-                                    handleRemoveNote()
-                                    close()
-                                }}
-                            />
+                                <MenuIconButton
+                                    icon={CheckIcon}
+                                    onClick={() => {
+                                        handleRemoveNote()
+                                        close()
+                                    }}
+                                    className="mr-1 text-text-muted"
+                                />
 
-                            <MenuIconButton
-                                icon={XIcon}
-                                className="text-neutral-400"
-                                onClick={() => close()}
-                            />
+                                <MenuIconButton
+                                    icon={XIcon}
+                                    onClick={() => close()}
+                                />
+                            </div>
                         </PopoverContent>
                     </PopoverPanel>
                 </>

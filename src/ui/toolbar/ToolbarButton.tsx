@@ -16,8 +16,9 @@ export default function ToolbarButton({
         <button
             {...props}
             className={clsx(
-                "flex items-center justify-center p-1.5 rounded transition",
-                "hover:bg-neutral-700",
+                "flex items-center justify-center p-2 rounded-sm transition",
+                "text-text-muted hover:text-text",
+                "hover:bg-bg",
                 "disabled:opacity-40 disabled:cursor-not-allowed",
                 className,
             )}
