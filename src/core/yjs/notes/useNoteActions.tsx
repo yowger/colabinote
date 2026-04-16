@@ -13,6 +13,8 @@ export function useNoteActions() {
     const { provider } = useHocuspocusContext()
 
     const addNote = (noteData?: Partial<Note>) => {
+        if (!provider) return
+
         const doc = provider?.document
         if (!doc) return
 
@@ -34,18 +36,20 @@ export function useNoteActions() {
             ...noteData,
         }
 
-        const yNote = new Y.Map()
-
         doc.transact(() => {
+            const yNote = new Y.Map()
+
             Object.entries(newNote).forEach(([key, value]) => {
                 yNote.set(key, value)
             })
-        })
 
-        yNotes.set(noteId, yNote)
+            yNotes.set(noteId, yNote)
+        })
     }
 
     const updateNote = (id: string, patch: Partial<Note>) => {
+        if (!provider) return
+
         const doc = provider?.document
         if (!doc) return
 
@@ -66,6 +70,8 @@ export function useNoteActions() {
     }
 
     const removeNote = (id: string) => {
+        if (!provider) return
+
         const doc = provider?.document
         if (!doc) return
 

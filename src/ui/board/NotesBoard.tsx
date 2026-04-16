@@ -2,7 +2,7 @@ import { useRef } from "react"
 
 import { BoardCanvas } from "./BoardCanvas"
 import { BoardViewport } from "./BoardViewport"
-// import BoardToolbar from "../toolbar/NotesBoardToolbar"
+import BoardToolbar from "../toolbar/NotesBoardToolbar"
 import NotesLayer from "../notes/NotesLayer"
 import { MiniMap } from "../minimap/Minimap"
 import { useBoardInteraction } from "../../features/interactions/hooks/useBoardInteraction"
@@ -40,7 +40,7 @@ export default function NotesBoard() {
 
     return (
         <div className="flex flex-col flex-1 overflow-hidden bg-bg-canvas bg-grid">
-            {/* <BoardToolbar /> */}
+            <BoardToolbar />
 
             <MiniMap
                 className="absolute z-20 bottom-0 right-0 m-6"

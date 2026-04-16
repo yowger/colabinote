@@ -15,7 +15,7 @@ export type NoteMeta = {
 }
 
 export function useNotesMeta() {
-    const { provider } = useHocuspocusContext()
+    const { providerRef: provider } = useHocuspocusContext()
     const [notesMeta, setNotesMeta] = useState<NoteMeta[]>([])
 
     useEffect(() => {

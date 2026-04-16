@@ -8,7 +8,7 @@ function generateColor() {
 const name = Date.now().toString()
 
 export function usePresenceUser() {
-    const { provider } = useHocuspocusContext()
+    const { providerRef: provider } = useHocuspocusContext()
 
     const userRef = useRef({
         id: crypto.randomUUID(),

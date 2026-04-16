@@ -2,7 +2,7 @@ import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContex
 import type { PresenceAction } from "../types/presence"
 
 export function usePresenceActions() {
-    const { provider } = useHocuspocusContext()
+    const { providerRef: provider } = useHocuspocusContext()
 
     const setAction = (action: PresenceAction) => {
         provider?.awareness?.setLocalStateField("action", action)

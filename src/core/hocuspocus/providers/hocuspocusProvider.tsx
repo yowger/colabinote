@@ -8,12 +8,10 @@ export function HocuspocusProviderWrapper({
     children: React.ReactNode
     roomName: string | null
 }) {
-    const { providerRef, docRef } = useRoom(roomName)
+    const { provider, doc } = useRoom(roomName)
 
     return (
-        <HocuspocusContext.Provider
-            value={{ provider: providerRef, doc: docRef }}
-        >
+        <HocuspocusContext.Provider value={{ provider, doc }}>
             {children}
         </HocuspocusContext.Provider>
     )

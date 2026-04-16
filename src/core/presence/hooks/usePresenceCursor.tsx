@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react"
 import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 
 export function usePresenceCursor() {
-    const { provider } = useHocuspocusContext()
+    const { providerRef: provider } = useHocuspocusContext()
 
     const frame = useRef<number | null>(null)
     const idleTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
