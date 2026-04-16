@@ -1,24 +1,26 @@
-import { http } from "../../../core/api/axiosClient"
+import { http } from "../../../core/http/axiosClient"
 
 import type { Board } from "../types/board"
 
+const BASE_URL = "/boards"
+
 export const boardsApi = {
     getBoards: async (): Promise<Board[]> => {
-        const { data } = await http.get("/")
+        const { data } = await http.get(BASE_URL)
         return data
     },
 
     createBoard: async (): Promise<Board> => {
-        const { data } = await http.post("/")
+        const { data } = await http.post(BASE_URL)
         return data
     },
 
     updateBoardTitle: async (id: string, title: string): Promise<Board> => {
-        const { data } = await http.patch(`/${id}`, { title })
+        const { data } = await http.patch(`${BASE_URL}/${id}`, { title })
         return data
     },
 
     deleteBoard: async (id: string): Promise<void> => {
-        await http.delete(`/${id}`)
+        await http.delete(`${BASE_URL}/${id}`)
     },
 }

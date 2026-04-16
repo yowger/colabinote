@@ -1,40 +1,61 @@
 import { useState } from "react"
-import { useBoardsStore } from "../../features/boards/stores/useBoardsStore"
 import { Plus } from "lucide-react"
-
-import BoardSidebarItem from "./BoardSidebarItem"
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 
+import BoardSidebarItem from "./BoardSidebarItem"
+import { useBoards } from "../../features/boards/hooks/useBoards"
+import { useCreateBoard } from "../../features/boards/hooks/useCreateBoard"
+import { useUpdateBoardTitle } from "../../features/boards/hooks/useUpdateBoardTitle"
+import { useDeleteBoard } from "../../features/boards/hooks/useDeleteBoard"
+import { useBoardsStore } from "../../features/boards/stores/useBoardsStore"
+import { useRoomStore } from "../../core/hocuspocus/store/useRoomStore"
+
 export default function BoardSidebar() {
-    const boards = useBoardsStore((store) => store.boards)
-    const setBoardTitle = useBoardsStore((store) => store.setBoardTitle)
-    const addBoard = useBoardsStore((store) => store.addBoard)
+    const { data: boards = [] } = useBoards()
+    const createBoard = useCreateBoard()
+    const updateBoard = useUpdateBoardTitle()
+    const deleteBoard = useDeleteBoard()
+    const activeBoardId = useBoardsStore((store) => store.activeBoardId)
+    const setActiveBoard = useBoardsStore((store) => store.setActiveBoard)
+    const setRoomId = useRoomStore((store) => store.setRoomId)
 
     const [editingBoardId, setEditingBoardId] = useState<string | null>(null)
     const [boardToDelete, setBoardToDelete] = useState<string | null>(null)
 
     const handleAddBoard = () => {
-        const newBoardId = crypto.randomUUID()
-        addBoard(newBoardId, "")
-        setEditingBoardId(newBoardId)
+        createBoard.mutate(undefined, {
+            onSuccess: (newBoard) => {
+                setEditingBoardId(newBoard.id)
+            },
+        })
+    }
+
+    const handleSelect = (id: string) => {
+        setActiveBoard(id)
+        setRoomId(id)
+    }
+
+    const handleFinishEdit = (id: string, newTitle: string | null) => {
+        const title =
+            newTitle && newTitle.trim() !== "" ? newTitle : "Untitled Board"
+
+        updateBoard.mutate({
+            id,
+            title,
+        })
+
+        setEditingBoardId(null)
+    }
+
+    const handleStartEdit = (id: string) => {
+        setEditingBoardId(id)
     }
 
     const handleConfirmDelete = () => {
-        if (boardToDelete) {
-            // deleteBoard(boardToDelete)
-            setBoardToDelete(null)
-        }
-    }
+        if (!boardToDelete) return
 
-    const handleStartEdit = (id: string) => setEditingBoardId(id)
-
-    const handleFinishEdit = (id: string, newTitle: string | null) => {
-        if (!newTitle || newTitle.trim() === "") {
-            setBoardTitle(id, "Untitled Board")
-        } else {
-            setBoardTitle(id, newTitle)
-        }
-        setEditingBoardId(null)
+        deleteBoard.mutate(boardToDelete)
+        setBoardToDelete(null)
     }
 
     return (
@@ -47,11 +68,7 @@ export default function BoardSidebar() {
 
                     <button
                         onClick={handleAddBoard}
-                        className="
-                p-1.5 rounded-md
-                hover:bg-bg
-                transition
-            "
+                        className="p-1.5 rounded-md hover:bg-bg transition"
                     >
                         <Plus size={16} className="text-text-muted" />
                     </button>
@@ -63,7 +80,9 @@ export default function BoardSidebar() {
                             key={board.id}
                             id={board.id}
                             title={board.title}
+                            isActive={activeBoardId === board.id}
                             isEditing={editingBoardId === board.id}
+                            onSelect={handleSelect}
                             onStartEdit={handleStartEdit}
                             onFinishEdit={handleFinishEdit}
                             onDelete={(id) => setBoardToDelete(id)}
@@ -71,8 +90,13 @@ export default function BoardSidebar() {
                     ))}
 
                     {boards.length === 0 && (
-                        <div className="text-xs text-text-muted px-2 py-3">
-                            No notebooks yet
+                        <div className="px-6">
+                            <button
+                                onClick={handleAddBoard}
+                                className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:opacity-90"
+                            >
+                                Create your first notebook
+                            </button>
                         </div>
                     )}
                 </div>

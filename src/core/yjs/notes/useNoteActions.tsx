@@ -2,7 +2,7 @@ import * as Y from "yjs"
 
 import { MAP_ID } from "../constants/note"
 import type { Note } from "../../notes/types/note"
-import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 import {
     DEFAULT_NOTE_COLOR,
     DEFAULT_NOTE_HEIGHT,

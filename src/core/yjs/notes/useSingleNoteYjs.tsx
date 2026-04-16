@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 import type { Note } from "../../notes/types/note"
 import { MAP_ID } from "../constants/note"
 import * as Y from "yjs"

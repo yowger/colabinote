@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 
 import type { PresenceAction, PresenceState } from "../types/presence"
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 
 function generateColor() {
     return "#" + Math.floor(Math.random() * 16777215).toString(16)

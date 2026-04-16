@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 
-import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 
 export function usePresenceCursor() {
     const { provider } = useHocuspocusContext()

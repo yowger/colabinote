@@ -1,4 +1,4 @@
-import { useHocuspocusContext } from "../../../hooks/useHocuspocusContext"
+import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
 import type { PresenceAction } from "../types/presence"
 
 export function usePresenceActions() {
