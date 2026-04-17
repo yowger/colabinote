@@ -7,7 +7,6 @@ import { queryClient } from "./core/query/queryClient"
 import { useRoomStore } from "./core/hocuspocus/store/useRoomStore"
 
 export default function App() {
-    // const url = "ws://localhost:1234"
     const roomName = useRoomStore((store) => store.roomId)
 
     return (
