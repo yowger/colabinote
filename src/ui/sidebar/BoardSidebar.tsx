@@ -75,7 +75,7 @@ export default function BoardSidebar() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-0.5">
-                    {boards.map((board) => (
+                    {boards?.map((board) => (
                         <BoardSidebarItem
                             key={board.id}
                             id={board.id}

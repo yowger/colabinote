@@ -7,7 +7,7 @@ type Room = {
     lastUsed: number
 }
 
-const url = "ws://localhost:1234"
+const SOCKET_URL = import.meta.env.VITE_SERVER_SOCKET_URL
 
 export function createRoomManager(url: string) {
     const rooms = new Map<string, Room>()
@@ -71,4 +71,4 @@ export function createRoomManager(url: string) {
     }
 }
 
-export const roomManager = createRoomManager(url)
+export const roomManager = createRoomManager(SOCKET_URL)

@@ -1,4 +1,4 @@
-import { HocuspocusContext } from "../../../contexts/hocuspocusContext"
+import { HocuspocusContext } from "../contexts/hocuspocusContext"
 import { useRoom } from "../hooks/useRooms"
 
 export function HocuspocusProviderWrapper({
