@@ -11,7 +11,7 @@ type UsePresenceOptions = {
 export function usePresenceUsers({
     excludeSelf = false,
 }: UsePresenceOptions = {}) {
-    const { providerRef: provider } = useHocuspocusContext()
+    const { provider } = useHocuspocusContext()
     const [users, setUsers] = useState<
         (PresenceState & { clientId: number })[]
     >([])

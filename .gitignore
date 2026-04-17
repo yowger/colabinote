@@ -23,4 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables file 
+.env
+!.env.example
+
 ignore.notes

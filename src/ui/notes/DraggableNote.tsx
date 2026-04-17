@@ -12,7 +12,7 @@ import type { NoteActionPayload } from "../../core/notes/types/note"
 import {
     getNoteTheme,
     type NoteColor,
-} from "../../components/Note/constants/noteColors"
+} from "../../core/notes/constants/noteColors"
 
 export type DraggableNoteProps = {
     noteId: string

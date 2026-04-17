@@ -2,7 +2,7 @@ import clsx from "clsx"
 
 import { useMiniMap } from "../../features/minimap/hooks/useMiniMap"
 
-import { type NoteColor } from "../../components/Note/constants/noteColors"
+import { type NoteColor } from "../../core/notes/constants/noteColors"
 
 export interface MiniMapItem {
     x: number

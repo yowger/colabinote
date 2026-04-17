@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import * as Y from "yjs"
 
 import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
-import { MAP_ID } from "../constants/note"
-import type { NoteColor } from "../../../components/Note/constants/noteColors"
+import type { NoteColor } from "../constants/noteColors"
+import { MAP_ID } from "../../yjs/constants/note"
 
 export type NoteMeta = {
     id: string
@@ -15,7 +15,7 @@ export type NoteMeta = {
 }
 
 export function useNotesMeta() {
-    const { providerRef: provider } = useHocuspocusContext()
+    const { provider } = useHocuspocusContext()
     const [notesMeta, setNotesMeta] = useState<NoteMeta[]>([])
 
     useEffect(() => {
