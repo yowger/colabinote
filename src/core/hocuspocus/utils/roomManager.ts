@@ -7,7 +7,8 @@ type Room = {
     lastUsed: number
 }
 
-const SOCKET_URL = import.meta.env.VITE_SERVER_SOCKET_URL
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL
+const SOCKET_PATH = SOCKET_URL + "/collaboration"
 
 export function createRoomManager(url: string) {
     const rooms = new Map<string, Room>()
@@ -71,4 +72,4 @@ export function createRoomManager(url: string) {
     }
 }
 
-export const roomManager = createRoomManager(SOCKET_URL)
+export const roomManager = createRoomManager(SOCKET_PATH)
