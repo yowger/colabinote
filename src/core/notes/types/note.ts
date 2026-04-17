@@ -1,4 +1,4 @@
-import type { NoteColor } from "../../../components/Note/types/colors"
+import type { NoteColor } from "../styles/noteColorStyles"
 
 export type Note = {
     id: string
