@@ -1,19 +1,21 @@
-import * as Y from "yjs"
-import type { HocuspocusProvider } from "@hocuspocus/provider"
+import { useMemo } from "react"
 
 import { roomManager } from "../utils/roomManager"
 
-export function useRoom(roomId: string | null): {
-    provider: HocuspocusProvider | null
-    doc: Y.Doc | null
-} {
-    if (!roomId) {
-        return { provider: null, doc: null }
-    }
+const SOCKET_URL = import.meta.env.VITE_SERVER_URL
+const SOCKET_PATH = SOCKET_URL + "/collaboration"
 
-    const room = roomManager.getRoom(roomId)
-    return {
-        provider: room.provider,
-        doc: room.doc,
-    }
+export function useRoom(roomId: string | null) {
+    return useMemo(() => {
+        if (!roomId) {
+            return { provider: null, doc: null }
+        }
+
+        const room = roomManager.getRoom(roomId, SOCKET_PATH)
+
+        return {
+            provider: room.provider,
+            doc: room.doc,
+        }
+    }, [roomId])
 }

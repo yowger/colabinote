@@ -2,74 +2,39 @@ import { HocuspocusProvider } from "@hocuspocus/provider"
 import * as Y from "yjs"
 
 type Room = {
+    id: string
     provider: HocuspocusProvider
     doc: Y.Doc
-    lastUsed: number
 }
 
-const SOCKET_URL = import.meta.env.VITE_SERVER_URL
-const SOCKET_PATH = SOCKET_URL + "/collaboration"
+class ConnectionManager {
+    private activeRoom: Room | null = null
 
-export function createRoomManager(url: string) {
-    const rooms = new Map<string, Room>()
-    const MAX_ROOMS = 5
-
-    function getRoom(roomId: string) {
-        let room = rooms.get(roomId)
-
-        if (!room) {
-            const doc = new Y.Doc()
-
-            const provider = new HocuspocusProvider({
-                url,
-                name: roomId,
-                document: doc,
-            })
-
-            room = {
-                provider,
-                doc,
-                lastUsed: Date.now(),
-            }
-
-            rooms.set(roomId, room)
-
-            evictIfNeeded()
+    getRoom(roomId: string, url: string): Room {
+        if (this.activeRoom?.id === roomId) {
+            return this.activeRoom
         }
 
-        room.lastUsed = Date.now()
+        this.destroyActiveRoom()
 
-        return room
+        const doc = new Y.Doc()
+        const provider = new HocuspocusProvider({
+            url,
+            name: roomId,
+            document: doc,
+        })
+
+        this.activeRoom = { id: roomId, provider, doc }
+        return this.activeRoom
     }
 
-    function evictIfNeeded() {
-        if (rooms.size <= MAX_ROOMS) return
-
-        const sorted = [...rooms.entries()].sort(
-            (a, b) => a[1].lastUsed - b[1].lastUsed,
-        )
-
-        const [oldestId, oldestRoom] = sorted[0]
-
-        oldestRoom.provider.disconnect()
-        oldestRoom.doc.destroy()
-
-        rooms.delete(oldestId)
-    }
-
-    function destroyAll() {
-        for (const [, room] of rooms) {
-            room.provider.disconnect()
-            room.doc.destroy()
+    destroyActiveRoom() {
+        if (this.activeRoom) {
+            this.activeRoom.provider.destroy()
+            this.activeRoom.doc.destroy()
+            this.activeRoom = null
         }
-        rooms.clear()
-    }
-
-    return {
-        getRoom,
-        switchRoom: getRoom,
-        destroyAll,
     }
 }
 
-export const roomManager = createRoomManager(SOCKET_PATH)
+export const roomManager = new ConnectionManager()
