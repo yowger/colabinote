@@ -51,7 +51,7 @@ function computeNextPosition(
 
 export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const { updateNote } = useNoteActions()
-
+    const selectNote = useNoteUiStateStore((store) => store.selectNote)
     const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
     const activeInteraction = useBoardInteractionStore(
         (store) => store.activeInteraction,
@@ -114,6 +114,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                 <DraggableNote
                     key={noteId}
                     noteId={noteId}
+                    onSelect={selectNote}
                     onInteractionEnd={handleInteractionEnd}
                     setNode={(element) => {
                         if (element) {

@@ -3,19 +3,17 @@ import clsx from "clsx"
 import { useRef } from "react"
 
 import { useSingleNoteYjs } from "../../core/yjs/notes/useSingleNoteYjs"
-import { useNoteUiStateStore } from "../../features/interactions/stores/useNoteUiStateStore"
 import NoteDragPreview from "./NotePreview"
 import { useNoteInteractions } from "../../core/notes/hooks/useNoteInteraction"
 import { usePresenceActions } from "../../core/presence/hooks/usePresenceActions"
+import { getNoteTheme } from "../../core/notes/constants/noteColors"
 
 import type { NoteActionPayload } from "../../core/notes/types/note"
-import {
-    getNoteTheme,
-    type NoteColor,
-} from "../../core/notes/constants/noteColors"
+import { type NoteColor } from "../../core/notes/constants/noteColors"
 
 export type DraggableNoteProps = {
     noteId: string
+    onSelect?: (noteId: string) => void
     onInteractionEnd?: (data: NoteActionPayload) => void
     setNode?: (el: HTMLDivElement | null) => void
 }
@@ -23,6 +21,7 @@ export type DraggableNoteProps = {
 export default function DraggableNote({
     noteId,
     onInteractionEnd: onDragEnd,
+    onSelect,
     setNode,
 }: DraggableNoteProps) {
     const note = useSingleNoteYjs(noteId)
@@ -30,8 +29,6 @@ export default function DraggableNote({
 
     const containerRef = useRef<HTMLDivElement | null>(null)
     const headerRef = useRef<HTMLDivElement | null>(null)
-
-    const selectNote = useNoteUiStateStore((store) => store.selectNote)
 
     const { setAction } = usePresenceActions()
     const { state, onResizeStart } = useNoteInteractions({
@@ -65,7 +62,7 @@ export default function DraggableNote({
         <>
             <div
                 ref={setContainerRef}
-                onMouseDown={() => selectNote(noteId)}
+                onMouseDown={() => onSelect?.(noteId)}
                 data-no-pan
                 style={{
                     position: "absolute",
