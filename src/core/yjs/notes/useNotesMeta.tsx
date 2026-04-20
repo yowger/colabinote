@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import * as Y from "yjs"
 
 import { useHocuspocusContext } from "../../hocuspocus/hooks/useHocuspocusContext"
-import type { NoteColor } from "../constants/noteColors"
-import { MAP_ID } from "../../yjs/constants/note"
+import type { NoteColor } from "../../notes/constants/noteColors"
+import { MAP_ID } from "../constants/note"
 
 export type NoteMeta = {
     id: string

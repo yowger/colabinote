@@ -38,7 +38,6 @@ type Params = {
     noteId: string
     containerRef: React.RefObject<HTMLDivElement | null>
     headerRef: React.RefObject<HTMLElement | null>
-    onCommit?: (data: MovePayload | ResizePayload) => void
     onDragStart?: (note: Note) => void
     onDragMove?: (payload: MovePayload) => void
     onDragEnd?: (payload: MovePayload) => void
@@ -58,7 +57,6 @@ export function useNoteInteractions({
     note,
     containerRef,
     headerRef,
-    onCommit,
     onDragStart,
     onDragEnd,
     onResizeStart,
@@ -124,7 +122,6 @@ export function useNoteInteractions({
             offsetY: offsetRef.current.y,
         }
 
-        onCommit?.(payload)
         onDragEnd?.(payload)
     }
 
@@ -202,7 +199,6 @@ export function useNoteInteractions({
                 },
             }
 
-            onCommit?.(payload)
             onResizeEnd?.(payload)
         }
 

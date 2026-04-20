@@ -15,7 +15,7 @@ import {
     DEFAULT_NOTE_HEIGHT,
     DEFAULT_NOTE_WIDTH,
 } from "../../core/notes/constants/defaults"
-import { useNotesMeta } from "../../core/notes/hooks/useNotesMeta"
+import { useNotesMeta } from "../../core/yjs/notes/useNotesMeta"
 
 const BOARD_DIMENSIONS = {
     width: 2000,

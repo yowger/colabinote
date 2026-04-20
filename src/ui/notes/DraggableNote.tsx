@@ -4,7 +4,7 @@ import { useRef } from "react"
 
 import { useSingleNoteYjs } from "../../core/yjs/notes/useSingleNoteYjs"
 import NoteDragPreview from "./NotePreview"
-import { useNoteInteractions } from "../../core/notes/hooks/useNoteInteraction"
+import { useNoteInteractions } from "../../features/interactions/hooks/useNoteInteraction"
 import { usePresenceActions } from "../../core/presence/hooks/usePresenceActions"
 import { getNoteTheme } from "../../core/notes/constants/noteColors"
 
@@ -36,13 +36,13 @@ export default function DraggableNote({
         noteId,
         containerRef,
         headerRef,
-        onCommit: onDragEnd,
         onDragStart: (note) => {
             setAction({
                 type: "dragging-note",
                 noteId: note.id,
             })
         },
+        onDragEnd,
         onResizeStart: (note) => {
             setAction({
                 type: "resizing-note",
