@@ -23,10 +23,9 @@ export function useNoteActions() {
 
         const noteId = noteData?.id ?? crypto.randomUUID()
 
-        const newNote: Note = {
+        const newNote = {
             id: noteId,
             title: "New Note",
-            content: "",
             color: DEFAULT_NOTE_COLOR,
             x: 100,
             y: 100,
@@ -40,8 +39,13 @@ export function useNoteActions() {
             const yNote = new Y.Map()
 
             Object.entries(newNote).forEach(([key, value]) => {
+                if (key === "content") return
+
                 yNote.set(key, value)
             })
+
+            const yContent = new Y.XmlFragment()
+            yNote.set("content", yContent)
 
             yNotes.set(noteId, yNote)
         })
@@ -50,16 +54,18 @@ export function useNoteActions() {
     const updateNote = (id: string, patch: Partial<Note>) => {
         if (!provider) return
 
-        const doc = provider?.document
+        const doc = provider.document
         if (!doc) return
 
-        const yNotes = doc?.getMap<Y.Map<unknown>>(MAP_ID)
+        const yNotes = doc.getMap<Y.Map<unknown>>(MAP_ID)
         const yNote = yNotes.get(id)
 
         if (!yNote || !(yNote instanceof Y.Map)) return
 
         doc.transact(() => {
             Object.entries(patch).forEach(([key, value]) => {
+                if (key === "content") return
+
                 const currentValue = yNote.get(key as keyof Note)
 
                 if (currentValue !== value) {

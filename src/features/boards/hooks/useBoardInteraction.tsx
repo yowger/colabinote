@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { useBoardInteractionStore } from "../../boards/stores/useBoardInteractionStore"
+import { useBoardInteractionStore } from "../stores/useBoardInteractionStore"
 
 const EDGE_SIZE = 75
 const MAX_SCROLL_SPEED = 10

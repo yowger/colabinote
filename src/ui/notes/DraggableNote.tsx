@@ -7,24 +7,28 @@ import NoteDragPreview from "./NotePreview"
 import { useNoteInteractions } from "../../features/interactions/hooks/useNoteInteraction"
 import { usePresenceActions } from "../../core/presence/hooks/usePresenceActions"
 import { getNoteTheme } from "../../core/notes/constants/noteColors"
+import NoteContent from "./NoteContent"
 
 import type { NoteActionPayload } from "../../core/notes/types/note"
-import { type NoteColor } from "../../core/notes/constants/noteColors"
+import type { NoteColor } from "../../core/notes/constants/noteColors"
 
 export type DraggableNoteProps = {
     noteId: string
     onSelect?: (noteId: string) => void
-    onInteractionEnd?: (data: NoteActionPayload) => void
+    onDragEnd?: (data: NoteActionPayload) => void
+    onResizeEnd?: (data: NoteActionPayload) => void
     setNode?: (el: HTMLDivElement | null) => void
 }
 
 export default function DraggableNote({
     noteId,
-    onInteractionEnd: onDragEnd,
+    onDragEnd,
+    onResizeEnd,
     onSelect,
     setNode,
 }: DraggableNoteProps) {
-    const note = useSingleNoteYjs(noteId)
+    const { note, fragment } = useSingleNoteYjs(noteId)
+
     const theme = getNoteTheme(note?.color as NoteColor)
 
     const containerRef = useRef<HTMLDivElement | null>(null)
@@ -42,13 +46,14 @@ export default function DraggableNote({
                 noteId: note.id,
             })
         },
-        onDragEnd,
         onResizeStart: (note) => {
             setAction({
                 type: "resizing-note",
                 noteId: note.id,
             })
         },
+        onDragEnd,
+        onResizeEnd,
     })
 
     const setContainerRef = (node: HTMLDivElement | null) => {
@@ -87,7 +92,7 @@ export default function DraggableNote({
                     )}
                 />
 
-                <div className="flex-1 p-3">DraggableNote content</div>
+                <NoteContent note={note} fragment={fragment} />
 
                 <div
                     onPointerDown={onResizeStart}

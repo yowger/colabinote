@@ -75,7 +75,7 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
     const isTransforming =
         activeInteraction === "note-drag" || activeInteraction === "note-resize"
 
-    const handleInteractionEnd = (data: NoteActionPayload) => {
+    const handleDragEnd = (data: NoteActionPayload) => {
         if (!canvasRef.current) return
         const rect = canvasRef.current.getBoundingClientRect()
 
@@ -87,13 +87,15 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
             updateNote(data.note.id, { x, y })
             return
         }
+    }
 
-        if (data.action === "resize") {
-            updateNote(data.note.id, {
-                width: data.note.width,
-                height: data.note.height,
-            })
-        }
+    const handleResizeEnd = (data: NoteActionPayload) => {
+        clearAction()
+
+        updateNote(data.note.id, {
+            width: data.note.width,
+            height: data.note.height,
+        })
     }
 
     useLayoutEffect(() => {
@@ -115,7 +117,8 @@ export default function NotesLayer({ noteIds, canvasRef }: NotesLayerProps) {
                     key={noteId}
                     noteId={noteId}
                     onSelect={selectNote}
-                    onInteractionEnd={handleInteractionEnd}
+                    onDragEnd={handleDragEnd}
+                    onResizeEnd={handleResizeEnd}
                     setNode={(element) => {
                         if (element) {
                             noteRefs.current.set(noteId, element)

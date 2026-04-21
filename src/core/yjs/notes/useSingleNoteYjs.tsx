@@ -7,7 +7,9 @@ import * as Y from "yjs"
 
 export function useSingleNoteYjs(id: string) {
     const { provider } = useHocuspocusContext()
+
     const [note, setNote] = useState<Note | null>(null)
+    const [fragment, setFragment] = useState<Y.XmlFragment | null>(null)
 
     useEffect(() => {
         const doc = provider?.document
@@ -17,6 +19,16 @@ export function useSingleNoteYjs(id: string) {
         const yNote = yNotes.get(id)
 
         if (!yNote || !(yNote instanceof Y.Map)) return
+
+        const yContent = yNote.get("content") as Y.XmlFragment
+
+        const updateYFragment = (fragment: Y.XmlFragment) => {
+            setFragment(fragment)
+        }
+
+        if (yContent instanceof Y.XmlFragment) {
+            updateYFragment(yContent)
+        }
 
         const updateNote = () => {
             const rawNote = yNote.toJSON() as Note
@@ -31,5 +43,5 @@ export function useSingleNoteYjs(id: string) {
         }
     }, [id, provider])
 
-    return note
+    return { note, fragment }
 }

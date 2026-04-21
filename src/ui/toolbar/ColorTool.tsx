@@ -20,7 +20,7 @@ type ColorToolProps = {
 export default function ColorTool({ position = "right" }: ColorToolProps) {
     const noteId = useNoteUiStateStore((store) => store.selectedNoteId)
     const { updateNote } = useNoteActions()
-    const note = useSingleNoteYjs(noteId || "")
+    const { note } = useSingleNoteYjs(noteId || "")
     const selectedNoteColor = note?.color ?? DEFAULT_NOTE_COLOR
 
     const handleSelectColor = (color: NoteColor) => {

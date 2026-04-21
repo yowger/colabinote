@@ -11,7 +11,6 @@ export default function NotesBoardToolbar() {
             width: 150,
             height: 150,
             title: "New Note",
-            content: "New note content",
             updatedAt: Date.now(),
             color: DEFAULT_NOTE_COLOR,
         })

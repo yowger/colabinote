@@ -1,3 +1,5 @@
+import * as Y from "yjs"
+
 import type { NoteColor } from "../styles/noteColorStyles"
 
 export type Note = {
@@ -7,7 +9,7 @@ export type Note = {
     width: number
     height: number
     title: string
-    content: string
+    content: Y.XmlFragment
     color?: NoteColor
     updatedAt?: number
     zIndex?: number
