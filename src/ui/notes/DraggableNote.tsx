@@ -77,7 +77,7 @@ export default function DraggableNote({
                     height: note.height ?? 0,
                 }}
                 className={clsx(
-                    "group relative rounded-xs overflow-hidden",
+                    "group relative rounded-xs flex flex-col",
                     theme.body,
                     theme.text,
                     theme.border,

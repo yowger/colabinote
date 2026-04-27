@@ -63,23 +63,25 @@ export default function NoteContent({ note, fragment }: NoteContentProps) {
         // }
     }
 
-
-
     useOnClickOutside(ref as RefObject<HTMLElement>, handleClickOutside)
 
     return (
         <div
             ref={ref}
-            className="px-4 pb-4 flex-1 overflow-auto min-h-0"
+            className="flex-wrap prose prose-sm overflow-y-auto h-full"
             onDoubleClick={handleDoubleClick}
             // data-no-pan={isEditing ? true : false}
         >
             <BubbleMenuComponent editor={editor} />
             {isEditing && editor ? (
-                <EditorContent editor={editor} onKeyDown={onEscapeKeyDown} />
+                <EditorContent
+                    className="p-4"
+                    editor={editor}
+                    onKeyDown={onEscapeKeyDown}
+                />
             ) : (
                 <div
-                    className="flex-wrap prose prose-sm"
+                    className="prose prose-sm wrap-break-words p-4"
                     onPointerDown={handleOnPointerDown}
                     dangerouslySetInnerHTML={{ __html: previewHtml || "" }}
                 />
