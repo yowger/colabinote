@@ -9,9 +9,10 @@ import { useUpdateBoardTitle } from "../../features/boards/hooks/useUpdateBoardT
 import { useDeleteBoard } from "../../features/boards/hooks/useDeleteBoard"
 import { useBoardsStore } from "../../features/boards/stores/useBoardsStore"
 import { useRoomStore } from "../../core/hocuspocus/store/useRoomStore"
+import { APP_VERSION } from "../../constants/versions"
 
 export default function BoardSidebar() {
-    const { data: boards = [] } = useBoards()
+    const { data: boards = [], isLoading } = useBoards()
     const createBoard = useCreateBoard()
     const updateBoard = useUpdateBoardTitle()
     const deleteBoard = useDeleteBoard()
@@ -75,21 +76,28 @@ export default function BoardSidebar() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto pr-2 space-y-0.5">
-                    {boards?.map((board) => (
-                        <BoardSidebarItem
-                            key={board.id}
-                            id={board.id}
-                            title={board.title}
-                            isActive={activeBoardId === board.id}
-                            isEditing={editingBoardId === board.id}
-                            onSelect={handleSelect}
-                            onStartEdit={handleStartEdit}
-                            onFinishEdit={handleFinishEdit}
-                            onDelete={(id) => setBoardToDelete(id)}
-                        />
-                    ))}
+                    {isLoading && (
+                        <div className="px-4 py-2 text-sm text-text-muted">
+                            Loading notebooks...
+                        </div>
+                    )}
 
-                    {boards.length === 0 && (
+                    {!isLoading &&
+                        boards?.map((board) => (
+                            <BoardSidebarItem
+                                key={board.id}
+                                id={board.id}
+                                title={board.title}
+                                isActive={activeBoardId === board.id}
+                                isEditing={editingBoardId === board.id}
+                                onSelect={handleSelect}
+                                onStartEdit={handleStartEdit}
+                                onFinishEdit={handleFinishEdit}
+                                onDelete={(id) => setBoardToDelete(id)}
+                            />
+                        ))}
+
+                    {!isLoading && boards.length === 0 && (
                         <div className="px-6">
                             <button
                                 onClick={handleAddBoard}
@@ -99,6 +107,10 @@ export default function BoardSidebar() {
                             </button>
                         </div>
                     )}
+                </div>
+
+                <div className="px-4 py-2 text-xs text-text-muted border-t border-border">
+                    {APP_VERSION}
                 </div>
             </aside>
 
