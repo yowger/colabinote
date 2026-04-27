@@ -78,7 +78,8 @@ export default function BoardSidebar() {
                 <div className="flex-1 overflow-y-auto pr-2 space-y-0.5">
                     {isLoading && (
                         <div className="px-4 py-2 text-sm text-text-muted">
-                            Loading notebooks...
+                            Loading notebooks... I'm using free plan so it might
+                            be slow.
                         </div>
                     )}
 
