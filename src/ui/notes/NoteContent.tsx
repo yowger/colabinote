@@ -3,11 +3,8 @@ import { useOnClickOutside } from "usehooks-ts"
 import { useRef } from "react"
 
 // import { useNoteUiStateStore } from "../../colabinote/src/features/interactions/stores/useNoteUiStateStore"
-// import type { Note } from "../../colabinote/src/core/notes/types/note"
-// import { useNoteEditor } from "../../colabinote/src/features/editor/hooks/useNoteEditor"
 // import BubbleMenuComponent from "../../colabinote/src/ui/toolbar/BubbleMenu"
 import { useNoteEditor } from "../../features/tiptap/hooks/useNoteEditor"
-// import { useNoteActions } from "../../core/yjs/notes/useNoteActions"
 
 import type { Note } from "../../core/notes/types/note"
 
@@ -26,7 +23,6 @@ export default function NoteContent({ note, fragment }: NoteContentProps) {
     const ref = useRef<HTMLDivElement>(null)
 
     // const [localEditing, setLocalEditing] = useState(false)
-    // const updateNote = useNoteUiStateStore((store) => store.updateNote)
     const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
 
     const editor = useNoteEditor({
@@ -68,20 +64,16 @@ export default function NoteContent({ note, fragment }: NoteContentProps) {
     return (
         <div
             ref={ref}
-            className="flex-wrap prose prose-sm overflow-y-auto h-full"
+            className="p-4 flex-1 overflow-y-auto min-h-0 scrollbar-thin"
             onDoubleClick={handleDoubleClick}
             // data-no-pan={isEditing ? true : false}
         >
             <BubbleMenuComponent editor={editor} />
             {isEditing && editor ? (
-                <EditorContent
-                    className="p-4"
-                    editor={editor}
-                    onKeyDown={onEscapeKeyDown}
-                />
+                <EditorContent editor={editor} onKeyDown={onEscapeKeyDown} />
             ) : (
                 <div
-                    className="prose prose-sm wrap-break-words p-4"
+                    className="prose prose-sm wrap-break-words"
                     onPointerDown={handleOnPointerDown}
                     dangerouslySetInnerHTML={{ __html: previewHtml || "" }}
                 />
