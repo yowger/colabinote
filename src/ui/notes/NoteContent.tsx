@@ -63,6 +63,8 @@ export default function NoteContent({ note, fragment }: NoteContentProps) {
         // }
     }
 
+
+
     useOnClickOutside(ref as RefObject<HTMLElement>, handleClickOutside)
 
     return (
