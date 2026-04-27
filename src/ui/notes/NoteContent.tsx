@@ -1,13 +1,13 @@
 import { EditorContent } from "@tiptap/react"
-import { useDebounceCallback, useOnClickOutside } from "usehooks-ts"
-import { useRef, useState } from "react"
+import { useOnClickOutside } from "usehooks-ts"
+import { useRef } from "react"
 
 // import { useNoteUiStateStore } from "../../colabinote/src/features/interactions/stores/useNoteUiStateStore"
 // import type { Note } from "../../colabinote/src/core/notes/types/note"
 // import { useNoteEditor } from "../../colabinote/src/features/editor/hooks/useNoteEditor"
 // import BubbleMenuComponent from "../../colabinote/src/ui/toolbar/BubbleMenu"
 import { useNoteEditor } from "../../features/tiptap/hooks/useNoteEditor"
-import { useNoteActions } from "../../core/yjs/notes/useNoteActions"
+// import { useNoteActions } from "../../core/yjs/notes/useNoteActions"
 
 import type { Note } from "../../core/notes/types/note"
 
@@ -25,7 +25,7 @@ type NoteContentProps = {
 export default function NoteContent({ note, fragment }: NoteContentProps) {
     const ref = useRef<HTMLDivElement>(null)
 
-    const [localEditing, setLocalEditing] = useState(false)
+    // const [localEditing, setLocalEditing] = useState(false)
     // const updateNote = useNoteUiStateStore((store) => store.updateNote)
     const selectedNoteId = useNoteUiStateStore((store) => store.selectedNoteId)
 
@@ -49,11 +49,13 @@ export default function NoteContent({ note, fragment }: NoteContentProps) {
         // editor.commands.focus("end")
     }
 
-    const onEscapeKeyDown = (keyEvent: React.KeyboardEvent) => {
-        // if (keyEvent.key === "Escape") {
-        //     setLocalEditing(false)
-        // }
-    }
+    const onEscapeKeyDown = () =>
+        // keyEvent: React.KeyboardEvent
+        {
+            // if (keyEvent.key === "Escape") {
+            //     setLocalEditing(false)
+            // }
+        }
 
     const handleClickOutside = () => {
         // if (isEditing && !editor?.isFocused) {
