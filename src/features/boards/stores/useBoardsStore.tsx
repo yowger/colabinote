@@ -1,7 +1,7 @@
 import { create } from "zustand"
 
 type Board = {
-    id: string
+    id?: string
     title: string
 }
 
@@ -15,12 +15,9 @@ type BoardsStore = {
 }
 
 export const useBoardsStore = create<BoardsStore>((set) => ({
-    boards: [
-        { id: "1", title: "Ideas" },
-        { id: "2", title: "Research" },
-    ],
+    boards: [],
 
-    activeBoardId: "1",
+    activeBoardId: null,
 
     addBoard: (id: string, title: string) => {
         set((state) => ({
